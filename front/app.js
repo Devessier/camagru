@@ -2,15 +2,22 @@
 
 loadScript([ 'core/component.js', 'test.js' ])
 	.then(() => {
-		const root = Maverick.bind(document.getElementById('app'))
-		const array = [ 1, 2 ]
-
-		function callback () {
-			console.log('callback')
+		const App = {
+			html: Maverick.bind(document.getElementById('app')),
+			data: {
+				message: 'Salut !'
+			},
+			teub () {
+				console.log('this', this)
+				//this.data.message = event.target.value
+				//this.render()
+			},
+			render () {
+				console.log(this)
+				this.html`<p> ${this.data.message}</p>
+				<button value="${this.data.message}" onclick="${this.teub}">Text</button>`
+			}
 		}
 
-		root`<div>
-			Salut ! ${array.map(el => el * 2)[0]}
-			<button onclick=${callback} title="${'lol'}">Text</button>
-		</div>`
+		App.render()
 	})
