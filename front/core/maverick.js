@@ -31,7 +31,6 @@ const Maverick = (() => {
         for (let entry of childNodes.entries()) {
             const i = entry[0]
             const child = entry[1]
-            console.log('hi child !', child)
             switch (child.nodeType) {
                 case 1:
                     attributesGunFight(child, weapons)
@@ -263,7 +262,6 @@ const Maverick = (() => {
      * @param {*} templates 
      */
     function upgrade (templates) {
-        console.log(templates, this.nodeType)
         const updates = []
         const html = templates.join(UIDC)
         if (this.nodeType === 1) {
@@ -297,7 +295,6 @@ const Maverick = (() => {
                 setup = false
                 content = armAndShoot(fragment)
             }
-            console.log(content())
             return content()
         }
     }
