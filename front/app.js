@@ -1,6 +1,6 @@
 'use strict';
 
-loadScript([ 'core/maverick.js', 'core/component.js' ])
+loadScript([ 'core/maverick.js', 'core/component.js', 'core/observer/index.js' ])
 	.then(() => {
 
         function click (event) {
@@ -23,9 +23,29 @@ loadScript([ 'core/maverick.js', 'core/component.js' ])
         const test2 = new MaverickComponent('Test2', '#aside2', state, update)
 
         setTimeout(() => {
-            state.message = 'EHEH SUPRISE'
+            state.message = 'FUCK MKERVABO'
         }, 3000)
+
+        setInterval(() => test.render(), 1000)
 
         test.render()
         test2.render()
+
+        const yolo = {
+            lol: 'hi !',
+            msg: {
+                test: {
+                    recursive: {
+                        recursive: {
+                            end: 'end'
+                        }
+                    }
+                }
+            }
+        }
+        
+        const observer = new Observer(yolo)
+        console.log(observer, yolo)
+
+        yolo.msg.test.recursive.recursive.end = 'TEUB'
 	})

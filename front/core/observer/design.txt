@@ -1,0 +1,39 @@
+Comportement Observer :
+
+On parcourt toutes les clefs d'un objet
+Chaque objet se voit assigne une nouvelle clef __ob__ qui est une instance de la classe Observer
+
+Si la clef rencontree est elle-meme un objet on appelle la fonction recursivement
+
+On set des getters et setters sur chaque clef :
+
+Le getter retourne la valeur
+Le setter, si la nouvelle valeur est differente de la precedente, doit signaler a qui de droit (les composants auxquels l'objet est attache) qu'il doit etre re-rendu
+
+On doit mettre en place un systeme de queue pour ne rendre le composant qu'une fois par tick
+
+const data = {
+	test: 'lol',
+	obj: {
+		message: 'lol
+	}
+}
+
+On doit parcourir l'objet data et obtenir cela :
+
+const data = {
+	__obj__: { ... },
+	test: {
+		get () {},
+		set () {}
+	},
+	obj: {
+		__obj__: { ... },
+		get () {},
+		set () {},
+		message: {
+			get () {},
+			set () {}
+		}
+	}
+}
