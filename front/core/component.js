@@ -39,11 +39,12 @@ const MaverickComponent = (() => {
     /**
      * MaverickComponent constructor
      * @param {String} name
+     * @param {String} selector The query selector representing the element to bind the instance to
      * @param {Object} data
      * @param {Function} update
      */
-    function MaverickComponent (name, el, data, update) {
-        this.el = el
+    function MaverickComponent (name, selector, data, update) {
+        this.el = Maverick.bind(document.querySelector(selector))
         this.name = name
         this.data = data
         this.update = update

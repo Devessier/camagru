@@ -2,7 +2,6 @@
 
 loadScript([ 'core/maverick.js', 'core/component.js' ])
 	.then(() => {
-        const root = Maverick.bind(document.body)
 
         function click (event) {
             console.log('clicked', event)
@@ -20,11 +19,13 @@ loadScript([ 'core/maverick.js', 'core/component.js' ])
             test: 'YOLOOOOOO'
         }
 
-        const test = new MaverickComponent('Test', root, state, update)
+        const test = new MaverickComponent('Test', '#aside1', state, update)
+        const test2 = new MaverickComponent('Test2', '#aside2', state, update)
 
         setTimeout(() => {
             state.message = 'EHEH SUPRISE'
         }, 3000)
 
         test.render()
+        test2.render()
 	})
