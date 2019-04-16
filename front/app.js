@@ -1,51 +1,36 @@
 'use strict';
 
-loadScript([ 'core/maverick.js', 'core/component.js', 'core/observer/index.js' ])
+loadScript([ 'core/maverick.js', 'core/observer/dep.js', 'core/observer/index.js', 'core/component.js', ])
 	.then(() => {
 
-        function click (event) {
-            console.log('clicked', event)
+        const state = {
+            message: 'watch me !',
+            test: 'YOLOOOOOO',
+            array: [
+                'test1',
+                'test2'
+            ]
+        }
+
+        function input (event) {
+            state.message = event.target.value
         }
 
         function update(render, props) {
             render`<div>
-                <h1 onclick="${click}">${props.message}</h1>
-                <h2>It is ${new Date().toLocaleTimeString()}.</h2>
+            <p>Salut !</p>
+            <ul>${props.array.map(el => Maverick.create()`<li>${el}</li>`)}</ul>
             </div>`
         }
 
-        const state = {
-            message: 'watch me !',
-            test: 'YOLOOOOOO'
-        }
-
-        const test = new MaverickComponent('Test', '#aside1', state, update)
-        const test2 = new MaverickComponent('Test2', '#aside2', state, update)
+        const test = new MaverickComponent('#aside1', state, update)
+        
+        const test2 = new MaverickComponent('#aside2', state, update)
 
         setTimeout(() => {
-            state.message = 'FUCK MKERVABO'
-        }, 3000)
-
-        setInterval(() => test.render(), 1000)
+            state.array = [ 'I love Maverick 🥰 ' ]
+        }, 5000)
 
         test.render()
         test2.render()
-
-        const yolo = {
-            lol: 'hi !',
-            msg: {
-                test: {
-                    recursive: {
-                        recursive: {
-                            end: 'end'
-                        }
-                    }
-                }
-            }
-        }
-        
-        const observer = new Observer(yolo)
-        console.log(observer, yolo)
-
-        yolo.msg.test.recursive.recursive.end = 'TEUB'
 	})
