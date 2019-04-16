@@ -1,56 +1,75 @@
 'use strict';
 
-const Maverick = (() => {
+const MaverickComponent = (() => {
 
-	let _root
-	
-	let _elementId = 0
-	
-	const _functions = []
+    /**
+     * Watch changes for a given property of an object
+     * @param {String} prop
+     * @param {Function} handler
+     */
+    function watch (prop, handler) {
+        let oldValue = this[prop], newValue = oldValue
 
-	function _render (elements) {
-		console.log('render')
-		const html = Array.prototype.shift.apply(arguments)
+        const getter = function get () {
+            return newValue
+        }
+        const setter = function set (value) {
+            oldValue = newValue = value
+            handler(prop, oldValue, value)
+            return value
+        }
+        if (delete this[prop]) {
+            Object.defineProperty(this, prop, {
+                get: getter,
+                set: setter
+            })
+        }
+    }
 
-		_root.innerHTML = html.reduce((innerHTML, node, index) => {
-			const result = innerHTML + node
-			if (!(index < arguments.length))
-				return result
-			const arg = arguments[index]
-			if (typeof arg === 'function') {
-				let fnName = null
-				_functions.forEach(f => {
-					if (f.fn === arg)
-						return fnName = f.name
-				})
-				if (!fnName) {
-					const name = arg.name + Math.floor(Math.random() * 100000)
-					console.log(name)
-					_functions.push({
-						name,
-						fn: arg
-					})
-					window[name] = arg
-					return result + name + '()'
-				}
-				return result + fnName + '()'
-			}
-			return result + arg
-		}, '')
-	}
+    /**
+     * Unset watchers
+     * @param {String} prop
+     */
+    function unwatch (prop) {
+        const value = this[prop]
+        delete this[prop]
+        this[prop] = value
+    }
 
-	/**
-	 * The bind function binds to an HTMLElement all the Maverick application
-	 * @param {HTMLElement} node - The node to which bind all the application
-	 */
-	function bind (node) {
-		if (!node instanceof HTMLElement)
-			throw new Error('Provide an HTMLElement to bind')
-		_root = node
-		return _render
-	}
-	
-	return {
-		bind
-	}
+    /**
+     * MaverickComponent constructor
+     * @param {String} name
+     * @param {Object} data
+     * @param {Function} update
+     */
+    function MaverickComponent (name, el, data, update) {
+        this.el = el
+        this.name = name
+        this.data = data
+        this.update = update
+
+        this._watch(this, [ 'data' ])
+    }
+
+    /**
+     * Watch given properties
+     * @param {Array<String>} properties
+     */
+    MaverickComponent.prototype._watch = function _watch (self, properties) {
+        for (let property of properties) {
+            if (typeof this[property] === 'object')
+                return this._watch(this[property], Object.keys(this[property]))
+            watch.call(self, property, (prop, oldValue, newValue) => {
+                this.render()
+                return newValue
+            })
+        }
+    }
+
+    MaverickComponent.prototype.render = function render () {
+        this.update(this.el, this.data)
+    }
+
+    return MaverickComponent
+
 })()

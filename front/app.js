@@ -1,23 +1,30 @@
 'use strict';
 
-loadScript([ 'core/component.js', 'test.js' ])
+loadScript([ 'core/maverick.js', 'core/component.js' ])
 	.then(() => {
-		const App = {
-			html: Maverick.bind(document.getElementById('app')),
-			data: {
-				message: 'Salut !'
-			},
-			teub () {
-				console.log('this', this)
-				//this.data.message = event.target.value
-				//this.render()
-			},
-			render () {
-				console.log(this)
-				this.html`<p> ${this.data.message}</p>
-				<button value="${this.data.message}" onclick="${this.teub}">Text</button>`
-			}
-		}
+        const root = Maverick.bind(document.body)
 
-		App.render()
+        function click (event) {
+            console.log('clicked', event)
+        }
+
+        function update(render, props) {
+            render`<div>
+                <h1 onclick="${click}">${props.message}</h1>
+                <h2>It is ${new Date().toLocaleTimeString()}.</h2>
+            </div>`
+        }
+
+        const state = {
+            message: 'watch me !',
+            test: 'YOLOOOOOO'
+        }
+
+        const test = new MaverickComponent('Test', root, state, update)
+
+        setTimeout(() => {
+            state.message = 'EHEH SUPRISE'
+        }, 3000)
+
+        test.render()
 	})
