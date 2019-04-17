@@ -12,6 +12,7 @@ const MaverickComponent = (() => {
      */
     function MaverickComponent (selector, data, update) {
         this.id = id++
+        this.timeoutID = null
 
         this.el = Maverick.bind(document.querySelector(selector))
         this.update = update
@@ -20,8 +21,16 @@ const MaverickComponent = (() => {
         this.state.bind(this.render.bind(this))
     }
 
+    /**
+     * Render the component only at the start of the next nick
+     */
     MaverickComponent.prototype.render = function render () {
-        this.update(this.el, this.state.value)
+        if (this.timeoutID !== null)
+            return
+        this.timeoutID = setTimeout(() => {
+            this.update(this.el, this.state.value)
+            this.timeoutID = null
+        }, 0)
     }
 
     return MaverickComponent
