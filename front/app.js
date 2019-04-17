@@ -1,38 +1,50 @@
 'use strict';
 
-loadScript([ 'core/maverick.js', 'core/observer/dep.js', 'core/observer/index.js', 'core/component.js', ])
+loadScript([ 'core/maverick.js', 'core/observer/dep.js', 'core/observer/index.js', 'core/components/index.js', 'core/components/page.js', 'core/router/index.js' ])
 	.then(() => {
 
-        const state = {
-            message: 'watch me !',
-            test: 'YOLOOOOOO',
-            array: [
-                {
-                    text: 'WILL THIS WORK ?'
-                }
-            ]
-        }
+        const page = new Page('test', {}, (render) => {
+            render`<aside>
+                LOL !
+            </aside>
+            `
+        })
 
-        function input (event) {
-            state.message = event.target.value
-        }
+        const page2 = new Page('test2', {}, (render) => {
+            render`<p>
+                EHEHEHEHEHEH
+            </p>`
+        })
 
-        function update(render, props) {
-            render`<div>
-            <p>Salut !</p>
-            <ul>${props.array.map(el => Maverick.create()`<li>${el.text}</li>`)}</ul>
-            </div>`
-        }
+        const page404 = new Page('Page Not Found', {}, (render) => {
+            render`<p>
+                Page not found !
+            </p>`
+        })
 
-        const test = new MaverickComponent('#aside1', state, update)
-        
-        const test2 = new MaverickComponent('#aside2', state, update)
+        const router = new Router([
+            {
+                name: 'Index',
+                path: /^\/$/,
+                component: page
+            },
+            {
+                name: 'Eheh',
+                path: /^\/eheh\/?$/,
+                component: page2
+            },
+            {
+                name: '404',
+                path: '.*',
+                component: page404
+            }
+        ])
 
         setTimeout(() => {
-            state.array[0].text = 'Does it work ?'
-            console.log(state)
+            router.push('/eheh')
+            setTimeout(() => {
+                router.push('afd gahdfj gk')
+            }, 2000)
         }, 2000)
 
-        test.render()
-        test2.render()
 	})
