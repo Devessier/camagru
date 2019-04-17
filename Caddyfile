@@ -1,3 +1,7 @@
 localhost:8000 {
 	root ./front
+	rewrite {
+		regexp .*
+		to {path} /
+	}
 }
