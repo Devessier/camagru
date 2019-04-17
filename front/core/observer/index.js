@@ -19,7 +19,11 @@ const Observer = (() => {
         this.value = value
         def(value, '__ob__', this)
 
-        this.walk(value)
+        if (Array.isArray(value)) {
+            this.observeArray(value)
+        } else {
+            this.walk(value)
+        }
     }
 
     /**
@@ -39,6 +43,17 @@ const Observer = (() => {
      */
     Observer.prototype.bind = function bind (fn) {
         this.dep.bind(fn)
+    }
+
+    /**
+     * This function loops over `array` and observes each of its members
+     * @param {Array} array
+     */
+    Observer.prototype.observeArray = function observeArray (array) {
+        for (let item of array) {
+            console.log(item)
+            observe(item, this.dep)
+        }
     }
 
     /**

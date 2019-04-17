@@ -7,8 +7,9 @@ loadScript([ 'core/maverick.js', 'core/observer/dep.js', 'core/observer/index.js
             message: 'watch me !',
             test: 'YOLOOOOOO',
             array: [
-                'test1',
-                'test2'
+                {
+                    text: 'WILL THIS WORK ?'
+                }
             ]
         }
 
@@ -19,7 +20,7 @@ loadScript([ 'core/maverick.js', 'core/observer/dep.js', 'core/observer/index.js
         function update(render, props) {
             render`<div>
             <p>Salut !</p>
-            <ul>${props.array.map(el => Maverick.create()`<li>${el}</li>`)}</ul>
+            <ul>${props.array.map(el => Maverick.create()`<li>${el.text}</li>`)}</ul>
             </div>`
         }
 
@@ -28,8 +29,9 @@ loadScript([ 'core/maverick.js', 'core/observer/dep.js', 'core/observer/index.js
         const test2 = new MaverickComponent('#aside2', state, update)
 
         setTimeout(() => {
-            state.array = [ 'I love Maverick 🥰 ' ]
-        }, 5000)
+            state.array[0].text = 'Does it work ?'
+            console.log(state)
+        }, 2000)
 
         test.render()
         test2.render()
