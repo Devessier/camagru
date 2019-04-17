@@ -2,7 +2,7 @@
 
 const Home = (() => {
 
-	const data = {
+	let data = {
 		articles: [
 			{
 				title: 'Hi !',
@@ -22,6 +22,15 @@ const Home = (() => {
 			}
 		]
 	}
+
+	setTimeout(() => {
+		data.articles = [
+			{
+				title: 'BYE',
+				text: "CIAO"
+			}
+		]
+	}, 2000)
 
 	function article (render, props) {
 		return render`<article>

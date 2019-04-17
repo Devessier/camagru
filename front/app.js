@@ -4,8 +4,7 @@ loadScript([ 'core/maverick.js', 'core/observer/dep.js', 'core/observer/index.js
 	.then(() => {
         loadScript([ 'pages/Home.js', 'pages/404.js' ])
             .then(() => {
-                console.log('home', Home)
-        
+
                 const router = new Router([
                     {
                         name: 'Index',
@@ -19,8 +18,6 @@ loadScript([ 'core/maverick.js', 'core/observer/dep.js', 'core/observer/index.js
                     }
                 ])
 
-                setTimeout(() => {
-                    router.push('54545454')
-                }, 30000)
+                
             })
 	})

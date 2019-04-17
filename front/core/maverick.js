@@ -18,7 +18,7 @@ const Maverick = (() => {
             }
         }
     }
-    
+
     /**
      * Walk throughout the node children
      * @param {HTMLElement} aircraft The node
