@@ -48,6 +48,10 @@ const Maverick = (() => {
                         aircraft.replaceChild(text, child)
                     }
                     break
+                case 3:
+                    if (aircraft.nodeName === 'STYLE' && child.textContent.includes(UIDC))
+                        weapons.push(setMissionOrder(child))
+                    break
             }
         }
     }
@@ -276,7 +280,7 @@ const Maverick = (() => {
         }
         return update.apply(this, arguments)
     }
-
+    
 	function Maverick (templates) {
         if (LOVE in this && this[LOVE].templates === templates)
             return update.apply(this, arguments)
