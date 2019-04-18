@@ -15,7 +15,7 @@ const Router = (() => {
 
 		created = true
 		/** @member {Array<Regex>} Router.routes The application routes */
-		this._routes = []
+		this._routes = new Map()
 
 		this.timeoutID = null
 
@@ -39,17 +39,17 @@ const Router = (() => {
 				const name = route.name || ''
 				const path = route.path
 				const component = route.component
+				const id = route.component.id
 
 				if (!(path && component && component instanceof Page))
 					throw new Error('Provide only valid route objects : ' + JSON.stringify(route))
-				this._routes.push({
+				this._routes.set(id, {
+					id,
 					name,
 					path,
 					component
 				})
 			}
-
-			console.log(this._routes)
 
 			let _route
 
@@ -77,11 +77,14 @@ const Router = (() => {
 		if (this.timeoutID !== null)
 			return
 		this.timeoutID = setTimeout(() => {
-			for (let route of this._routes) {
+			for (let route of this._routes.values()) {
 				const regex = route.path instanceof RegExp ? route.path : new RegExp('^' + route.path + '$')
 				if (regex.test(this._currentRoute)) {
-					route.component.render()
+					this._currentRouteObj && this._currentRouteObj.component._trigger('unmount')
+
 					this._currentRouteObj = route
+					route.component._trigger('mount')
+					route.component.render()
 					break
 				}
 			}
@@ -120,6 +123,7 @@ const Router = (() => {
 	 */
 	function go (route, handler) {
 		if (this._currentRoute = route) {
+			console.log('go to ' + route)
 			setTimeout(() => {
 				handler()
 			}, 0)

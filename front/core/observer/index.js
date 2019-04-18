@@ -45,6 +45,14 @@ const Observer = (() => {
         this.dep.bind(fn)
     }
 
+    Observer.prototype.freeze = function freeze (fn) {
+        this.dep.freeze(fn)
+    }
+
+    Observer.prototype.recover = function recover (fn) {
+        this.dep.recover(fn)
+    }
+
     /**
      * This function loops over `array` and observes each of its members
      * @param {Array} array
