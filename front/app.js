@@ -21,7 +21,5 @@ loadScript([ 'core/maverick.js', 'core/observer/dep.js', 'core/observer/index.js
                 setTimeout(() => {
                     router.push('a fgadfg adf gadfg ')
                 }, 1000)
-
-                console.log(router)
             })
 	})

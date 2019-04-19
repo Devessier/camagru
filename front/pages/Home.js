@@ -33,7 +33,6 @@ const Home = (() => {
 	}, 5000)
 
 	function article (render, props) {
-		console.log('render article')
 		return render`<article>
 			<h1>${props.title}</h1>
 			<p>${props.text}</p>
@@ -42,7 +41,6 @@ const Home = (() => {
 	}
 
 	function update (render, props) {
-		console.log('render update')
 		render`<section>${ props.articles.map(obj => article(Maverick.create(), obj)) }</section>`
 	}
 

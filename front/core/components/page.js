@@ -26,13 +26,11 @@ const Page = (() => {
 	}
 
 	Page.prototype.render = function render () {
-		console.log('render page !')
 		this.setTitle(this.title)
 		this.component.render()
 	}
 
 	Page.prototype._trigger = function _trigger (event) {
-		console.log('trigger event ' + event)
 		const fn = events.get(event)
 		fn && fn.call(this)
 	}

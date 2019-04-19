@@ -84,7 +84,6 @@ const Router = (() => {
 
 					this._currentRouteObj = route
 					route.component._trigger('mount')
-					console.log('route =', route)
 					route.component.render()
 					break
 				}
@@ -124,7 +123,6 @@ const Router = (() => {
 	 */
 	function go (route, handler) {
 		if (this._currentRoute = route) {
-			console.log('go to ' + route)
 			setTimeout(() => {
 				handler()
 			}, 0)

@@ -59,7 +59,6 @@ const Observer = (() => {
      */
     Observer.prototype.observeArray = function observeArray (array) {
         for (let item of array) {
-            console.log(item)
             observe(item, this.dep)
         }
     }
