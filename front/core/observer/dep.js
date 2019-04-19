@@ -17,19 +17,18 @@ const Dep = (() => {
 
     Dep.prototype.trigger = function trigger () {
         for (let handler of this.handlers) {
-            console.log('has handler : ', blacklist.has(handler))
-            !blacklist.has(handler) && handler()
+            const id = handler.id
+            const fn = handler.fn
+            !blacklist.has(id) && fn()
         }
     }
 
-    Dep.prototype.freeze = function freeze (fn) {
-        console.log('freeze ' + blacklist.size, fn, [...blacklist])
-        blacklist.add(fn)
+    Dep.prototype.freeze = function freeze (id) {
+        blacklist.add(id)
     }
 
-    Dep.prototype.recover = function recover (fn) {
-        console.log('recover ' + blacklist.size, fn, [...blacklist])
-        console.log(blacklist.delete(fn))
+    Dep.prototype.recover = function recover (id) {
+        blacklist.delete(id)
     }
 
     return Dep

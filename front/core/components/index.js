@@ -18,7 +18,10 @@ const MaverickComponent = (() => {
         this.update = update
 
         this.state = Observer.apply(data)
-        this.state.bind(this.render.bind(this))
+        this.state.bind({
+            id: this.id,
+            fn: this.render.bind(this)
+        })
     }
 
     /**

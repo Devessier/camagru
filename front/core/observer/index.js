@@ -39,10 +39,10 @@ const Observer = (() => {
 
     /**
      * Add a function which will be called if a setter is triggered
-     * @param {Function} fn
+     * @param {Object} obj
      */
-    Observer.prototype.bind = function bind (fn) {
-        this.dep.bind(fn)
+    Observer.prototype.bind = function bind (obj) {
+        this.dep.bind(obj)
     }
 
     Observer.prototype.freeze = function freeze (fn) {

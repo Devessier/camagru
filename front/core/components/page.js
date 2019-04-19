@@ -6,10 +6,10 @@ const Page = (() => {
 
 	const events = new Map([
 		[ 'unmount', function unmount () {
-			this.component.state.freeze(this.component.render)
+			this.component.state.freeze(this.component.id)
 		} ],
 		[ 'mount', function mount () {
-			this.component.state.recover(this.component.render)
+			this.component.state.recover(this.component.id)
 		} ]
 	])
 

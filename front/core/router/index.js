@@ -21,8 +21,8 @@ const Router = (() => {
 
 		this._setup(routes)
 
-		/** @member {String} Router.currentRoute The route currently displayed */
 		this.replace(window.location.pathname)
+		/** @member {String} Router._currentRoute The route currently displayed */
 		this._currentRouteObj = null
 	}
 
@@ -32,7 +32,7 @@ const Router = (() => {
 	 */
 	Router.prototype._setup = function _setup (routes) {
 		window.addEventListener('popstate', (event) => {
-			this.replace(event.state.route )
+			this.replace(event.state.route)
 		})
 		if (Array.isArray(routes)) {
 			for (let route of routes) {
@@ -84,6 +84,7 @@ const Router = (() => {
 
 					this._currentRouteObj = route
 					route.component._trigger('mount')
+					console.log('route =', route)
 					route.component.render()
 					break
 				}
