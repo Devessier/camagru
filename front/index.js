@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 function loadScript (paths) {
 	if (!Array.isArray(paths))
