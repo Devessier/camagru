@@ -4,6 +4,11 @@ const Page = (() => {
 
 	let id = 0
 
+	/**
+	 * These are the events a page can handle.
+	 * This is mainly used to freeze and then recover the state
+	 * of a page to disallow the rendering of a component beeing in background.
+	 */
 	const events = new Map([
 		[ 'unmount', function unmount () {
 			this.component.state.freeze(this.component.id)
@@ -12,10 +17,18 @@ const Page = (() => {
 			this.component.state.recover(this.component.id)
 		} ]
 	])
+	
+	function layout (render, props) {
+		render`
+		<nav>
+			<h1>Camagru</h1>
+		</nav>
+		<main>${ props.page(Maverick.create(), props) }</main>`
+	}
 
 	function Page (title, state, page) {
 		this.id = id++
-		this.component = new MaverickComponent('#app', state, page)
+		this.component = new MaverickComponent(state, layout, page)
 		this.state = state
 		this.title = title
 	}

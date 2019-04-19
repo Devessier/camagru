@@ -40,10 +40,10 @@ const Home = (() => {
 		</article>`
 	}
 
-	function update (render, props) {
-		render`<section>${ props.articles.map(obj => article(Maverick.create(), obj)) }</section>`
+	function render (h, props) {
+		return h`<section>${ props.articles.map(obj => article(Maverick.create(), obj)) }</section>`
 	}
 
-	return new Page('Camagru - Accueil', data, update)
+	return new Page('Camagru - Accueil', data, render)
 
 })()

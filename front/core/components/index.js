@@ -4,18 +4,20 @@ const MaverickComponent = (() => {
 
     let id = 0
 
+    const App = Maverick.bind(document.getElementById('app'))
+
     /**
      * MaverickComponent constructor
      * @param {String} selector The query selector representing the element to bind the instance to
      * @param {Object} data
      * @param {Function} update
      */
-    function MaverickComponent (selector, data, update) {
+    function MaverickComponent (data, update, page) {
         this.id = id++
         this.timeoutID = null
 
-        this.el = Maverick.bind(document.querySelector(selector))
         this.update = update
+        data.page = page
 
         this.state = Observer.apply(data)
         this.state.bind({
@@ -31,7 +33,7 @@ const MaverickComponent = (() => {
         if (this.timeoutID !== null)
             return
         this.timeoutID = setTimeout(() => {
-            this.update(this.el, this.state.value)
+            this.update(App, this.state.value)
             this.timeoutID = null
         }, 0)
     }
