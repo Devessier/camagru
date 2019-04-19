@@ -20,6 +20,9 @@ loadScript([ 'core/maverick.js', 'core/observer/dep.js', 'core/observer/index.js
 
                 setTimeout(() => {
                     router.push('a fgadfg adf gadfg ')
+                    setTimeout(() => {
+                        router.push('/')
+                    }, 7000)
                 }, 1000)
             })
 	})
