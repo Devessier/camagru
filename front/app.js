@@ -7,7 +7,7 @@ const GLOBAL_STATE = {
 function layout (render, props) {
     render`
     <nav class="flex items-center justify-between bg-grey-light px-12 py-4 mb-4">
-        <h1><a href="/">Camagru</a></h1>
+        <h1><a href="/" onclick="${ router.click('/') }">Camagru</a></h1>
         <div>${ (props.user && props.user.logguedIn) ? 'Loggued in' : 'Sign up' }</div>
     </nav>
     <main>${ props.page(Maverick.create(), props) }</main>`

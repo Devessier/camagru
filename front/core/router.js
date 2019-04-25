@@ -3,6 +3,7 @@
 const Router = (() => {
 
 	let created = false
+	let lastRoute = null
 
 	/**
 	 * Router constructor - Takes an array as first parameter which represents all the routes of the application
@@ -21,7 +22,10 @@ const Router = (() => {
 
 		this._setup(routes)
 
-		this.replace(window.location.pathname)
+		try {
+			this.replace(decodeURIComponent(window.location.pathname))
+		} catch (e) {}
+
 		/** @member {String} Router._currentRoute The route currently displayed */
 		this._currentRouteObj = null
 	}
@@ -116,16 +120,29 @@ const Router = (() => {
 		})
 	}
 
+	Router.prototype.click = function click (route, replace = false) {
+		return (event) => {
+			if (replace) {
+				this.replace(route)
+			} else {
+				this.push(route)
+			}
+			event.preventDefault()
+		}
+	}
+
 	/**
 	 * Utility function which moves to the next page, awaits the transformations to be done and then call the handler (either Router.prototype.push or Router.prototype.replace)
 	 * @param {String} route
 	 * @param {Function} handler
 	 */
 	function go (route, handler) {
-		if (this._currentRoute = route) {
+		if (route !== lastRoute) {
+			this._currentRoute = route
 			setTimeout(() => {
 				handler()
 			}, 0)
+			lastRoute = route
 		}
 	}
 
