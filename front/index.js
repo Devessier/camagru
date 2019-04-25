@@ -4,7 +4,7 @@ function loadScript (paths) {
 	if (!Array.isArray(paths))
 		return Promise.reject('Need to provide an array')
 	return Promise.all(paths.map(path => new Promise(resolve => {
-		const body = document.head
+		const body = document.body
 		const script = document.createElement('script')
 		script.type = 'text/javascript'
 		script.src = path

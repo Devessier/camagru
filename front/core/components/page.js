@@ -20,8 +20,9 @@ const Page = (() => {
 	
 	function layout (render, props) {
 		render`
-		<nav>
-			<h1>Camagru</h1>
+		<nav class="flex items-center justify-between bg-grey-light px-12 py-4 mb-4">
+            <h1><a href="/">Camagru</a></h1>
+            <div>${ (props.user && props.user.logguedIn) ? 'Loggued in' : 'Sign up' }</div>
 		</nav>
 		<main>${ props.page(Maverick.create(), props) }</main>`
 	}
