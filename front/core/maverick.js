@@ -1,4 +1,4 @@
-'use strict';
+/* 2 */
 
 const Maverick = (() => {
 
@@ -81,7 +81,7 @@ const Maverick = (() => {
                     break
             }
         }
-}
+    }
 
     function virtualShoot (ship) {
         const fragment = document.createDocumentFragment()

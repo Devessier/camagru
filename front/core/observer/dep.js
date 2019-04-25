@@ -1,4 +1,4 @@
-'use strict';
+/* 3 */
 
 const Dep = (() => {
 

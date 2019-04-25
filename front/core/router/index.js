@@ -1,4 +1,4 @@
-'use strict';
+/* 7 */
 
 const Router = (() => {
 

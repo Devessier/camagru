@@ -1,20 +1,4 @@
-'use strict';
-
-function loadScript (paths) {
-	if (!Array.isArray(paths))
-		return Promise.reject('Need to provide an array')
-	return Promise.all(paths.map(path => new Promise(resolve => {
-		const body = document.body
-		const script = document.createElement('script')
-		script.type = 'text/javascript'
-		script.src = path
-
-		script.onreadystatechange = resolve
-		script.onload = resolve
-
-		body.appendChild(script)
-	})))
-}
+/* 0 */
 
 function copyObject (obj) {
     const newObj = {}
@@ -35,5 +19,3 @@ function mergeObjects () {
 	}
 	return tmp
 }
-
-loadScript([ 'app.js' ])

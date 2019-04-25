@@ -1,5 +1,7 @@
 localhost:8000 {
-	root ./front
+	root ./dist
+	gzip
+	push
 	rewrite {
 		regexp .*
 		to {path} /

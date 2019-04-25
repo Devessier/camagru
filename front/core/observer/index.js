@@ -1,4 +1,4 @@
-'use strict';
+/* 4 */
 
 const Observer = (() => {
 

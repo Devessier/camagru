@@ -1,5 +1,3 @@
-'use strict';
-
 const _404 = (() => {
 
 	function update (render) {

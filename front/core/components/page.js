@@ -1,4 +1,4 @@
-'use strict';
+/* 6 */
 
 const Page = (() => {
 

@@ -1,4 +1,4 @@
-'use strict';
+/* 5 */
 
 const MaverickComponent = (() => {
 
