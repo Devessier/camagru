@@ -1,5 +1,7 @@
 apt-get update
 apt-get install -y mysql-server
-mysql < /git/configs/default-user.sql
-apt-get install -y curl vim htop unzip
+apt-get install -y curl vim
 curl https://getcaddy.com | bash -s personal
+
+sudo echo "cd /git && ./build.sh && nohup caddy &" > /etc/init.d/test
+chmod +x /etc/init.d/test

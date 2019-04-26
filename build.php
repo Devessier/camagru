@@ -1,3 +1,4 @@
+#!/usr/bin/env php
 <?php
 
 echo <<<EOT
@@ -23,8 +24,8 @@ function endsWith($haystack, $needle) {
 function get_js_files ($path, $dep = 0) {
 	$paths = [];
 
-	if ($handle = opendir($path)) {
-		while (($entry = readdir($handle)) !== false) {
+	if ($handle = @opendir($path)) {
+		while (($entry = @readdir($handle)) !== false) {
 			if ($entry[0] !== '.') {
 				$filepath = $path . '/' . $entry;
 
@@ -35,7 +36,7 @@ function get_js_files ($path, $dep = 0) {
 				}
 			}
 		}
-		closedir($handle);
+		@closedir($handle);
 	}
 
 	return $paths;
@@ -60,8 +61,8 @@ EOT;
 
 		$file = file_get_contents($path);
 
-		if (preg_match('/^(?:\/\*(?<ID>[^;\n]*)\*\/){1}/', $file, $matches)) {
-			$file = preg_replace('/^(?:\/\*(?:[^;\n]*)\*\/){1}\n/', '', $file);
+		if (@preg_match('/^(?:\/\*(?<ID>[^;\n]*)\*\/){1}/', $file, $matches)) {
+			$file = @preg_replace('/^(?:\/\*(?:[^;\n]*)\*\/){1}\n/', '', $file);
 			$trimmed = trim($matches['ID']);
 
 			if ($trimmed === 'LAST') {
@@ -123,17 +124,17 @@ function rmRf ($dir) {
 if (file_exists($dist)) {
 	if (is_dir($dist)) {
 		rmRf($dist);
-		rmdir($dist);
+		@rmdir($dist);
 	}
 	else
-		unlink($dist);
+		@unlink($dist);
 }
 
-mkdir($dist);
+@mkdir($dist);
 
 $mainChunk = "/dist/app-$id.js";
 
-if (file_put_contents(__DIR__ . $mainChunk, sort_files_and_conc($paths)) === false) {
+if (@file_put_contents(__DIR__ . $mainChunk, sort_files_and_conc($paths)) === false) {
 	echo "ERROR: An error occured while writing " . $mainChunk . " ! Exit" . PHP_EOL;
 	exit(1);
 }
@@ -149,7 +150,7 @@ $indexHtml = __DIR__ . '/front/index.html';
 function get_css_files ($dir, $base) {
 	$files = [];
 
-	$scan = scandir($dir);
+	$scan = @scandir($dir);
 	foreach ($scan as $file) {
 		if (!($file === '.' || $file === '..')) {
 			$path = $dir . '/' . $file;
@@ -170,7 +171,7 @@ $cssPaths = get_css_files(__DIR__ . '/front/public/css', '/css');
 if (file_exists($indexHtml) && ($indexHtmlContent = file_get_contents($indexHtml)) !== false) {
 	$distCSS = __DIR__ . '/dist/css';
 	rmRf($distCSS);
-	mkdir($distCSS);
+	@mkdir($distCSS);
 
 	$indexHtmlContent = preg_replace('/{{ APP_CHUNK }}/', "/app-$id.js", $indexHtmlContent);
 	$dom = new DOMDocument();
@@ -187,7 +188,7 @@ EOT;
 
 		if (substr_count($newFileName, '/') > 2) {
 			list(, , $dir) = explode('/', $newFileName);
-			mkdir(__DIR__ . "/dist/css/$dir");
+			@mkdir(__DIR__ . "/dist/css/$dir");
 		}
 
 		@copy(__DIR__ . '/front/public' . $css, __DIR__ . '/dist' . $newFileName);
