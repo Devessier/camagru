@@ -131,6 +131,10 @@ const Router = (() => {
 		}
 	}
 
+	Router.prototype.refresh = function refresh () {
+		this._currentRouteObj.component.render()
+	}
+
 	/**
 	 * Utility function which moves to the next page, awaits the transformations to be done and then call the handler (either Router.prototype.push or Router.prototype.replace)
 	 * @param {String} route

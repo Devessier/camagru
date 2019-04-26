@@ -1,0 +1,13 @@
+What tables are necessary ?
+
+-> Users
+-> Tokens (sign-up, password recovery processes)
+
+Features :
+
+-> Being able to change its username, password, email
+-> Send emails (have to find a way to do that)
+-> Authenticated users can comment and like images
+-> The author of an image must be alerted by email if someone likes it (this is the default behavior but it can be configured)
+
+-> Pagination : at least 5 images per page

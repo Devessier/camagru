@@ -1,16 +1,12 @@
 /* LAST */
 
 const GLOBAL_STATE = {
-    user: 'lol'
-}
-
-function layout (render, props) {
-    render`
-    <nav class="flex items-center justify-between bg-grey-light px-12 py-4 mb-4">
-        <h1><a href="/" onclick="${ router.click('/') }">Camagru</a></h1>
-        <div>${ (props.user && props.user.logguedIn) ? 'Loggued in' : 'Sign up' }</div>
-    </nav>
-    <main>${ props.page(Maverick.create(), props) }</main>`
+    user: {},
+    layout: {
+        menu: {
+            open: false
+        }
+    }
 }
 
 const router = new Router([
@@ -25,6 +21,12 @@ const router = new Router([
         component: _404
     }
 ])
+
+const GLOBAL_OBSERVER = Observer.apply(GLOBAL_STATE)
+GLOBAL_OBSERVER.bind({
+    id: Infinity,
+    fn: router.refresh.bind(router)
+})
 
 setTimeout(() => {
     router.push('a fgadfg adf gadfg ')

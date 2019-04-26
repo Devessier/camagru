@@ -1,6 +1,8 @@
 <?php
 
-require_once __DIR__ . '/constants.php';
+require __DIR__ . '/server/app.php';
+
+/*require_once __DIR__ . '/constants.php';
 require_once __DIR__ . '/router/router.php';
 require_once __DIR__ . '/router/middlewares.php';
 
@@ -24,4 +26,4 @@ get('/^\/401$/', '/views/401.php');
 get('/^\/404$/', '/views/404.php');
 get('/^\/500$/', '/views/500.php');
 
-get('//', '/views/404.php');
+get('//', '/views/404.php');*/
