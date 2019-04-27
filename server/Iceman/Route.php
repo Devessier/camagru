@@ -8,42 +8,38 @@ load(__DIR__ . '/../controllers');
 
 class Route {
 
-	private static function handle ($httpMethod, $pattern, $action) {
+	private static function handle ($httpMethod, $pattern, $action, ...$middlewares) {
 		$requestUri = $_SERVER['REQUEST_URI'];
 		$requestMethod = $_SERVER['REQUEST_METHOD'];
 
 		if (strtoupper($httpMethod) === strtoupper($requestMethod)) {
-			list($controller, $method) = explode('@', $action);
+            [ $controller, $method ] = explode('@', $action);
 
 			try {
-				$instance = new $controller;
-
-				if (method_exists($instance, $method)) {
-					$instance->$method();
+				if (method_exists($controller, $method)) {
+                    $data = Middlewares::resolve($middlewares);
+					$controller::$method($data);
 				}
 			} catch (Exception $e) {}
-			
-
-			print_r($instance);
 
 			exit();
 		}
 	}
 
-	public static function get ($pattern, $action) {
-		self::handle('get', $pattern, $action);
+	public static function get (...$args) {
+		self::handle('get', ...$args);
 	}
 
-	public static function post ($pattern, $action) {
-		self::handle('post', $pattern, $action);
+	public static function post (...$args) {
+		self::handle('post', ...$args);
 	}
 
-	public static function put ($pattern, $action) {
-		self::handle('put', $pattern, $action);
+	public static function put (...$args) {
+		self::handle('put', ...$args);
 	}
 
-	public static function delete ($pattern, $action) {
-		self::handle('delete', $pattern, $action);
+	public static function delete (...$args) {
+		self::handle('delete', ...$args);
 	}
 
 }

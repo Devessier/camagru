@@ -9,7 +9,7 @@ class App {
 
 	public function __construct ($name) {
 		$this->appName = $name;
-		$this->db = new \DB\Database;
+		$this->db = new Database;
 	}
 
 }

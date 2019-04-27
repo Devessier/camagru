@@ -3,7 +3,6 @@
 require __DIR__ . '/Iceman/autoload.php';
 
 use Iceman\Route;
+use Iceman\Middlewares;
 
-Route::get('/', 'UserController@test');
-
-Route::get('/', 'UserController@surprise');
+Route::get('/', 'UserController@test', Middlewares::bind('json'));
