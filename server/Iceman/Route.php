@@ -9,16 +9,26 @@ load(__DIR__ . '/../controllers');
 class Route {
 
 	private static function handle ($httpMethod, $pattern, $action, ...$middlewares) {
-		$requestUri = $_SERVER['REQUEST_URI'];
+        $requestUri = $_SERVER['REQUEST_URI'];
 		$requestMethod = $_SERVER['REQUEST_METHOD'];
 
-		if (strtoupper($httpMethod) === strtoupper($requestMethod)) {
+        if (strtoupper($httpMethod) === strtoupper($requestMethod)
+            && @preg_match($pattern, $requestUri, $matches)) {
             [ $controller, $method ] = explode('@', $action);
+            array_shift($matches);
 
 			try {
 				if (method_exists($controller, $method)) {
                     $data = Middlewares::resolve($middlewares);
-					$controller::$method($data);
+
+                    $request = Request::create($data);
+
+                    if (is_string($response = $controller::$method($request, ...$matches))) {
+                        $response = Response::make($response, 200);
+                    }
+
+                    if ($response && $response instanceof Response)
+                        $response->send();
 				}
 			} catch (Exception $e) {}
 

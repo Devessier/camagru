@@ -1,17 +1,18 @@
 <?php
 
 use Iceman\DB;
+use Iceman\Request;
+use Iceman\Response;
 
 class UserController {
 
-	public function test () {
-        DB::connect();
+	public function test (Request $request) {
 
-        try {
-            DB::insert('INSERT INTO users (username, password, email) VALUES (?, ?, ?)', [ 'FJKHDFKJS', sha1('JKJHFDSF'), 'test@example.fr' ]);
-            echo "after";
-            print_r(DB::select('SELECT * FROM users'));
-        } catch (\Exception $e) {}
-	}
+        return 'lol';
+
+    }
+
+    public function user (Request $request, $id) {
+    }
 
 }
