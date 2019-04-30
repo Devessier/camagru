@@ -12,7 +12,7 @@ class Response {
     private function __construct ($content, $status) {
         $this->content = $content;
         $this->status = (int)$status;
-        $this->header('Status', $status);
+        $this->status($this->status);
     }
 
     public function header ($header, $value) {
@@ -21,7 +21,7 @@ class Response {
     }
 
     public function status (int $status) {
-        header("Status: $status");
+        http_response_code($status);
         return $this;
     }
 
