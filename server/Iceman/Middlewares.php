@@ -5,7 +5,7 @@ namespace Iceman;
 class Middlewares {
 
     public const FILES_ILLIMITED = 1 << 3;
-    private const ACCEPTED_MIDDLEWARES = [ 'json', 'files' ];
+    private const ACCEPTED_MIDDLEWARES = [ 'json' ];
     
     public static function resolve (array $middlewares) {
         $data = [];
@@ -39,29 +39,6 @@ class Middlewares {
                 if ($_SERVER['CONTENT_TYPE'] === 'application/json') {
                 return next([
                     'body' => @json_decode(@file_get_contents('php://input'))
-                ]);
-            }
-            next();
-        };
-    }
-
-    private static function files ($maximum) {
-        return function ($next) use ($maximum) {
-            if (isset($_FILES)) {
-                if ($maximum === self::FILES_ILLIMITED)
-                    return next([
-                        'files' => $_FILES
-                    ]);
-
-                $files = [];
-                foreach ($_FILES as $index => $file) {
-                    if ($index === $maximum)
-                        break;
-                    $files[] = $file;
-                }
-
-                return next([
-                    'files' => $files
                 ]);
             }
             next();

@@ -60,8 +60,7 @@ class File {
             @mkdir($upload_dir);
         }
         $this->path = $upload_dir . "/$filename";
-        @move_uploaded_file($this->tmp_name, $this->path);
-        $this->saved = true;
+        $this->saved = @move_uploaded_file($this->tmp_name, $this->path);
     }
 
     public function isValid () {
