@@ -11,4 +11,8 @@ localhost:8000 {
 localhost:8001 {
 	gzip
 	proxy / localhost:8500
+
+	cors / {
+		origin http://localhost:8000
+	}
 }
