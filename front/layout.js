@@ -26,5 +26,5 @@ function layout (h, props) {
                 class="${ 'sm:flex flex-row justify-between items-center w-full sm:w-auto ' + (GLOBAL_STATE.layout.menu.open ? 'block' : 'hidden') }"
         >${ (GLOBAL_STATE.user && GLOBAL_STATE.user.logguedIn && GLOBAL_STATE.user.pseudo) ? AuthenticatedHeader(renderer) : NotAuthenticatedHeader(renderer) }</div>
     </nav>
-    <main>${ props.page(Maverick.create(), props) }</main>`
+    <main>${ props._page(Maverick.create(), props) }</main>`
 }

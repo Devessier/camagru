@@ -46,8 +46,16 @@ class Request {
         return $this->httpMethod === $method;
     }
 
+    public function body () {
+        return isset($this->data['body']) ? $this->data['body'] : null;
+    }
+
     public function cookie ($name) {
         return $this->cookies[$name];
+    }
+
+    public function session ($name) {
+        return $this->sessions[$name];
     }
 
     public function file ($name) {

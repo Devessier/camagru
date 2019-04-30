@@ -17,7 +17,7 @@ const MaverickComponent = (() => {
         this.timeoutID = null
 
         this.update = update
-        data.page = page
+        data._page = page
 
         this.state = Observer.apply(data)
         this.state.bind({

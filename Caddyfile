@@ -14,5 +14,7 @@ localhost:8001 {
 
 	cors / {
 		origin http://localhost:8000
+		allow_credentials true
+		allowed_headers Content-Type
 	}
 }

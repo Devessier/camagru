@@ -1,25 +1,25 @@
 USE camagru;
 
-CREATE TABLE IF NOT EXISTS users (
+CREATE TABLE users (
 	id				INTEGER						AUTO_INCREMENT PRIMARY KEY,
-	username		VARCHAR(255)				NOT NULL,
+	username		VARCHAR(100)				NOT NULL UNIQUE,
 	password		VARCHAR(255)				NOT NULL,
-	email		    VARCHAR(255)				NOT NULL,
+	email		    VARCHAR(100)				NOT NULL UNIQUE,
 	type			ENUM('default', 'admin')	NOT NULL DEFAULT 'default',
 	created_at		TIMESTAMP					NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS images (
+CREATE TABLE images (
 	id				INTEGER						AUTO_INCREMENT PRIMARY KEY,
 	url				VARCHAR(255)				NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS tokens (
+CREATE TABLE tokens (
 	id				INTEGER						AUTO_INCREMENT PRIMARY KEY,
 	token			VARCHAR(255)				NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS posts (
+CREATE TABLE posts (
 	id				INTEGER						AUTO_INCREMENT PRIMARY KEY,
 	user_id	  		INTEGER						NOT NULL,
 	img_id    		INTEGER						NOT NULL,

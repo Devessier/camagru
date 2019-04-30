@@ -11,13 +11,10 @@ try {
 	if (($setup = @file_get_contents('./schema.sql')) !== false) {
 		$db->exec($setup);
 
-		// fake data
-
 		if (($fake = @file_get_contents('./fake.sql')) !== false) {
 			$db->exec($fake);
 		}
-
-    }
+	}
 
 } catch (PDOException $e) {
 	die();

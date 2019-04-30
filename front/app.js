@@ -27,10 +27,3 @@ GLOBAL_OBSERVER.bind({
     id: Infinity,
     fn: router.refresh.bind(router)
 })
-
-setTimeout(() => {
-    router.push('a fgadfg adf gadfg ')
-    setTimeout(() => {
-        router.push('/')
-    }, 7000)
-}, 1000)

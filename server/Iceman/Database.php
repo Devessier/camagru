@@ -2,7 +2,11 @@
 
 namespace Iceman;
 
-require_once __DIR__ . '/../../config/setup.php';
+include_once __DIR__ . '/../../config/setup.php';
+
+$GLOBALS['DB_DSN'] = $DB_DSN;
+$GLOBALS['DB_USER'] = $DB_USER;
+$GLOBALS['DB_PASSWORD'] = $DB_PASSWORD;
 
 interface DatabaseOperations {
 
@@ -19,41 +23,41 @@ class DB implements DatabaseOperations {
     private static  $connection = null;
 
 	public static function connect () {
+        global $DB_DSN, $DB_USER, $DB_PASSWORD;
+
         if (self::$connection === null) {
             try {
                 self::$connection = new \PDO($DB_DSN, $DB_USER, $DB_PASSWORD);
                 self::$connection->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
             } catch (PDOException $e) {
                 self::$error = true;
+                throw $e;
             }
         }
-        return true;
     }
 
     public static function select (string $query, array $params = []) {
-        if (self::$error)
-            throw new \Exception("The connection with the DB isn't established.");
+        self::canMakeRequest();
         $stmt = self::prepare($query, $params);
         $stmt->execute();
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
     public static function insert (string $query, array $params = []) {
-        if (self::$error)
-            throw new \Exception("The connection with the DB isn't established.");
+        self::canMakeRequest();
         $stmt = self::prepare($query, $params);
         $stmt->execute();
     }
 
     public static function update (string $query, array $params = []) {
-        if (self::$error)
-            throw new \Exception("The connection with the DB isn't established.");
+        self::canMakeRequest();
         $stmt = self::prepare($query, $params);
         $stmt->execute();
         return $stmt->rowCount();
     }
 
     public static function delete (string $query, array $params = []) {
+        self::canMakeRequest();
         return self::update($query, $params);
     }
 
@@ -84,6 +88,11 @@ class DB implements DatabaseOperations {
         if (is_null($param))
             return \PDO::PARAM_NULL;
         return 0;
+    }
+
+    private static function canMakeRequest () {
+        if (self::$error || self::$connection === null)
+            throw new \Exception("Error, it's impossible to make a request to DB");
     }
 
 }

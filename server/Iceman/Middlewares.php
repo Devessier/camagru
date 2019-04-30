@@ -4,30 +4,24 @@ namespace Iceman;
 
 class Middlewares {
 
-    public const FILES_ILLIMITED = 1 << 3;
     private const ACCEPTED_MIDDLEWARES = [ 'json' ];
     
     public static function resolve (array $middlewares) {
         $data = [];
 
-        foreach ($middlewares as $middleware) {
+        foreach ($middlewares as &$middleware) {
             if (is_callable($middleware)) {
-                $stop = false;
+                $result = $middleware();
 
-                $middleware(function ($result) use ($stop, $data) {
-                    if ($result === false) {
-                        $stop = true;
-                    } else {
-                        if (is_array($result)) {
-                            $data = array_merge($data, $result);
-                        } else if ($result) {
-                            array_push($data, $result);
-                        }
-                    }
-                });
-
-                if ($stop)
+                if ($result === false) {
                     break;
+                } else {
+                    if (is_array($result)) {
+                        $data = array_merge($data, $result);
+                    } else if ($result) {
+                        array_push($data, $result);
+                    }
+                }
             }
         }
 
@@ -35,20 +29,19 @@ class Middlewares {
     }
 
     private static function json () {
-        return function ($next) {
-                if ($_SERVER['CONTENT_TYPE'] === 'application/json') {
-                return next([
-                    'body' => @json_decode(@file_get_contents('php://input'))
-                ]);
+        if ($_SERVER['CONTENT_TYPE'] === 'application/json') {
+            if (($content = @file_get_contents('php://input')) && ($json = @json_decode($content))) {
+                return [
+                    'body' => $json
+                ];
             }
-            next();
-        };
+        }
     }
 
     public static function bind ($method, ...$args) {
         if (in_array($method, self::ACCEPTED_MIDDLEWARES)) {
             return function () use ($method, $args) {
-                self::$method(...$args);
+                return self::$method(...$args);
             };
         }
     }
