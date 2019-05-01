@@ -5,6 +5,15 @@ const Maverick = (() => {
     const LOVE = '#TOPGUN#'
     const UID = LOVE + ((Math.random() * new Date) | 0)
     const UIDC = '<!--' + UID + '-->'
+    const BLACK_LIST = {
+        '&': '&#38;',
+        '<': '&#60;',
+        '>': '&#62;',
+        '"': '&#34;',
+        '\'': '&#39;',
+        '/': '&#47;'
+    }
+    const SANITIZING_REGEX = /&(?!#?w+;)|<|>|"|'|\//g
 
     /**
      * Parse attributes of node and launch gun fight against bastards
@@ -181,9 +190,11 @@ const Maverick = (() => {
         switch (trainee.nodeType) {
             case 1:
                 const childNodes = ship.childNodes
-                if (childNodes !== 1 || childNodes[0] !== trainee) {
+                const length = childNodes.length
+                if (length > 0 || childNodes[0] !== trainee) {
                     rmRf(ship, trainee)
-                }
+                } else if (childNodes.length !== 1)
+		    console.log('that is the case')
                 break
             case 11:
                 if (!twin(ship.childNodes, trainee.childNodes)) {
@@ -253,10 +264,10 @@ const Maverick = (() => {
      * Update the template - The template has been cached and this function modifies the DOM only if necessary
      * @param {Array} templates
      */
-    function update (templates) {
+    function update () {
         const updates = this[LOVE].updates
 
-        for (let i = 1; i < templates.length; i++)
+        for (let i = 1; i < arguments.length; i++)
             updates[i - 1](arguments[i])
         return this
     }
@@ -301,6 +312,10 @@ const Maverick = (() => {
             }
             return content()
         }
+    }
+
+    Maverick.sanitize = function sanitize (html) {
+        return html ? html.replace(SANITIZING_REGEX, match => BLACK_LIST[match] || match) : html
     }
 
     return Maverick
