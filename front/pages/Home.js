@@ -32,16 +32,33 @@ const Home = (() => {
 	}
 
 	function render (h, props) {
-		console.log(props)
-		
-		return h`<div>${ props.loading ? 'loading...' : props.user.username }</div><section>${ props.articles.map(obj => article(Maverick.create(), obj)) }</section>`
+		return (
+			h`<input label="focus me">
+			<div>${
+				props.loading ? 'loading...' : Maverick.sanitize(props.user.username)
+			}</div>
+			<section>${
+				props.articles.map(obj => article(Maverick.create(), obj))
+			}</section>`
+		)
 	}
 
 	return new Page('Camagru - Accueil', data, render, {
 		created: function created () {
 			this.state.loading = true
 
-			fetch('http://localhost:8001/sign-in', {
+			setTimeout(() => {
+				this.state.user.username = 'kikou'
+				data.articles = [
+					{
+						title: 'Hehe !',
+						text: "Surprise"
+					}
+				]
+				this.state.loading = false
+			}, 15000)
+
+			/*fetch('http://localhost:8001/sign-in', {
 				method: 'POST',
 				body: JSON.stringify({
 					username: 'Shakespeare',
@@ -58,13 +75,13 @@ const Home = (() => {
 					//const user = data.user
 
 					this.state.user = {
-						username: 'Shakespeare'
+						username: "<p>console.log('teub')</p>"
 					}
 				})
 				.catch(console.error)
 				.finally(() => {
 					this.state.loading = false
-				})
+				})*/
 		}
 	})
 
