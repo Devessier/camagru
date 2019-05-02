@@ -1,51 +1,93 @@
 const Home = (() => {
 
-	let data = {
-		articles: [
+	const data = {
+		posts: [
 			{
-				title: 'Hi !',
-				text: "Salut ! Je suis le texte de l'article !"
+				id: 0,
+				url: 'https://cdn.pixabay.com/photo/2017/01/13/14/06/james-handley-1977361_640.jpg',
+				text: 'Hi !',
+				user: {
+					id: 0,
+					name: 'Baptiste',
+					avatar: 'https://api.adorable.io/avatars/40/adwabott@adorable.io.png'
+				},
+				comments: [
+					{
+						user: {
+							name: 'Baptiste'
+						},
+						text: 'Sacrée photo !'
+					}
+				],
+				createdAt: +new Date
 			},
 			{
-				title: 'Hi !',
-				text: "Salut ! Je suis le texte de l'article !"
-			},
-			{
-				title: 'Hi !',
-				text: "Salut ! Je suis le texte de l'article !"
-			},
-			{
-				title: 'Hi !',
-				text: "Salut ! Je suis le texte de l'article !"
+				id: 1,
+				url: 'https://cdn.pixabay.com/photo/2017/01/13/14/06/james-handley-1977361_640.jpg',
+				text: 'Hi !',
+				user: {
+					id: 0,
+					name: 'Baptiste',
+					avatar: 'https://api.adorable.io/avatars/40/adwabott@adorable.io.png'
+				},
+				comments: [
+					{
+						user: {
+							name: 'Baptiste'
+						},
+						text: 'Sacrée photo !'
+					}
+				],
+				createdAt: +new Date
 			}
 		],
 		loading: false,
 		user: {}
 	}
 
-	function article (render, props) {
-		return render`<article>
-			<h1>${props.title}</h1>
-			<p>${props.text}</p>
-			<button onclick="${ () => { props.text = 'deleteddddddd' } }">Change text</button>
-		</article>`
+	function post (h, props) {
+		const format = (() => {
+			const f = new Intl.DateTimeFormat('fr-FR', {
+
+			})
+
+			return timestamp => f.format(new Date(timestamp))
+		})()
+
+		const userLink = '/user/' + props.user.id
+
+		return h`
+			<article class="flex flex-col mb-4 bg-grey-lighter">
+				<header class="flex justify-between items-center py-2 px-1">
+					<div class="flex items-center">
+						<a href="${ userLink }">
+							<img src="${ props.user.avatar }" width="40px" height="40px" class="rounded-full hover:shadow-md transition" />
+						</a>
+						<a class="block ml-2 hover:underline" href="${ userLink }">${ props.user.name }</a>
+					</div>
+					<p>${ format(props.createdAt) }</p>
+				</header>
+
+				<section>
+					<img src="${ props.url }" class="w-full" />
+				</section>
+			</article>
+		`
 	}
 
 	function render (h, props) {
-		return (
-			h`<input label="focus me">
-			<div>${
-				props.loading ? 'loading...' : Maverick.sanitize(props.user.username)
-			}</div>
-			<section>${
-				props.articles.map(obj => article(Maverick.link(obj), obj))
-			}</section>`
-		)
+		return h`
+			<div class="flex justify-center items-center mx-10">
+				<section class="flex flex-col items-center">${
+					props.posts.map(p => post(Maverick.link(p), p))
+				}</section>
+			</div>
+		`
 	}
 
 	return new Page('Camagru - Accueil', data, render, {
 		created: function created () {
-			this.state.loading = true
+			//this.state.loading = true
 
 			/*setTimeout(() => {
 				this.state.user.username = 'kikou'
