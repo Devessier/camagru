@@ -8,9 +8,10 @@ function NotAuthenticatedHeader (h) {
 }
 
 const headerRenderer = Maverick.link()
-const pageRenderer = Maverick.link()
 
 function layout (h, props) {
+    const pageRenderer = Maverick.link(props._page)
+
     h`<nav class="flex flex-wrap items-center justify-between bg-grey-light px-3 md:px-12 py-4 mb-4">
         <h1>
             <a href="/" onclick="${ router.click('/') }">
