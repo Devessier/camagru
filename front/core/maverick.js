@@ -148,9 +148,9 @@ const Maverick = (() => {
         const isListener = name.indexOf('on') === 0
 
         if (isListener) {
-            aircraft.removeAttribute(attribute.name)
+            aircraft.removeAttribute(name)
             return function event (value) {
-                aircraft.addEventListener(attribute.name.slice(2), value)
+                aircraft[name] = value
             }
         }
         return function attr (value) {
