@@ -9,7 +9,7 @@ const Page = (() => {
 	 * @param {String} title The title of the page (document.title)
 	 * @param {Object} state A reactive object containing the state which we'll be passed to the render function
 	 * @param {Function} page The famous render function
-	 * @param {Array<Object<String, Function>>} hooks An object <String, Function> containing functions which we'll be called at some moments of the life of the component
+	 * @param {Object<String, Function>} hooks An object <String, Function> containing functions which we'll be called at some moments of the life of the component
 	 */
 
 	function Page (title, state, page, hooks) {
@@ -49,6 +49,8 @@ const Page = (() => {
 	Page.prototype.render = function render () {
 		this.setTitle(this.title)
 		this.component.render()
+
+		window[`component-${this.id}`] = this.component.render.bind(this.component)
 	}
 
 	Page.prototype._trigger = function _trigger (event) {
