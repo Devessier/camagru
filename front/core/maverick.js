@@ -141,16 +141,16 @@ const Maverick = (() => {
     /**
      * Set an attribute of a Node element
      * @param {Node} aircraft
-     * @param {String} attribute
+     * @param {Attr} attribute
      */
     function setWeapon (aircraft, attribute) {
         const name = attribute.name
         const isListener = name.indexOf('on') === 0
 
         if (isListener) {
-            aircraft.removeAttribute(attribute)
+            aircraft.removeAttribute(attribute.name)
             return function event (value) {
-                aircraft[name] = value
+                aircraft.addEventListener(attribute.name.slice(2), value)
             }
         }
         return function attr (value) {
