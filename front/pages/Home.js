@@ -54,23 +54,36 @@ const Home = (() => {
 			return timestamp => f.format(new Date(timestamp))
 		})()
 
-		const userLink = '/user/' + props.user.id
+        const userLink = '/user/' + props.user.id
+        const date = format(props.createdAt)
 
 		return h`
 			<article class="flex flex-col mb-4 bg-grey-lighter">
 				<header class="flex justify-between items-center py-2 px-1">
 					<div class="flex items-center">
-						<a href="${ userLink }">
+                        <a
+                                href="${ userLink }"
+                                onclick="${ router.click(userLink) }"
+                        >
 							<img src="${ props.user.avatar }" width="40px" height="40px" class="rounded-full hover:shadow-md transition" />
 						</a>
-						<a class="block ml-2 hover:underline" href="${ userLink }">${ props.user.name }</a>
+                        <a
+                                class="block ml-2 hover:underline"
+                                href="${ userLink }"
+                                onclick="${ router.click(userLink) }"
+                        >
+                            ${ props.user.name }
+                        </a>
 					</div>
-					<p>${ format(props.createdAt) }</p>
+					<p>${ date }</p>
 				</header>
 
 				<section>
 					<img src="${ props.url }" class="w-full" />
-				</section>
+                </section>
+
+                <footer class="flex justify-center items-center">
+                </footer>
 			</article>
 		`
 	}

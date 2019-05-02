@@ -1,15 +1,39 @@
-function AuthenticatedHeader (h) {
-	return h`<a href="/me" onclick="${ router.click('/me') }" class="block sm:px-2 hover:underline">${ GLOBAL_STATE.user.pseudo }</a>`
-}
+const AuthenticatedHeader = (h) => (
+    h`
+        <a
+                href="/me"
+                onclick="${ router.click('/me') }"
+                class="block sm:px-2 hover:underline"
+        >${
+            GLOBAL_STATE.user.pseudo
+        }</a>
+    `
+)
 
-function NotAuthenticatedHeader (h) {
-	return h`<a href="/sign-up" onclick="${ router.click('/sign-up') }" class="block sm:px-2 hover:underline">Inscription</a>
-	<a href="/sign-in" onclick="${ router.click('/sign-in') }" class="block sm:px-2 hover:underline">Connexion</a>`
-}
-
-const headerRenderer = Maverick.link()
+const NotAuthenticatedHeader = (h) => (
+    h`
+        <a
+                href="/sign-up"
+                onclick="${ router.click('/sign-up') }"
+                class="block sm:px-2 hover:underline"
+        >
+            Inscription
+        </a>
+        <a
+                href="/sign-in"
+                onclick="${ router.click('/sign-in') }"
+                class="block sm:px-2 hover:underline"
+        >
+            Connexion
+        </a>
+    `
+)
 
 function layout (h, props) {
+    const isLogguedIn = GLOBAL_STATE.user && GLOBAL_STATE.user.logguedIn && GLOBAL_STATE.user.pseudo
+    const fn = isLogguedIn ? AuthenticatedHeader : NotAuthenticatedHeader
+
+    const headerRenderer = Maverick.link(fn)
     const pageRenderer = Maverick.link(props._page)
 
     h`<nav class="flex flex-wrap items-center justify-between bg-grey-light px-3 md:px-12 py-4 mb-4">
@@ -26,7 +50,7 @@ function layout (h, props) {
         </div>
         <div
                 class="${ 'sm:flex flex-row justify-between items-center w-full sm:w-auto ' + (GLOBAL_STATE.layout.menu.open ? 'block' : 'hidden') }"
-        >${ (GLOBAL_STATE.user && GLOBAL_STATE.user.logguedIn && GLOBAL_STATE.user.pseudo) ? AuthenticatedHeader(headerRenderer) : NotAuthenticatedHeader(headerRenderer) }</div>
+        >${ fn(headerRenderer) }</div>
     </nav>
     <main>${ props._page(pageRenderer, props) }</main>`
 }
