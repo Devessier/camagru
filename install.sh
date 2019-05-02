@@ -3,7 +3,7 @@ apt-get install -y mysql-server
 apt-get install -y curl vim
 
 apt-get install -y apt-transport-https lsb-release
-wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg 2>&- # Download the signing key
+wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg # Download the signing key
 sh -c 'echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/php.list' # Add Ondrej's repo to sources list.
 apt-get update
 
