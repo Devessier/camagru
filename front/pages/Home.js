@@ -38,7 +38,7 @@ const Home = (() => {
 				props.loading ? 'loading...' : Maverick.sanitize(props.user.username)
 			}</div>
 			<section>${
-				props.articles.map(obj => article(Maverick.create(), obj))
+				props.articles.map(obj => article(Maverick.link(obj), obj))
 			}</section>`
 		)
 	}
@@ -47,7 +47,7 @@ const Home = (() => {
 		created: function created () {
 			this.state.loading = true
 
-			setTimeout(() => {
+			/*setTimeout(() => {
 				this.state.user.username = 'kikou'
 				data.articles = [
 					{
@@ -56,7 +56,7 @@ const Home = (() => {
 					}
 				]
 				this.state.loading = false
-			}, 15000)
+			}, 15000)*/
 
 			/*fetch('http://localhost:8001/sign-in', {
 				method: 'POST',

@@ -14,6 +14,7 @@ const Maverick = (() => {
         '/': '&#47;'
     }
     const SANITIZING_REGEX = /&(?!#?w+;)|<|>|"|'|\//g
+    const weak = new WeakMap
 
     /**
      * Parse attributes of node and launch gun fight against bastards
@@ -265,7 +266,30 @@ const Maverick = (() => {
         }
         return () => children
     }
-    
+
+    function linkContent () {
+        let fragment = document.createDocumentFragment()
+        let render = Maverick.bind(fragment)
+        let templates
+        let content
+        let setup = true
+
+        return function update (statics) {
+            if (templates !== statics) {
+                setup = true
+                templates = statics
+                fragment = document.createDocumentFragment()
+                render = Maverick.bind(fragment)
+            }
+            render.apply(null, arguments)
+            if (setup) {
+                setup = false
+                content = armAndShoot(fragment)
+            }
+            return content()
+        }
+    }
+
     /**
      * Update the template - The template has been cached and this function modifies the DOM only if necessary
      * @param {Array} templates
@@ -304,20 +328,13 @@ const Maverick = (() => {
         return upgrade.apply(this, arguments)
     }
 
-    Maverick.create = function create () {
-        const fragment = document.createDocumentFragment()
-        const render = Maverick.bind(fragment)
-        let content
-        let setup = true
-
-        return function update () {
-            render.apply(null, arguments)
-            if (setup) {
-                setup = false
-                content = armAndShoot(fragment)
-            }
-            return content()
-        }
+    Maverick.link = function link (ref) {
+        if (!ref)
+            return linkContent()
+        return weak.get(ref) || (
+            weak.set(ref, linkContent()),
+            link(ref)
+        )
     }
 
     Maverick.sanitize = function sanitize (html) {

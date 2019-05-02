@@ -7,9 +7,10 @@ function NotAuthenticatedHeader (h) {
 	<a href="/sign-in" onclick="${ router.click('/sign-in') }" class="block sm:px-2 hover:underline">Connexion</a>`
 }
 
-function layout (h, props) {
-    const renderer = Maverick.create()
+const headerRenderer = Maverick.link()
+const pageRenderer = Maverick.link()
 
+function layout (h, props) {
     h`<nav class="flex flex-wrap items-center justify-between bg-grey-light px-3 md:px-12 py-4 mb-4">
         <h1>
             <a href="/" onclick="${ router.click('/') }">
@@ -24,7 +25,7 @@ function layout (h, props) {
         </div>
         <div
                 class="${ 'sm:flex flex-row justify-between items-center w-full sm:w-auto ' + (GLOBAL_STATE.layout.menu.open ? 'block' : 'hidden') }"
-        >${ (GLOBAL_STATE.user && GLOBAL_STATE.user.logguedIn && GLOBAL_STATE.user.pseudo) ? AuthenticatedHeader(renderer) : NotAuthenticatedHeader(renderer) }</div>
+        >${ (GLOBAL_STATE.user && GLOBAL_STATE.user.logguedIn && GLOBAL_STATE.user.pseudo) ? AuthenticatedHeader(headerRenderer) : NotAuthenticatedHeader(headerRenderer) }</div>
     </nav>
-    <main>${ props._page(Maverick.create(), props) }</main>`
+    <main>${ props._page(pageRenderer, props) }</main>`
 }
