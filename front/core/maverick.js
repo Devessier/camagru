@@ -80,10 +80,16 @@ const Maverick = (() => {
                     ship.textContent = value
                 default:
                     if (Array.isArray(value)) {
-                        any(populateFragment(
-                            document.createDocumentFragment(),
-                            value
-                        ))
+                        if (value.length === 1) {
+                            any(value[0])
+                        } else if (typeof value[0] === 'string') {
+                            any(value.join(''))
+                        } else {
+                            any(populateFragment(
+                                document.createDocumentFragment(),
+                                value
+                            ))
+                        }
                     } else {
                         populateShip(ship, value)
                     }
@@ -194,7 +200,7 @@ const Maverick = (() => {
                 if (length > 0 || childNodes[0] !== trainee) {
                     rmRf(ship, trainee)
                 } else if (childNodes.length !== 1)
-		    console.log('that is the case')
+                    console.log('that is the case')
                 break
             case 11:
                 if (!twin(ship.childNodes, trainee.childNodes)) {
