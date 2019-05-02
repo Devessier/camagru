@@ -71,14 +71,22 @@ const Maverick = (() => {
      * @param {Node} ship The node
      */
     function randomShoot (ship) {
+        let old
+
         return function any (value) {
             switch (typeof value) {
                 case 'string':
-                    ship.innerHTML = value
+                    if (old !== value) {
+                        ship.innerHTML = value
+                        old = value
+                    }
                     break
                 case 'number':
                 case 'boolean':
-                    ship.textContent = value
+                    if (old !== value) {
+                        ship.textContent = value
+                        old = value
+                    }
                 default:
                     if (Array.isArray(value)) {
                         if (value.length === 1) {
@@ -146,15 +154,27 @@ const Maverick = (() => {
     function setWeapon (aircraft, attribute) {
         const name = attribute.name
         const isListener = name.indexOf('on') === 0
+        const weapons = new Map
 
         if (isListener) {
             aircraft.removeAttribute(name)
+
             return function event (value) {
-                aircraft[name] = value
+                const old = weapons.get(name)
+
+                if (old !== value) {
+                    aircraft[name] = value
+                    weapons.set(name, value)
+                }
             }
         }
         return function attr (value) {
-            attribute.value = value
+            const old = weapons.get(name)
+
+            if (old !== value) {
+                attribute.value = value
+                weapons.set(name, value)
+            }
         }
     }
 
@@ -163,8 +183,12 @@ const Maverick = (() => {
      * @param {Node} ship
      */
     function setMissionOrder (ship) {
+        let old
         return text => {
-            ship.textContent = text
+            if (text !== old) {
+                ship.textContent = text
+                old = text
+            }
         }
     }
 
@@ -200,8 +224,7 @@ const Maverick = (() => {
                 const length = childNodes.length
                 if (length > 0 || childNodes[0] !== trainee) {
                     rmRf(ship, trainee)
-                } else if (childNodes.length !== 1)
-                    console.log('that is the case')
+                }
                 break
             case 11:
                 if (!twin(ship.childNodes, trainee.childNodes)) {
