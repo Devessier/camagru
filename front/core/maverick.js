@@ -22,7 +22,8 @@ const Maverick = (() => {
      * @param {Array} weapons The actions
      */
     function attributesGunFight (aircraft, weapons) {
-        for (let attribute of aircraft.attributes) {
+        const attributes = Array.from(aircraft.attributes)
+        for (let attribute of attributes) {
             if (attribute.value === UIDC) {
                 weapons.push(setWeapon(aircraft, attribute))
             }
@@ -156,6 +157,7 @@ const Maverick = (() => {
     function setWeapon (aircraft, attribute) {
         const name = attribute.name
         const isListener = name.indexOf('on') === 0
+        const directWrite = /^value$/.test(name)
         const weapons = new Map
 
         if (isListener) {
@@ -170,11 +172,28 @@ const Maverick = (() => {
                 }
             }
         }
+        /**
+         * The attr function sets a value for a given attribute on aircraft node
+         * It takes care of checking if the requested new value is a false boolean and, if this is the case, it simply deletes the attribute
+         * It makes possible the use of attributes such as disabled or readonly
+         * @param {any} value
+         */
         return function attr (value) {
             const old = weapons.get(name)
 
             if (old !== value) {
-                attribute.value = value
+                if (value === false) {
+                    aircraft.removeAttribute(name)
+                } else {
+                    if (old === false) {
+                        aircraft.setAttribute(name, value)
+                    } else {
+                        if (directWrite) {
+                            aircraft[name] = value
+                        }
+                        attribute.value = value
+                    }
+                }
                 weapons.set(name, value)
             }
         }
