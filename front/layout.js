@@ -3,7 +3,7 @@ const AuthenticatedHeader = (h) => (
         <a
                 href="/me"
                 onclick="${ router.click('/me') }"
-                class="block sm:px-2 hover:underline"
+                class="block sm:px-2 hover:underline text-white"
         >${
             GLOBAL_STATE.user.pseudo
         }</a>
@@ -15,14 +15,14 @@ const NotAuthenticatedHeader = (h) => (
         <a
                 href="/sign-up"
                 onclick="${ router.click('/sign-up') }"
-                class="block sm:px-2 hover:underline"
+                class="block sm:px-2 hover:underline text-white"
         >
             Inscription
         </a>
         <a
                 href="/sign-in"
                 onclick="${ router.click('/sign-in') }"
-                class="block sm:px-2 hover:underline"
+                class="block sm:px-2 hover:underline text-white"
         >
             Connexion
         </a>
@@ -36,11 +36,11 @@ function layout (h, props) {
     const headerRenderer = Maverick.link(fn)
     const pageRenderer = Maverick.link(props._page)
 
-    h`<nav class="flex flex-wrap items-center justify-between bg-grey-light px-3 md:px-12 py-4 mb-4">
+    h`<nav class="flex flex-wrap items-center justify-between bg-purple-light px-3 md:px-12 py-4 mb-4">
         <h1>
-            <a href="/" onclick="${ router.click('/') }">
-                <span class="block sm:hidden">Cam</span>
-                <span class="hidden sm:block">Camagru</span>
+            <a href="/" onclick="${ router.click('/') }" class="font-semibold">
+                <span class="block sm:hidden text-white">Cam</span>
+                <span class="hidden sm:block text-white">Camagru</span>
             </a>
         </h1>
         <div class="sm:hidden">
