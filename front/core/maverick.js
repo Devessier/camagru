@@ -94,10 +94,12 @@ const Maverick = (() => {
                         } else if (typeof value[0] === 'string') {
                             any(value.join(''))
                         } else {
-                            any(populateFragment(
-                                document.createDocumentFragment(),
-                                value
-                            ))
+                            if (!twin(ship.childNodes, value)) {
+                                any(populateFragment(
+                                    document.createDocumentFragment(),
+                                    value
+                                ))
+                            }
                         }
                     } else {
                         populateShip(ship, value)
@@ -222,7 +224,9 @@ const Maverick = (() => {
             case 1:
                 const childNodes = ship.childNodes
                 const length = childNodes.length
-                if (length > 0 || childNodes[0] !== trainee) {
+                if (length > 0 && childNodes[0] === trainee) {
+                    rmShipsList(childNodes, 1)
+                } else {
                     rmRf(ship, trainee)
                 }
                 break
@@ -234,6 +238,14 @@ const Maverick = (() => {
             case 3:
                 ship.textContent = trainee.textContent
                 break
+        }
+    }
+
+    function rmShipsList (list, index) {
+        let length = list.length
+        while (index < length--) {
+            const child = list[length]
+            child.parentNode.removeChild(child)
         }
     }
 
