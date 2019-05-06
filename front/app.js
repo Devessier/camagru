@@ -16,6 +16,11 @@ const router = new Router([
         component: Home
     },
     {
+        name: 'SignUp',
+        path: /^\/sign-up\/?$/,
+        component: SignUp
+    },
+    {
         name: '404',
         path: /.*/,
         component: _404
