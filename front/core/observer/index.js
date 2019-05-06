@@ -1,6 +1,25 @@
 /* 4 */
 
+function def (object, property, value) {
+    Object.defineProperty(object, property, {
+        value: value,
+        writable: true,
+        configurable: true
+    })
+}
+
+/**
+ * Util function under Object.hasOwnProperty
+ * @param {Object} object
+ * @param {String} property
+ */
+function hasOwn (object, property) {
+    return object.hasOwnProperty(property)
+}
+
 const Observer = (() => {
+
+    const arrayKeys = Object.getOwnPropertyNames(ArrayObserver.arrayMethods)
 
     Observer.apply = function apply (object) {
         if (hasOwn(object, '__ob__') && object.__ob__ instanceof Observer) {
@@ -20,6 +39,7 @@ const Observer = (() => {
         def(value, '__ob__', this)
 
         if (Array.isArray(value)) {
+            copyAugment(value, ArrayObserver.arrayMethods, arrayKeys)
             this.observeArray(value)
         } else {
             this.walk(value)
@@ -115,20 +135,10 @@ const Observer = (() => {
         })
     }
 
-    /**
-     * Util function under Object.hasOwnProperty
-     * @param {Object} object
-     * @param {String} property
-     */
-    function hasOwn (object, property) {
-        return object.hasOwnProperty(property)
-    }
-
-    function def (object, property, value) {
-        if (!hasOwn(object, '__ob__'))
-            Object.defineProperty(object, property, {
-                value
-            })
+    function copyAugment (target, src, keys) {
+        for (let key of keys) {
+            def(target, key, src[key])
+        }
     }
 
     return Observer
