@@ -36,7 +36,7 @@ function layout (h, props) {
     const headerRenderer = Maverick.link(fn)
     const pageRenderer = Maverick.link(props._page)
 
-    h`<nav class="flex flex-wrap items-center justify-between bg-purple-light px-3 md:px-12 py-4 mb-4">
+    h`<nav class="flex flex-wrap items-center justify-between bg-purple-light px-3 md:px-12 py-4">
         <h1>
             <a href="/" onclick="${ router.click('/') }" class="font-semibold">
                 <span class="block sm:hidden text-white">Cam</span>
