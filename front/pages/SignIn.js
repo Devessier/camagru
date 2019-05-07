@@ -13,14 +13,22 @@ const SignIn = (() => {
             }
         ],
         onclick: () => {
+            const username = data.inputs[0].value
+            const password = data.inputs[1].value
+
+            data.inputs[0].value = ''
+            data.inputs[1].value = ''
             data.loading = true
 
             fetch('http://localhost:8001/sign-in', {
                 method: 'POST',
                 body: JSON.stringify({
-                    username: data.inputs[0].value,
-                    password: data.inputs[1].value
+                    username: username,
+                    password: password
                 }),
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 credentials: 'include'
             })
                 .then(res => res.json())
@@ -28,18 +36,21 @@ const SignIn = (() => {
                     if (res.error) {
                         data.error = true
                         data.error = res.message
+                        data.inputs[0].value = username
                     } else {
                         data.error = false
                         data.message = res.message
+                        GLOBAL_STATE.user = res.user
+                        GLOBAL_STATE.user.logguedIn = true
                     }
                 })
                 .catch((err) => {
                     data.error = true
                     data.error = err
+                    data.inputs[0].value = username
                 })
                 .finally(() => {
                     data.loading = false
-                    console.log(data)
                 })
         },
         signin: true,
