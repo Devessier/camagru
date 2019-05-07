@@ -22,6 +22,7 @@ class AuthController {
 			DB::connect();
 
 			$users = DB::select('SELECT * FROM users WHERE username = ?', [ $username ]);
+			
 			if (!(count($users) > 0))
 				return Response::unauthorized();
 
@@ -33,7 +34,13 @@ class AuthController {
 			return Response::make()
 					->session('id', $user->id)
 					->json([
-						'message' => 'Successfully signed-in'
+						'message' => 'Successfully signed-in',
+						'user' => [
+							'username' => $user->username,
+							'email' => $user->email,
+							'type' => $user->type,
+							'createdAt' => $user->created_at
+						]
 					]);
 		} catch (\Exception $e) {
 			return Response::internalError();
