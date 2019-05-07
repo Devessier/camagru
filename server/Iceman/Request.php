@@ -47,7 +47,7 @@ class Request {
     }
 
     public function body () {
-        return isset($this->data['body']) ? $this->data['body'] : null;
+        return $this->data ? ($this->data['body'] ?: null) : null;
     }
 
     public function cookie ($name) {
@@ -55,7 +55,7 @@ class Request {
     }
 
     public function session ($name) {
-        return $this->sessions[$name];
+        return $this->sessions ? ($this->sessions[$name] ?: null) : null;
     }
 
     public function file ($name) {
