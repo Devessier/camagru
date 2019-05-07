@@ -20,12 +20,18 @@ const router = new Router([
     {
         name: 'SignUp',
         path: /^\/sign-up\/?$/,
-        component: SignUp
+        component: SignUp,
+        beforeEnter: () => {
+            return !isAuthenticated()
+        }
     },
     {
         name: 'SignIn',
         path: /^\/sign-in\/?$/,
-        component: SignIn
+        component: SignIn,
+        beforeEnter: () => {
+            return !isAuthenticated()
+        }
     },
     {
         name: '404',

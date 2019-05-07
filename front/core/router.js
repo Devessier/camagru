@@ -4,6 +4,7 @@ const Router = (() => {
 
 	let created = false
 	let lastRoute = null
+	let lastRouteObj = null
 
 	/**
 	 * Router constructor - Takes an array as first parameter which represents all the routes of the application
@@ -43,6 +44,7 @@ const Router = (() => {
 				const name = route.name || ''
 				const path = route.path
 				const component = route.component
+				const beforeEnter = route.beforeEnter
 				const id = route.component.id
 
 				if (!(path && component && component instanceof Page))
@@ -51,7 +53,8 @@ const Router = (() => {
 					id,
 					name,
 					path,
-					component
+					component,
+					beforeEnter
 				})
 			}
 
@@ -84,11 +87,15 @@ const Router = (() => {
 			for (let route of this._routes.values()) {
 				const regex = route.path instanceof RegExp ? route.path : new RegExp('^' + route.path + '$')
 				if (regex.test(this._currentRoute)) {
-					this._currentRouteObj && this._currentRouteObj.component._trigger('unmount')
+					if (route.beforeEnter && !route.beforeEnter(route, lastRoute)) {
+						this._currentRouteObj = lastRouteObj
+					} else {
+						this._currentRouteObj && this._currentRouteObj.component._trigger('unmount')
 
-					this._currentRouteObj = route
-					route.component._trigger('mount')
-					route.component.render()
+						this._currentRouteObj = route
+						route.component._trigger('mount')
+						route.component.render()
+					}
 					break
 				}
 			}
@@ -143,10 +150,9 @@ const Router = (() => {
 	function go (route, handler) {
 		if (route !== lastRoute) {
 			this._currentRoute = route
-			setTimeout(() => {
-				handler()
-			}, 0)
+			setTimeout(handler, 0)
 			lastRoute = route
+			lastRouteObj = this._currentRouteObj
 		}
 	}
 
