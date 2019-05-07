@@ -1,4 +1,4 @@
--- USE camagru;
+USE camagru;
 
 CREATE TABLE users (
 	id				INTEGER						AUTO_INCREMENT PRIMARY KEY,
