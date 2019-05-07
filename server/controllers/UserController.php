@@ -7,7 +7,10 @@ use Iceman\Response;
 class UserController {
 
 	public static function me (Request $request) {
-        return self::user($request, $request->session('id'));
+        $id = $request->session('id');
+        if ($id === null)
+            return Response::unauthorized();
+        return self::user($request, $id);
     }
 
     public static function user (Request $request, $id) {
