@@ -2,11 +2,13 @@ function authenticate () {
     const url = 'http://localhost:8001/me'
 
     GLOBAL_STATE.user = {}
-    fetch(url)
+    fetch(url, {
+        credentials: 'include'
+    })
         .then(res => res.json())
         .then((data) => {
             const user = data.user
-            if (user !== null)
+            if (user)
                 GLOBAL_STATE.user = user
         })
         .catch((err) => {
@@ -15,5 +17,5 @@ function authenticate () {
 }
 
 function isAuthenticated () {
-    return GLOBAL_STATE.user && GLOBAL_STATE.user.name && GLOBAL_STATE.user.logguedIn
+    return !!(GLOBAL_STATE.user && GLOBAL_STATE.user.username && GLOBAL_STATE.user.logguedIn)
 }
