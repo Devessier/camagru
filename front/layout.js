@@ -5,7 +5,7 @@ const AuthenticatedHeader = (h) => (
                 onclick="${ router.click('/me') }"
                 class="block sm:px-2 hover:underline text-white"
         >${
-            GLOBAL_STATE.user.name
+            GLOBAL_STATE.user.username
         }</a>
         <button
                 title="Déconnexion"
@@ -37,7 +37,7 @@ const NotAuthenticatedHeader = (h) => (
 )
 
 function layout (h, props) {
-    const isLogguedIn = GLOBAL_STATE.user && GLOBAL_STATE.user.logguedIn && GLOBAL_STATE.user.name
+    const isLogguedIn = GLOBAL_STATE.user && GLOBAL_STATE.user.logguedIn && GLOBAL_STATE.user.username
     const fn = isLogguedIn ? AuthenticatedHeader : NotAuthenticatedHeader
 
     const headerRenderer = Maverick.link(fn)
