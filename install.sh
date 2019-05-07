@@ -8,7 +8,7 @@ sh -c 'echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/
 apt-get update
 
 apt-get install -y php7.3 php7.3-common php7.3-cli
-apt-get install -y php7.3-bcmath php7.3-bz2 php7.3-curl php7.3-gd php7.3-intl php7.3-json php7.3-mbstring php7.3-readline php7.3-xml php7.3-zip
+apt-get install -y php7.3-bcmath php7.3-bz2 php7.3-curl php7.3-gd php7.3-intl php7.3-json php7.3-mbstring php7.3-readline php7.3-xml php7.3-zip php7.3-mysql
 
 curl https://getcaddy.com | bash -s personal http.cors
 
