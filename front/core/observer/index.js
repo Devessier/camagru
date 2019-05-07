@@ -1,4 +1,4 @@
-/* 4 */
+/* 5 */
 
 function def (object, property, value) {
     Object.defineProperty(object, property, {
