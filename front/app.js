@@ -9,6 +9,8 @@ const GLOBAL_STATE = {
     }
 }
 
+authenticate()
+
 const router = new Router([
     {
         name: 'Index',
@@ -19,6 +21,11 @@ const router = new Router([
         name: 'SignUp',
         path: /^\/sign-up\/?$/,
         component: SignUp
+    },
+    {
+        name: 'SignIn',
+        path: /^\/sign-in\/?$/,
+        component: SignIn
     },
     {
         name: '404',

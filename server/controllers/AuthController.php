@@ -28,7 +28,7 @@ class AuthController {
 			$user = (object) $users[0];
 
 			if (!(isset($user) && password_verify($password, $user->password)))
-				return Response::unauthorized();
+                return Response::unauthorized();
 
 			return Response::make()
 					->session('id', $user->id)
