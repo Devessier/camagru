@@ -1,4 +1,4 @@
-localhost:8000 {
+0.0.0.0:8000 {
 	root ./dist
 	gzip
 	push
@@ -8,7 +8,7 @@ localhost:8000 {
 	}
 }
 
-localhost:8001 {
+0.0.0.0:8001 {
 	gzip
 	proxy / localhost:8500
 
