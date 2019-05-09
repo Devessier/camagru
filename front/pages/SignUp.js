@@ -16,8 +16,48 @@ const SignUp = (() => {
                 password: true
 			}
         ],
-        onclick: () => console.log(data.inputs.map(({ value }) => value)),
-        signup: true
+        onclick: () => {
+			const username = data.inputs[0].value
+			const email = data.inputs[1].value
+			const password = data.inputs[2].value
+
+			data.inputs[0].value = ''
+			data.inputs[1].value = ''
+			data.inputs[2].value = ''
+			data.loading = true
+
+			fetch('http://localhost:8001/sign-up', {
+				method: 'POST',
+				body: JSON.stringify({
+					username: username,
+					email: email,
+					password: password
+				}),
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				credentials: 'include'
+			})
+				.then(res => res.json())
+				.then((res) => {
+					if (res.error) {
+						data.error = res.message
+					} else {
+						data.error = false
+						data.message = res.message
+						GLOBAL_STATE.user = res.user
+						router.replace('/me')
+					}
+				})
+				.catch((err) => {
+					data.error = err
+				})
+				.finally(() => {
+					data.loading = false
+				})
+		},
+		signup: true,
+		loading: false
 	}
 
 	function render (h, props) {
