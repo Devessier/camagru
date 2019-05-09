@@ -9,7 +9,7 @@ use Iceman\Middlewares;
 
 Route::get('/^\/?$/', 'HomeController@welcome');
 
-Route::post('/^\/sign-up\/?$/', 'UserController@signup', Middlewares::bind('json'));
+Route::post('/^\/sign-up\/?$/', 'AuthController@signup', Middlewares::bind('json'));
 Route::post('/^\/sign-in\/?$/', 'AuthController@login', Middlewares::bind('json'));
 Route::get('/^\/logout\/?$/', 'AuthController@logout');
 

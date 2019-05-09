@@ -7,26 +7,26 @@ use Iceman\Response;
 class AuthController {
 
 	public static function login (Request $request) {
-		$body = $request->body();
-
-		if (!isset($body))
-			return Response::unauthorized();
-
-		$username = $body->username;
-		$password = $body->password;
-
-		if (!($username && $password))
-			return Response::unauthorized();
-
 		try {
-			DB::connect();
+			$body = $request->body();
 
-			$users = DB::select('SELECT * FROM users WHERE username = ?', [ $username ]);
-			
-			if (!(count($users) > 0))
+			if (!isset($body))
 				return Response::unauthorized();
 
-			$user = (object) $users[0];
+			$username = $body->username;
+			$password = $body->password;
+
+			if (!($username && $password))
+				return Response::unauthorized();
+
+			DB::connect();
+
+			[ $user ] = DB::select('SELECT * FROM users WHERE username = ?', [ $username ]);
+			
+			if (!isset($user))
+				return Response::unauthorized();
+
+			$user = (object) $user;
 
 			if (!(isset($user) && password_verify($password, $user->password)))
                 return Response::unauthorized();
@@ -36,6 +36,7 @@ class AuthController {
 					->json([
 						'message' => 'Successfully signed-in',
 						'user' => [
+							'id' => $user->id,
 							'username' => $user->username,
 							'email' => $user->email,
 							'type' => $user->type,
@@ -48,7 +49,69 @@ class AuthController {
 	}
 
 	public static function signup (Request $request) {
+		try {
+			$body = $request->body();
 
+			if (!isset($body))
+				return Response::unauthorized();
+
+			$username = $body->username;
+			$password = $body->password;
+			$email = $body->email;
+
+			if (!($username && $password && $email))
+				return Response::unauthorized();
+
+			if (!preg_match('^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$', $email)) {
+				return Response::make()
+						->status(400)
+						->json([
+							'error' => true,
+							'message' => 'The provided email is not correct'
+						]);
+			}
+
+			DB::connect();
+
+			try {
+				DB::insert("INSERT INTO users(username, password, email) VALUES(:username, :password, :email)", [
+					'username' => $username,
+					'password' => password_hash($password, PASSWORD_BCRYPT),
+					'email' => $email
+				]);
+
+				[ $user ] = DB::select('SELECT LAST_INSERT_ID() AS id, type, created_at FROM users WHERE username = :username', [
+					'username' => $username
+				]);
+
+				$user = (object) $user;
+
+				return Response::make()
+						->session('id', $user->id)
+						->json([
+							'message' => 'Successfully signed-in',
+							'user' => [
+								'id' => $user->id,
+								'username' => $username,
+								'email' => $email,
+								'type' => $user->type,
+								'createdAt' => $user->created_at
+							]
+						]);
+			} catch (\PDOException $e) {
+				if ($e->getCode() === '23000') {
+					return Response::make()
+							->status(403)
+							->json([
+								'error' => true,
+								'message' => "The username and/or the email you provided can't be used"
+							]);
+				}
+				return Response::internalError();
+			}
+		} catch (\Exception $e) {
+			return Response::internalError();
+		}
 	}
 
 	public static function logout () {
