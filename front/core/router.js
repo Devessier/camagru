@@ -4,7 +4,6 @@ const Router = (() => {
 
 	let created = false
 	let lastRoute = null
-	let lastRouteObj = null
 
 	/**
 	 * Router constructor - Takes an array as first parameter which represents all the routes of the application
@@ -22,6 +21,8 @@ const Router = (() => {
 		this.timeoutID = null
 
 		this._setup(routes)
+
+		this._currentRoute = null
 
 		try {
 			this.replace(decodeURIComponent(window.location.pathname))
@@ -57,30 +58,33 @@ const Router = (() => {
 					beforeEnter
 				})
 			}
-
-			let _route
-
-			Object.defineProperty(this, '_currentRoute', {
-				get: function reactiveGetter () {
-					return _route
-				},
-				set: function reactiveSetter (newVal) {
-					if (newVal === _route)
-						return false
-					_route = newVal
-					this._render()
-					return true
-				}
-			})
 		} else {
 			throw new Error('`routes` must be an array')
 		}
 	}
 
+	Router.prototype._setCurrentRoute = function _setCurrentRoute (route, handler) {
+		if (this._currentRoute === route)
+			return false
+		let old = this._currentRoute
+		this._currentRoute = route
+		this._render((success) => {
+			if (success) {
+				handler()
+			} else {
+				if (!old) {
+					this.replace('/')
+				} else {
+					this._currentRoute = old
+				}
+			}
+		})
+	}
+
 	/**
 	 * This function renders the component corresponding to the current route only at the beginning of the next event-loop tick
 	 */
-	Router.prototype._render = function _render () {
+	Router.prototype._render = function _render (done) {
 		if (this.timeoutID !== null)
 			return
 		this.timeoutID = setTimeout(() => {
@@ -88,13 +92,15 @@ const Router = (() => {
 				const regex = route.path instanceof RegExp ? route.path : new RegExp('^' + route.path + '$')
 				if (regex.test(this._currentRoute)) {
 					if (route.beforeEnter && !route.beforeEnter(route, lastRoute)) {
-						this._currentRouteObj = lastRouteObj
+						this.timeoutID = null
+						done(false)
 					} else {
 						this._currentRouteObj && this._currentRouteObj.component._trigger('unmount')
 
 						this._currentRouteObj = route
 						route.component._trigger('mount')
 						route.component.render()
+						done(true)
 					}
 					break
 				}
@@ -127,7 +133,9 @@ const Router = (() => {
 		})
 	}
 
-	Router.prototype.click = function click (route, replace = false) {
+	Router.prototype.click = function click (route, replace) {
+		if (replace === undefined)
+			replace = false
 		return (event) => {
 			if (replace) {
 				this.replace(route)
@@ -148,11 +156,10 @@ const Router = (() => {
 	 * @param {Function} handler
 	 */
 	function go (route, handler) {
-		if (route !== lastRoute) {
-			this._currentRoute = route
-			setTimeout(handler, 0)
-			lastRoute = route
-			lastRouteObj = this._currentRouteObj
+		if (route !== this._currentRoute) {
+			this._setCurrentRoute(route, () => {
+				handler()
+			})
 		}
 	}
 
