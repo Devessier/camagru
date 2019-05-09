@@ -12,7 +12,7 @@ const GLOBAL_STATE = {
 let router
 
 authenticate()
-    .then(() => {
+    .finally(() => {
         router = new Router([
             {
                 name: 'Index',
