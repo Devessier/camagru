@@ -42,6 +42,7 @@ const SignIn = (() => {
                         data.message = res.message
                         GLOBAL_STATE.user = res.user
                         GLOBAL_STATE.user.logguedIn = true
+                        router.replace('/me')
                     }
                 })
                 .catch((err) => {
