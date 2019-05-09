@@ -34,14 +34,12 @@ const SignIn = (() => {
                 .then(res => res.json())
                 .then((res) => {
                     if (res.error) {
-                        data.error = true
                         data.error = res.message
                         data.inputs[0].value = username
                     } else {
                         data.error = false
                         data.message = res.message
                         GLOBAL_STATE.user = res.user
-                        GLOBAL_STATE.user.logguedIn = true
                         router.replace('/me')
                     }
                 })
