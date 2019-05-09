@@ -28,7 +28,7 @@ const Home = (() => {
 					name: 'Baptiste',
 					avatar: 'https://api.adorable.io/avatars/40/adwabott@adorable.io.png'
 				},
-				comment: "Dans un village pitoresque, il n'est pas rare de tomber sur des gens formidables. Ici, la maison de Monique, la dernière évangéliste Java de France, rencontrée au marché de Quimper-les-Menhirs",
+				comment: "Dans un village pittoresque, il n'est pas rare de tomber sur des gens formidables. Ici, la maison de Monique, la dernière évangéliste Java de France, rencontrée au marché de Quimper-les-Menhirs",
 				comments: [
 					{
 						user: {
