@@ -137,7 +137,7 @@ const Home = (() => {
         const userLink = '/user/' + props.user.id
 		const date = format(props.createdAt)
 		const id = 'input-home-' + index
-		const disabled = !(GLOBAL_STATE.user && GLOBAL_STATE.user.username)
+		const disabled = !isAuthenticated()
 
 		return h`
 			<article class="flex flex-col bg-grey-lighter" style="max-width: 640px">
