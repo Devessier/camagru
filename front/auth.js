@@ -2,7 +2,7 @@ function authenticate () {
     const url = 'http://localhost:8001/me'
 
     GLOBAL_STATE.user = {}
-    fetch(url, {
+    return fetch(url, {
         credentials: 'include'
     })
         .then(res => res.json())
@@ -17,5 +17,13 @@ function authenticate () {
 }
 
 function isAuthenticated () {
-    return !!(GLOBAL_STATE.user && GLOBAL_STATE.user.username && GLOBAL_STATE.user.logguedIn)
+    return !!(GLOBAL_STATE.user && GLOBAL_STATE.user.username)
+}
+
+function logout () {
+    GLOBAL_STATE.user = {}
+    fetch('http://localhost:8001/logout', {
+        credentials: 'include'
+    })
+        .catch(() => {})
 }
