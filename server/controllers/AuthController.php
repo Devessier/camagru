@@ -51,4 +51,8 @@ class AuthController {
 
 	}
 
+	public static function logout () {
+		return Response::make()->session('id', null);
+	}
+
 }
