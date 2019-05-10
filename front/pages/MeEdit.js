@@ -45,8 +45,8 @@ const MeEdit = (() => {
 						: "Une erreur s'est produite, veuillez réessayer ultérieurement"
 				)
 			})
-			.catch((err) => {
-				props.error = 'Une erreur a eu lieu pendant la mise à jour des données'
+			.catch(() => {
+				$toast(props, 'Édition du profil', 'Une erreur a eu lieu pendant la mise à jour des données')
 			})
 	}
 
@@ -60,7 +60,6 @@ const MeEdit = (() => {
 								<input
 										value="${ props.username }"
 										oninput="${ event => { props.username = event.target.value } }"
-										autofocus
 
 										class="mb-3 text-2xl font-bold border-purple-lighter focus:border-purple border-b-2 short-transition"
 								/>
@@ -86,11 +85,6 @@ const MeEdit = (() => {
 								onclick="${ () => { save(props) } }"
 								class="text-purple-dark border-purple-light hover:border-purple border-2 rounded px-3 py-2 short-transition">
 							Sauvegarder
-						</button>
-						<button onclick="${ () => {
-							$toast(props, 'Édition du profil', 'Votre profil a été sauvegardé avec succès !')
-						} }">
-							Toast
 						</button>
 					</div>
 				</div>
