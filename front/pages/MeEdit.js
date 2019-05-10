@@ -4,10 +4,10 @@ const MeEdit = (() => {
 		username: '',
 		email: '',
 		toast: {
-			title: 'Édition du profil',
-			text: 'Votre profil a été sauvegardé avec succès !',
-			timeout: 3000,
-			open: true
+			title: '',
+			text: '',
+			open: undefined,
+			hide: true
 		}
 	}
 
@@ -37,6 +37,13 @@ const MeEdit = (() => {
 					GLOBAL_STATE.user.username = props.username
 					GLOBAL_STATE.user.email = props.email
 				}
+				$toast(
+					props,
+					'Édition du profil', 
+					data.success ?
+						'Votre profil a été modifié avec succès'
+						: "Une erreur s'est produite, veuillez réessayer ultérieurement"
+				)
 			})
 			.catch((err) => {
 				props.error = 'Une erreur a eu lieu pendant la mise à jour des données'
@@ -80,7 +87,9 @@ const MeEdit = (() => {
 								class="text-purple-dark border-purple-light hover:border-purple border-2 rounded px-3 py-2 short-transition">
 							Sauvegarder
 						</button>
-						<button onclick="${ () => { props.toast.open = true } }">
+						<button onclick="${ () => {
+							$toast(props, 'Édition du profil', 'Votre profil a été sauvegardé avec succès !')
+						} }">
 							Toast
 						</button>
 					</div>

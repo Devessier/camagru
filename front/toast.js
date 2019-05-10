@@ -1,16 +1,28 @@
 function toast (h, props) {
 	const classes = 'flex justify-between items-center max-w-full md:mr-6 px-5 py-3 bg-purple-dark text-white rounded shadow-md absolute'
-	
-	return h`
-		<div class="fixed pin-t pin-r flex justify-center md:justify-end items-center w-full">
-			<div id="toast" class="${ classes + ' ' + (props.toast.open ? 'toast-enter' : 'toast-leave') }">
+
+	return props.toast ? h`
+		<div class="${ 'fixed pin-t pin-r justify-center md:justify-end items-center w-full ' + (props.toast.hide ? 'hidden' : 'flex') }">
+			<div
+					id="toast"
+					class="${ classes + ' ' + (props.toast.open ? 'toast-enter' : 'toast-leave') }"
+
+					onanimationend="${
+						(event) => {
+							if (event.animationName === 'slideout') {
+								console.log('pass it to true')
+								props.toast.hide = true
+							}
+						}
+					}"
+			>
 				<div class="flex flex-col items-stretch justify-center w-64">
 					<h3 class="mb-2">${ props.toast.title || '' }</h3>
 					<p>${ props.toast.text || '' }</p>
 				</div>
 
 				<button
-						onclick="${ () => { props.toast.open = false } }"
+						onclick="${ () => { $toastClose(props) } }"
 						class="ml-4"
 				>
 					<svg
@@ -19,5 +31,22 @@ function toast (h, props) {
 				</button>
 			</div>
 		</div>
-	`
+	` : ''
+}
+
+function $toast (props, title, text, timeout) {
+	if (typeof timeout !== 'number')
+		timeout = 3000
+	props.toast.hide = false
+	props.toast.title = title
+	props.toast.text = text
+	props.toast.open = true
+	props.toast._timeoutID = setTimeout(() => {
+		props.toast.open = false
+	}, timeout)
+}
+
+function $toastClose (props) {
+	clearTimeout(props.toast._timeoutID)
+	props.toast.open = false
 }
