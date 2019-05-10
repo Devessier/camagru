@@ -6,7 +6,8 @@ const GLOBAL_STATE = {
         menu: {
             open: false
         }
-    }
+    },
+    avatar: 'https://api.adorable.io/avatars/128/adwabott@adorable.io.png'
 }
 
 let router
@@ -35,6 +36,12 @@ authenticate()
                 name: 'Me',
                 path: /^\/me\/?$/,
                 component: Me,
+                beforeEnter: isAuthenticated
+            },
+            {
+                name: 'MeEdit',
+                path: /^\/me\/edit\/?$/,
+                component: MeEdit,
                 beforeEnter: isAuthenticated
             },
             {
