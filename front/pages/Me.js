@@ -1,13 +1,13 @@
 const Me = (() => {
 
     const data = {
-        avatar: 'https://api.adorable.io/avatars/128/adwabott@adorable.io.png',
+        avatar: '',
         posts: []
     }
 
     function post (h, props, i) {
         return h`
-            <article class="w-1/3 border border-white">
+            <article class="w-1/3 xl:w-1/4 border border-white">
                 <div class="relative post">
                     <div class="absolute pin">
                         <img src="${ props.url }" class="h-full w-full" style="object-fit: cover;" />
@@ -23,7 +23,6 @@ const Me = (() => {
     }
 
     function render (h, props) {
-        console.log(props)
         return h`
             <div class="flex justify-center items-center md:mx-10 mt-10">
                 <div class="flex flex-col items-stretch w-full md:w-3/5">
@@ -43,7 +42,7 @@ const Me = (() => {
                             </a>
                         </div>
                         <div>
-                            <img src="${ props.avatar }" class="w-32 h-32 rounded-full" />
+                            <img src="${ GLOBAL_STATE.avatar }" class="w-32 h-32 rounded-full" />
                         </div>
                     </div>
                     <section class="mt-8">
