@@ -10,16 +10,8 @@ a, a:visited {
     transition: all .1s;
 }
 
-.post:before {
+.post:after {
     content: '';
     display: block;
     padding-top: 100%
-}
-
-.post > img {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
 }
