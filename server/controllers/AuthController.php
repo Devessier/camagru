@@ -62,7 +62,7 @@ class AuthController {
 			if (!($username && $password && $email))
 				return Response::unauthorized();
 
-			if (!preg_match('^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$', $email)) {
+			if (!validEmail($email)) {
 				return Response::make()
 						->status(400)
 						->json([
