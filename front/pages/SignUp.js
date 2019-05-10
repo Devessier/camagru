@@ -13,7 +13,8 @@ const SignUp = (() => {
 			{
 				placeholder: 'Mot de passe',
                 value: '',
-                password: true
+				password: true,
+				visible: false
 			}
         ],
         onclick: () => {
