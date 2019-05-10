@@ -29,4 +29,69 @@ class UserController {
         }
     }
 
+    public static function posts (Request $request, $id) {
+        try {
+            if (!$id)
+                $id = $request->session('id');
+            if (!$id)
+                return Response::unauthorized();
+
+            return Response::make()
+                    ->json([
+                        'posts' => [
+                            [
+                                'id' => 76,
+                                'url' => 'https://cdn.pixabay.com/photo/2017/10/22/13/17/malham-2877845_640.jpg',
+                                'user' => [
+                                    'id' => 0,
+                                    'name' => 'Baptiste',
+                                    'avatar' => 'https://api.adorable.io/avatars/40/adwabott@adorable.io.png'
+                                ],
+                                'comment' => 'Magnifique photo de vacances',
+                                'comments' => [],
+                                'createdAt' => time()
+                            ],
+                            [
+                                'id' => 76,
+                                'url' => 'https://cdn.pixabay.com/photo/2018/04/03/07/49/house-3286172_640.jpg',
+                                'user' => [
+                                    'id' => 0,
+                                    'name' => 'Baptiste',
+                                    'avatar' => 'https://api.adorable.io/avatars/40/adwabott@adorable.io.png'
+                                ],
+                                'comment' => 'Magnifique photo de vacances',
+                                'comments' => [],
+                                'createdAt' => time()
+                            ],
+                            [
+                                'id' => 76,
+                                'url' => 'https://cdn.pixabay.com/photo/2017/10/22/13/17/malham-2877845_640.jpg',
+                                'user' => [
+                                    'id' => 0,
+                                    'name' => 'Baptiste',
+                                    'avatar' => 'https://api.adorable.io/avatars/40/adwabott@adorable.io.png'
+                                ],
+                                'comment' => 'Magnifique photo de vacances',
+                                'comments' => [],
+                                'createdAt' => time()
+                            ],
+                            [
+                                'id' => 76,
+                                'url' => 'https://cdn.pixabay.com/photo/2017/10/22/13/17/malham-2877845_640.jpg',
+                                'user' => [
+                                    'id' => 0,
+                                    'name' => 'Baptiste',
+                                    'avatar' => 'https://api.adorable.io/avatars/40/adwabott@adorable.io.png'
+                                ],
+                                'comment' => 'Magnifique photo de vacances',
+                                'comments' => [],
+                                'createdAt' => time()
+                            ]
+                        ]
+                    ]);
+        } catch (\Exception $e) {
+            return Response::internalError();
+        }
+    }
+
 }

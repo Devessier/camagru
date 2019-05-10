@@ -9,3 +9,17 @@ a, a:visited {
 .short-transition {
     transition: all .1s;
 }
+
+.post:before {
+    content: '';
+    display: block;
+    padding-top: 100%
+}
+
+.post > img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}

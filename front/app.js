@@ -32,6 +32,12 @@ authenticate()
                 beforeEnter: () => !isAuthenticated()
             },
             {
+                name: 'Me',
+                path: /^\/me\/?$/,
+                component: Me,
+                beforeEnter: isAuthenticated
+            },
+            {
                 name: '404',
                 path: /.*/,
                 component: _404
