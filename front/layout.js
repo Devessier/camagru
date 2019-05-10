@@ -41,6 +41,7 @@ function layout (h, props) {
 
     const headerRenderer = Maverick.link(fn)
     const pageRenderer = Maverick.link(props._page)
+    const toastRenderer = Maverick.link(props.toast)
 
     h`<nav class="flex flex-wrap items-center justify-between bg-purple-light px-3 md:px-12 py-4">
         <h1>
@@ -58,5 +59,11 @@ function layout (h, props) {
                 class="${ 'sm:flex flex-row justify-between items-center w-full sm:w-auto ' + (GLOBAL_STATE.layout.menu.open ? 'block' : 'hidden') }"
         >${ fn(headerRenderer) }</div>
     </nav>
-    <main>${ props._page(pageRenderer, props) }</main>`
+    <main>${ props._page(pageRenderer, props) }</main>
+    <aside>${
+        toast(toastRenderer, props)
+    }</aside>
+    <footer>
+        
+    </footer>`
 }

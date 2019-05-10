@@ -15,3 +15,38 @@ a, a:visited {
     display: block;
     padding-top: 100%
 }
+
+@keyframes slidein {
+    from {
+        top: 0;
+        opacity: 0;
+    }
+
+    to {
+        top: 40px;
+        opacity: 1;
+    }
+}
+
+@keyframes slideout {
+    from {
+        top: 40px;
+        opacity: 1;
+    }
+
+    to {
+        top: 0;
+        opacity: 0;
+    }
+}
+
+.toast-enter {
+    top: 40px;
+    animation: slidein 500ms;
+}
+
+.toast-leave {
+    top: 0;
+    animation: slideout 500ms;
+    animation-fill-mode: forwards;
+}
