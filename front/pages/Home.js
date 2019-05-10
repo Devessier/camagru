@@ -222,7 +222,7 @@ const Home = (() => {
 
 	function render (h, props) {
 		return h`
-			<div class="flex justify-center items-center mx-10">
+			<div class="flex justify-center items-center md:mx-10">
 				<section class="container flex flex-col items-center">${
 					props.posts.map((p, i) => post(Maverick.link(p), p, i))
 				}</section>
