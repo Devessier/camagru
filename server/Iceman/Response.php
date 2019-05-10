@@ -65,13 +65,24 @@ class Response {
     }
 
     public static function internalError () {
-        $reponse = new self;
+        $response = new self;
 
-        return $reponse
+        return $response
                 ->status(500)
                 ->json([
                     'error' => true,
                     'message' => 'An internal error occured, please try latter'
+                ]);
+    }
+
+    public static function badRequest () {
+        $response = new self;
+
+        return $response
+                ->status(400)
+                ->json([
+                    'error' => true,
+                    'message' => 'Bad Request'
                 ]);
     }
 
