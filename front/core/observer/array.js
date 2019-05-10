@@ -18,16 +18,17 @@ const ArrayObserver = (() => {
 	for (let method of methods) {
 		const original = arrayProto[method]
 		def(arrayMethods, method, function mutator () {
-			const result = original.apply(this, arguments)
+			const args = Array.from(arguments)
+			const result = original.apply(this, args)
 			const ob = this.__ob__
 			let inserted
 			switch (method) {
 				case 'push':
 				case 'unshift':
-					inserted = arguments
+					inserted = args
 					break
 				case 'splice':
-					inserted = arguments.slice(2)
+					inserted = args.slice(2)
 					break
 			}
 			if (inserted)
