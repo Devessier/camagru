@@ -45,6 +45,12 @@ authenticate()
                 beforeEnter: isAuthenticated
             },
             {
+                name: 'TakeAPick',
+                path: /^\/take-a-pick\/?$/,
+                component: TakeAPick,
+                beforeEnter: isAuthenticated
+            },
+            {
                 name: '404',
                 path: /.*/,
                 component: _404

@@ -50,3 +50,17 @@ a, a:visited {
     animation: slideout 500ms;
     animation-fill-mode: forwards;
 }
+
+@keyframes flash {
+    from {
+        opacity: 0
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.flash {
+    animation: flash 800ms;
+}

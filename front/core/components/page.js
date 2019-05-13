@@ -26,6 +26,8 @@ const Page = (() => {
 		this.events = new Map([
 			[ 'unmount', function unmount () {
 				this.component.state.freeze(this.component.id)
+
+				this._trigger('bye')
 			} ],
 			[ 'mount', function mount () {
 				this.component.state.recover(this.component.id)
@@ -50,7 +52,7 @@ const Page = (() => {
 		this.setTitle(this.title)
 		this.component.render()
 
-		window[`component-${this.id}`] = this.component.render.bind(this.component)
+		window['component-' + this.id] = this.component.render.bind(this.component)
 	}
 
 	Page.prototype._trigger = function _trigger (event) {
