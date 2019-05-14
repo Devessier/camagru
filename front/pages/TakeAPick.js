@@ -106,13 +106,18 @@ const TakeAPick = (() => {
 		return !props.photo.url ?
 			h`
 			<button
-					disabled="${ !props.filter.path }"
 					onclick="${ () => { take(props) } }"
-					class="p-5 bg-purple-light rounded-full text-white shadow"
+					class="${ 'p-5 rounded-full text-white shadow ' + (props.filter.path ? 'bg-purple-light' : 'bg-grey') }"
 			>
 				<svg class="w-8 h-8 xl:w-10 xl:h-10" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-camera"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
 			</button>
 		` : h`
+			<button
+					onclick="${ () => { cancel(props) } }"
+					class=""
+			>
+				Annuler
+			</button>
 			<button
 					onclick="${ () => { cancel(props) } }"
 					class=""
@@ -260,7 +265,7 @@ const TakeAPick = (() => {
 						video.srcObject = stream
 						video.onloadedmetadata = video.play
 					})
-					.catch((err) => {
+					.catch(() => {
 						$toast(this.state, 'Caméra', 'Une erreur est survenue lors du lancement de la caméra', 2e3)
 					})
 			}

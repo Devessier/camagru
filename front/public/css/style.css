@@ -64,3 +64,7 @@ a, a:visited {
 .flash {
     animation: flash 800ms;
 }
+
+.button--take-a-pick:disabled {
+    background-color: #CBD5E0;
+}
