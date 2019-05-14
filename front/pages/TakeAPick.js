@@ -16,6 +16,18 @@ const TakeAPick = (() => {
 				path: 'https://whydoesitsuck.com/why-does-php-suck/thumbnail.png',
 				width: 300,
 				height: 300
+			},
+			{
+				name: 'PHP is perfect',
+				path: 'https://whydoesitsuck.com/why-does-php-suck/thumbnail.png',
+				width: 300,
+				height: 300
+			},
+			{
+				name: 'PHP is perfect',
+				path: 'https://whydoesitsuck.com/why-does-php-suck/thumbnail.png',
+				width: 300,
+				height: 300
 			}
 		],
 		filter: {
@@ -69,6 +81,8 @@ const TakeAPick = (() => {
 	}
 
 	function pick (props) {
+		if (data.filter.block)
+			return
 		data.filter.path = props.path
 		data.filter.name = props.name
 		data.filter.width = props.width
@@ -92,6 +106,7 @@ const TakeAPick = (() => {
 		return !props.photo.url ?
 			h`
 			<button
+					disabled="${ !props.filter.path }"
 					onclick="${ () => { take(props) } }"
 					class="p-5 bg-purple-light rounded-full text-white shadow"
 			>
@@ -107,48 +122,70 @@ const TakeAPick = (() => {
 		`
 	}
 
-	let move = false
-
 	let rect
 	let diff = {
 		x: 0,
 		y: 0
 	}
 
-	function handleMouseDown (e, props) {
+	function handleMouseDown (event, props) {
 		if (props.filter.block)
 			return
 		if (!rect)
 			rect = document.getElementById('eh').getBoundingClientRect()
-		diff.x = e.clientX - rect.left - props.filter.position.x | 0
-		diff.y = e.clientY - rect.top - props.filter.position.y | 0
-		move = true
+		diff.x = event.clientX - rect.left - props.filter.position.x | 0
+		diff.y = event.clientY - rect.top - props.filter.position.y | 0
+		window.addEventListener('mousemove', handleMouseMove)
+		window.addEventListener('mouseup', handleMouseUp)
 	}
 
-	function handleMouseMove (e, props) {
-		if (!move || props.filter.block)
+	function handleMouseMove (event) {
+		if (data.filter.block)
 			return
 
-		const x = e.clientX - rect.left - diff.x | 0
-		const y = e.clientY - rect.top - diff.y | 0
+		const x = event.clientX - rect.left - diff.x | 0
+		const y = event.clientY - rect.top - diff.y | 0
 
 		if (x < 0)
-			props.filter.position.x = 0
-		else if ((x + props.filter.width) > rect.width)
-			props.filter.position.x = rect.width - props.filter.width
+			data.filter.position.x = 0
+		else if ((x + data.filter.width) > rect.width)
+			data.filter.position.x = rect.width - data.filter.width
 		else
-			props.filter.position.x = x
+			data.filter.position.x = x
 
 		if (y < 0)
-			props.filter.position.y = 0
-		else if ((y + props.filter.height) > rect.height)
-			props.filter.position.y = rect.height - props.filter.height
+			data.filter.position.y = 0
+		else if ((y + data.filter.height) > rect.height)
+			data.filter.position.y = rect.height - data.filter.height
 		else
-			props.filter.position.y = y
+			data.filter.position.y = y
 	}
 
 	function handleMouseUp () {
-		move = false
+		window.removeEventListener('mousemove', handleMouseMove)
+	}
+
+	function resizeDown (props, event) {
+		event.preventDefault()
+		window.addEventListener('mousemove', resizeMove)
+		window.addEventListener('mouseup', resizeUp)
+	}
+
+	function resizeMove (e) {
+		if (!rect)
+			rect = document.getElementById('eh').getBoundingClientRect()
+
+		const size = e.clientX - rect.left - diff.x | 0
+
+		if (data.filter.position.x + size <= rect.width
+			&& data.filter.position.y + size <= rect.height) {
+			data.filter.width = size
+			data.filter.height = size
+		}
+	}
+
+	function resizeUp () {
+		window.removeEventListener('mousemove', resizeMove)
 	}
 
 	function render (h, props) {
@@ -170,22 +207,34 @@ const TakeAPick = (() => {
 						<video width="640" height="480" id="video" class="${ props.photo.url ? 'hidden' : 'rounded' }"></video>
 						<img id="photo" class="${ props.photo.url ? 'h-full w-full rounded flash' : 'hidden' }" src="${ props.photo.url }" />
 
-						<img
-								src="${ props.filter && props.filter.path }"
+						<div
 								class="${ props.filter ? 'absolute pin-t pin-l' : 'hidden' }"
 								style="${ style }"
+						>
+							<div class="h-full w-full relative">
+								<img
+										src="${ props.filter && props.filter.path }"
 
-								ondragstart="${ () => false }"
-								onmousemove="${ e => { handleMouseMove(e, props) } }"
-								onmouseup="${ handleMouseUp.bind(null, props) }"
-								onmousedown="${ e => { handleMouseDown(e, props) } }"
+										ondragstart="${ () => false }"
+										onmousedown="${ e => { handleMouseDown(e, props) } }"
 
-								width="${ props.filter.width + 'px' }"
-								height="${ props.filter.height + 'px' }"
-						/>
+										width="${ props.filter.width + 'px' }"
+										height="${ props.filter.height + 'px' }"
+								/>
+
+								<div
+										class="${ !props.filter.block ? 'absolute' : 'hidden' }"
+										style="transform: rotate(90deg); bottom: -10px; right: -10px"
+
+										onmousedown="${ resizeDown.bind(null, props) }"
+								>
+									<svg class="w-5 h-5 text-white" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-maximize-2"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
+								</div>
+							</div>
+						</div>
 					</article>
 
-					<div class="overflow-auto overflow-y-hidden w-full relative" style="height: 140px;">
+					<div class="${ props.filter.block ? 'hidden' : 'overflow-auto overflow-y-hidden w-full relative' }" style="height: 140px;">
 						<aside class="flex justify-start items-center absolute">${
 							props.filters.map((filter, index) => stackableImage(Maverick.link(filter), filter, index))
 						}</aside>
