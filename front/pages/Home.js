@@ -221,21 +221,30 @@ const Home = (() => {
 	}
 
 	function render (h, props) {
+		if (isAuthenticated()) {
+			return h`
+				<div class="flex justify-center items-center md:mx-10">
+					<section class="container flex flex-col items-center">${
+						props.posts.map((p, i) => post(Maverick.link(p), p, i))
+					}</section>
+				</div>
+				<a
+						href="/take-a-pick"
+						onclick="${ router.click('/take-a-pick') }"
+						title="Prendre une photo"
+
+						class="fixed pin-b pin-r flex justify-center items-center m-6 p-4 xl:m-10 xl:p-6 rounded-full bg-purple-light shadow hover:shadow-md short-transition text-white"
+				>
+					<svg class="w-8 h-8 xl:w-10 xl:h-10" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-camera"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+				</a>
+			`
+		}
 		return h`
 			<div class="flex justify-center items-center md:mx-10">
 				<section class="container flex flex-col items-center">${
 					props.posts.map((p, i) => post(Maverick.link(p), p, i))
 				}</section>
 			</div>
-			<a
-					href="/take-a-pick"
-					onclick="${ router.click('/take-a-pick') }"
-					title="Prendre une photo"
-
-					class="fixed pin-b pin-r flex justify-center items-center m-6 p-4 xl:m-10 xl:p-6 rounded-full bg-purple-light shadow hover:shadow-md short-transition text-white"
-			>
-				<svg class="w-8 h-8 xl:w-10 xl:h-10" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-camera"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
-			</a>
 		`
 	}
 
