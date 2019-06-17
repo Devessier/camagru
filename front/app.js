@@ -56,7 +56,7 @@ authenticate()
                 component: _404
             }
         ])
-        
+
         const GLOBAL_OBSERVER = Observer.apply(GLOBAL_STATE)
         GLOBAL_OBSERVER.bind({
             id: Infinity,
