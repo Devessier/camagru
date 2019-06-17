@@ -1,6 +1,8 @@
 #!/usr/bin/env php
 <?php
 
+include_once __DIR__ . '/babel.php';
+
 echo <<<EOT
 
 
@@ -63,6 +65,7 @@ EOT;
 
 		if (@preg_match('/^(?:\/\*(?<ID>[^;\n]*)\*\/){1}/', $file, $matches)) {
 			$file = @preg_replace('/^(?:\/\*(?:[^;\n]*)\*\/){1}\n/', '', $file);
+			$file = transpile($file);
 			$trimmed = trim($matches['ID']);
 
 			if ($trimmed === 'LAST') {

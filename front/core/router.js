@@ -59,7 +59,7 @@ const Router = (() => {
 				})
 			}
 		} else {
-			throw new Error('`routes` must be an array')
+			throw new Error('routes must be an array')
 		}
 	}
 

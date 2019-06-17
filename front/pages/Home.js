@@ -127,9 +127,9 @@ const Home = (() => {
 				<button
 						class="${ 'text-purple-light py-2 px-2 border-purple-light rounded mb-4' + (hasComments ? ' border' : '') }"
 						onclick="${ () => { props.loadComments = true } }"
-				>
-					${ hasComments ? 'Voir les commentaires' : 'Aucun commentaire' }
-				</button>
+				>${
+					hasComments ? 'Voir les commentaires' : 'Aucun commentaire'
+				}</button>
 			` : h``
 	}
 
@@ -153,9 +153,9 @@ const Home = (() => {
                                 class="block ml-2 hover:underline text-black"
                                 href="${ userLink }"
                                 onclick="${ router.click(userLink) }"
-                        >
-                            ${ props.user.name }
-                        </a>
+                        >${
+							props.user.name
+						}</a>
 					</div>
 					<p>${ date }</p>
 				</header>
@@ -167,9 +167,9 @@ const Home = (() => {
 							class="w-full"
 					/>
 
-					<p class="px-1 pt-2 pb-3 font-light">
-						${ props.comment }
-					</p>
+					<p class="px-1 pt-2 pb-3 font-light">${
+						props.comment
+					}</p>
                 </section>
 
 				<footer class="flex flex-col pb-2 px-1">
