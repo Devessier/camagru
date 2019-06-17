@@ -118,12 +118,6 @@ const TakeAPick = (() => {
 			>
 				Annuler
 			</button>
-			<button
-					onclick="${ () => { cancel(props) } }"
-					class=""
-			>
-				Annuler
-			</button>
 		`
 	}
 
