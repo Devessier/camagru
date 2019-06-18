@@ -46,6 +46,7 @@ const TakeAPick = (() => {
 		photo: {
 			url: ''
 		},
+		file: '',
 		toast: {
 			title: '',
 			text: '',
@@ -89,6 +90,44 @@ const TakeAPick = (() => {
 		data.filter.height = props.height
 	}
 
+	function triggerUploadInput () {
+		const input = document.getElementById('upload')
+		if (input) {
+			input.click()
+		}
+	}
+
+	/**
+	 * Test whether the File instance is correct and can be upload
+	 * @param {File} file
+	 * @returns {boolean}
+	 */
+	function isValidFile (file) {
+		return true
+	}
+
+	function upload (e, props) {
+		const input = e.target
+		if (input) {
+			const file = input.files[0]
+
+			if (isValidFile(file)) {
+				const reader = new FileReader
+				props.file = file
+				props.filter.block = true
+
+				reader.onload = (e) => {
+					props.photo.url = e.target.result
+				}
+				reader.readAsDataURL(file)
+			} else {
+				$toast(props, 'Fichier incorrect', 'Le fichier sélectionné ne peut être utilisé')
+			}
+
+			console.log('upload', props, file)
+		}
+	}
+
 	function stackableImage (h, props, index) {
 		return h`
 			<figure style="width: 200px">
@@ -105,20 +144,34 @@ const TakeAPick = (() => {
 	function button (h, props) {
 		return !props.photo.url ?
 			h`
-			<button
-					onclick="${ () => { take(props) } }"
-					class="${ 'p-5 rounded-full text-white shadow ' + (props.filter.path ? 'bg-purple-light' : 'bg-grey') }"
-			>
-				<svg class="w-8 h-8 xl:w-10 xl:h-10" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-camera"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
-			</button>
-		` : h`
-			<button
-					onclick="${ () => { cancel(props) } }"
-					class=""
-			>
-				Annuler
-			</button>
-		`
+				<input
+						id="upload"
+						type="file"
+						accept="image/*"
+						class="hidden"
+						onchange="${ (e) => { upload(e, props) } }"
+				/>
+				<button
+						onclick="${ triggerUploadInput }"
+						class="${ 'p-5 mr-1 rounded-full text-white shadow ' + (props.filter.path ? 'bg-purple-light' : 'bg-grey') }"
+				>
+					<svg class="w-8 h-8 xl:w-10 xl:h-10" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-upload"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+				</button>
+				<button
+						onclick="${ () => { take(props) } }"
+						class="${ 'p-5 ml-1 rounded-full text-white shadow ' + (props.filter.path ? 'bg-purple-light' : 'bg-grey') }"
+				>
+					<svg class="w-8 h-8 xl:w-10 xl:h-10" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-camera"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+				</button>
+			` :
+			h`
+				<button
+						onclick="${ () => { cancel(props) } }"
+						class=""
+				>
+					Annuler
+				</button>
+			`
 	}
 
 	let rect
@@ -174,7 +227,12 @@ const TakeAPick = (() => {
 		if (!rect)
 			rect = document.getElementById('eh').getBoundingClientRect()
 
-		const size = e.clientX - rect.left - diff.x | 0
+		const width = e.clientX - rect.left | 0
+		const height = e.clientY - rect.top | 0
+
+		console.log(width, height)
+
+		const size = width > height ? width : height
 
 		if (data.filter.position.x + size <= rect.width
 			&& data.filter.position.y + size <= rect.height) {
@@ -204,7 +262,7 @@ const TakeAPick = (() => {
 							class="h-full w-full relative"
 							style="height: 480px; background: linear-gradient(to right, #9796f0, #fbc7d4);"
 					>
-						<video width="640" height="480" id="video" class="${ props.photo.url ? 'hidden' : 'rounded' }"></video>
+						<video width="640" height="480" id="video" class="${ 'max-w-full ' + (props.photo.url ? 'hidden' : 'rounded') }"></video>
 						<img id="photo" class="${ props.photo.url ? 'h-full w-full rounded flash' : 'hidden' }" src="${ props.photo.url }" />
 
 						<div
