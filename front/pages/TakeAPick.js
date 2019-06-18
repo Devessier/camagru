@@ -188,6 +188,7 @@ const TakeAPick = (() => {
 	}
 
 	function render (h, props) {
+		console.log(props.filter, props.filter.block || !Number.isInteger(props.filter.height))
 		const style = (props.filter && props.filter.position && ('transform: translate3d(' + props.filter.position.x + 'px,' + props.filter.position.y + 'px, 0px)')) || false
 
 		return h`
@@ -222,7 +223,7 @@ const TakeAPick = (() => {
 								/>
 
 								<div
-										class="${ !props.filter.block ? 'absolute' : 'hidden' }"
+										class="${ (props.filter.block || !props.filter.height) ? 'hidden' : 'absolute' }"
 										style="transform: rotate(90deg); bottom: -10px; right: -10px"
 
 										onmousedown="${ resizeDown.bind(null, props) }"
