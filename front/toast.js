@@ -7,14 +7,12 @@ function toast (h, props) {
 					id="toast"
 					class="${ classes + ' ' + (props.toast.open ? 'toast-enter' : 'toast-leave') }"
 
-					onanimationend="${
-						(event) => {
+					onanimationend="${ (event) => {
 							if (event.animationName === 'slideout') {
 								console.log('pass it to true')
 								props.toast.hide = true
 							}
-						}
-					}"
+						} }"
 			>
 				<div class="flex flex-col items-stretch justify-center w-64">
 					<h3 class="mb-2">${ props.toast.title || '' }</h3>
