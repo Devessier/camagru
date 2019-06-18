@@ -392,7 +392,7 @@ const Maverick = (() => {
     }
 
     Maverick.sanitize = function sanitize (html) {
-        return html ? html.replace(SANITIZING_REGEX, match => BLACK_LIST[match] || match) : html
+        return html ? html.replace(SANITIZING_REGEX, match => BLACK_LIST[match] || match) : ''
     }
 
     return Maverick

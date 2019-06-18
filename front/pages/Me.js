@@ -29,8 +29,8 @@ const Me = (() => {
                     <div class="flex justify-between flex-wrap">
                         <div class="flex flex-col justify-around">
                             <div class="flex flex-col">
-                                <h2 class="mb-2">${ GLOBAL_STATE.user.username }</h2>
-                                <h3 class="font-normal">${ GLOBAL_STATE.user.email }</h3>
+                                <h2 class="mb-2">${ Maverick.sanitize(GLOBAL_STATE.user.username) }</h2>
+                                <h3 class="font-normal">${ Maverick.sanitize(GLOBAL_STATE.user.email) }</h3>
                             </div>
 
                             <a
