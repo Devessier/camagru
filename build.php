@@ -61,11 +61,10 @@ Processing $path ...
 
 EOT;
 
-		$file = file_get_contents($path);
+		$file = transpile(file_get_contents($path));
 
 		if (@preg_match('/^(?:\/\*(?<ID>[^;\n]*)\*\/){1}/', $file, $matches)) {
 			$file = @preg_replace('/^(?:\/\*(?:[^;\n]*)\*\/){1}\n/', '', $file);
-			$file = transpile($file);
 			$trimmed = trim($matches['ID']);
 
 			if ($trimmed === 'LAST') {
@@ -83,7 +82,7 @@ EOT;
 	ksort($files);
 	array_push($files, ...$tmp);
 	$files[] = $last;
-	return "'use strict';\n" . implode('', $files);
+	return "'use strict';\n" . head_transpilation_result() . implode('', $files);
 }
 
 function place_file (&$files, $pos, $file) {
