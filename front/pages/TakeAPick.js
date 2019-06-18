@@ -267,7 +267,6 @@ const TakeAPick = (() => {
 		bye: function bye () {
 			const video = document.getElementById('video')
 			video && (video.src = '')
-			this.state.photo.url = ''
 		}
 	})
 
