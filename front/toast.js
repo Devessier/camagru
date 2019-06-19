@@ -9,7 +9,6 @@ function toast (h, props) {
 
 					onanimationend="${ (event) => {
 							if (event.animationName === 'slideout') {
-								console.log('pass it to true')
 								props.toast.hide = true
 							}
 						} }"
