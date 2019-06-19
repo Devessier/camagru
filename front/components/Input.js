@@ -14,7 +14,7 @@ function InputCounter (props, options) {
     const placeholder = options.placeholder || false
     const keydownHandler = options.onkeydown || (() => {})
 
-    let count = props.value.length
+    const count = props.value.length
 
     return h`
         <div>
