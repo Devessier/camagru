@@ -167,7 +167,7 @@ const TakeAPick = (() => {
 			h`
 				<button
 						onclick="${ () => { cancel(props) } }"
-						class=""
+						class="px-3 py-2 rounded text-white bg-purple-light"
 				>
 					Annuler
 				</button>
