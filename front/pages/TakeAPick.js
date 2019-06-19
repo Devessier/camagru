@@ -3,6 +3,8 @@ const TakeAPick = (() => {
 	const WIDTH = 640
 	const HEIGHT = 480
 
+	const POST_COMMENT_MAX = 120
+
 	const data = {
 		_stream: undefined,
 		filters: [
@@ -48,7 +50,9 @@ const TakeAPick = (() => {
 			url: ''
 		},
 		file: '',
-		message: '',
+		message: {
+			value: ''
+		},
 		toast: {
 			title: '',
 			text: '',
@@ -82,7 +86,7 @@ const TakeAPick = (() => {
 		}
 		props.photo.url = '' 
 		props.file = ''
-		props.message = ''
+		props.message.value = ''
 	}
 
 	function pick (props) {
@@ -159,7 +163,7 @@ const TakeAPick = (() => {
 	function button (h, props) {
 		const takePhotoDisabled = props._stream === undefined || !props.filter.path
 		const uploadFileDisabled = !props.filter.path
-		const sendPostDisabled = props.message === ''
+		const sendPostDisabled = props.message.value === '' || props.message.value.length > POST_COMMENT_MAX
 
 		return !props.photo.url ?
 			h`
@@ -173,7 +177,7 @@ const TakeAPick = (() => {
 				<button
 						disabled="${ uploadFileDisabled }"
 						onclick="${ triggerUploadInput }"
-						class="${ 'p-5 mr-1 rounded-full text-white shadow transition ' + (uploadFileDisabled ? 'bg-grey cursor-not-allowed' : 'bg-purple-light cursor-pointer') }"
+						class="${ 'p-5 mr-1 rounded-full border shadow transition ' + (uploadFileDisabled ? 'text-grey border-grey cursor-not-allowed' : 'text-purple-light border-purple-light cursor-pointer') }"
 				>
 					<svg class="w-8 h-8 xl:w-10 xl:h-10" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-upload"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
 				</button>
@@ -188,7 +192,7 @@ const TakeAPick = (() => {
 			h`
 				<button
 						onclick="${ () => { cancel(props) } }"
-						class="px-3 py-2 mr-1 rounded text-white bg-purple-light"
+						class="px-3 py-2 mr-1 rounded text-purple-light border border-purple-light"
 				>
 					Annuler
 				</button>
@@ -272,7 +276,7 @@ const TakeAPick = (() => {
 	}
 
 	function aside (step, h, props) {
-		const disabled = props.message === ''
+		const disabled = props.message.value === '' || props.message.value.length > POST_COMMENT_MAX
 
 		if (step === 1) {
 			return h`
@@ -284,19 +288,13 @@ const TakeAPick = (() => {
 			`
 		} else if (step === 2) {
 			return h`
-				<div class="mt-2">
-					<input
-							id="message"
-
-							placeholder="Écrire un commentaire…"
-
-							value="${ props.message }"
-							oninput="${ e => { props.message = e.target.value } }"
-							onkeydown="${ e => { (e.keyCode === 13 && !disabled) && send(props) } }"
-
-							class="py-2 w-full border-b"
-					/>
-				</div>
+				<div class="mt-2">${
+					InputCounter(props.message, {
+						placeholder: 'Écrire un commentaire…',
+						maximum: POST_COMMENT_MAX,
+						onkeydown: e => { (e.keyCode === 13 && !disabled) && send(props) }
+					})
+				}</div>
 			`
 		}
 	}
