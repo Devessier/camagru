@@ -48,6 +48,7 @@ const TakeAPick = (() => {
 			url: ''
 		},
 		file: '',
+		message: '',
 		toast: {
 			title: '',
 			text: '',
@@ -81,6 +82,7 @@ const TakeAPick = (() => {
 		}
 		props.photo.url = '' 
 		props.file = ''
+		props.message = ''
 	}
 
 	function pick (props) {
@@ -129,6 +131,10 @@ const TakeAPick = (() => {
 	}
 
 	function send (props) {
+		if (!(props.filter.block && (props.file || props.photo.url) && props.message !== '')) {
+			console.log('this is a fail !')
+			return
+		}
 		if (props.file) {
 			console.log('we will send a file')
 		} else {
@@ -151,7 +157,9 @@ const TakeAPick = (() => {
 	}
 
 	function button (h, props) {
-		const disabled = props._stream === undefined
+		const takePhotoDisabled = props._stream === undefined || !props.filter.path
+		const uploadFileDisabled = !props.filter.path
+		const sendPostDisabled = props.message === ''
 
 		return !props.photo.url ?
 			h`
@@ -163,15 +171,16 @@ const TakeAPick = (() => {
 						onchange="${ (e) => { upload(e, props) } }"
 				/>
 				<button
+						disabled="${ uploadFileDisabled }"
 						onclick="${ triggerUploadInput }"
-						class="${ 'p-5 mr-1 rounded-full text-white shadow ' + (props.filter.path ? 'bg-purple-light' : 'bg-grey') }"
+						class="${ 'p-5 mr-1 rounded-full text-white shadow transition ' + (uploadFileDisabled ? 'bg-grey cursor-not-allowed' : 'bg-purple-light cursor-pointer') }"
 				>
 					<svg class="w-8 h-8 xl:w-10 xl:h-10" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-upload"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
 				</button>
 				<button
-						disabled="${ disabled }"
+						disabled="${ takePhotoDisabled }"
 						onclick="${ () => { take(props) } }"
-						class="${ 'p-5 ml-1 rounded-full text-white shadow ' + (props.filter.path ? 'bg-purple-light' : 'bg-grey') + ' ' +  (disabled ? 'cursor-not-allowed' : 'cursor-pointer') }"
+						class="${ 'p-5 ml-1 rounded-full text-white shadow transition ' + (takePhotoDisabled ? 'bg-grey cursor-not-allowed' : 'bg-purple-light cursor-pointer') }"
 				>
 					<svg class="w-8 h-8 xl:w-10 xl:h-10" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-camera"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
 				</button>
@@ -184,8 +193,9 @@ const TakeAPick = (() => {
 					Annuler
 				</button>
 				<button
+						disabled="${ sendPostDisabled }"
 						onclick="${ () => { send(props) } }"
-						class="px-3 py-2 ml-1 rounded text-white bg-purple-light"
+						class="${ 'px-3 py-2 ml-1 rounded text-white transition ' + (sendPostDisabled ? 'bg-grey' : 'bg-purple-light') }"
 				>
 					Envoyer
 				</button>
@@ -261,6 +271,36 @@ const TakeAPick = (() => {
 		window.removeEventListener('mousemove', resizeMove)
 	}
 
+	function aside (step, h, props) {
+		const disabled = props.message === ''
+
+		if (step === 1) {
+			return h`
+				<div class="overflow-auto overflow-y-hidden w-full h-full relative" style="height: 140px">
+					<aside class="flex justify-start items-center absolute">${
+						props.filters.map((filter, index) => stackableImage(Maverick.link(filter), filter, index))
+					}</aside>
+				</div>
+			`
+		} else if (step === 2) {
+			return h`
+				<div class="mt-2">
+					<input
+							id="message"
+
+							placeholder="Écrire un commentaire…"
+
+							value="${ props.message }"
+							oninput="${ e => { props.message = e.target.value } }"
+							onkeydown="${ e => { (e.keyCode === 13 && !disabled) && send(props) } }"
+
+							class="py-2 w-full border-b"
+					/>
+				</div>
+			`
+		}
+	}
+
 	function render (h, props) {
 		const style = (props.filter && props.filter.position && ('transform: translate3d(' + props.filter.position.x + 'px,' + props.filter.position.y + 'px, 0px)')) || false
 
@@ -270,7 +310,7 @@ const TakeAPick = (() => {
 					<h2 class="text-3xl">Prise de photographie</h2>
 				</header>
 
-				<section class="flex flex-col items-center" style="width: 640px">
+				<section class="flex flex-wrap align-center" style="width: 640px">
 					<article
 							id="eh"
 
@@ -307,13 +347,13 @@ const TakeAPick = (() => {
 						</div>
 					</article>
 
-					<div class="${ props.filter.block ? 'hidden' : 'overflow-auto overflow-y-hidden w-full relative' }" style="height: 140px;">
-						<aside class="flex justify-start items-center absolute">${
-							props.filters.map((filter, index) => stackableImage(Maverick.link(filter), filter, index))
-						}</aside>
-					</div>
+					<aside class="w-full">${
+						aside(props.filter.block ? 2 : 1, Maverick.link(aside), props)
+					}</aside>
 
-					<footer class="mt-5">${ button(Maverick.link(), props) }</footer>
+					<footer class="flex justify-center w-full mt-5">${
+						button(Maverick.link(button), props)
+					}</footer>
 
 					<canvas width="640" height="480" id="canvas" class="hidden"></canvas>
 				</section>
