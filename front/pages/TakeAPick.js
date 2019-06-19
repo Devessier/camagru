@@ -4,6 +4,7 @@ const TakeAPick = (() => {
 	const HEIGHT = 480
 
 	const data = {
+		_stream: undefined,
 		filters: [
 			{
 				name: 'Vue.js',
@@ -79,6 +80,7 @@ const TakeAPick = (() => {
 			block: false
 		}
 		props.photo.url = '' 
+		props.file = ''
 	}
 
 	function pick (props) {
@@ -123,9 +125,16 @@ const TakeAPick = (() => {
 			} else {
 				$toast(props, 'Fichier incorrect', 'Le fichier sélectionné ne peut être utilisé')
 			}
-
-			console.log('upload', props, file)
 		}
+	}
+
+	function send (props) {
+		if (props.file) {
+			console.log('we will send a file')
+		} else {
+			console.log('we will send a photo')
+		}
+		cancel(props)
 	}
 
 	function stackableImage (h, props, index) {
@@ -142,6 +151,8 @@ const TakeAPick = (() => {
 	}
 
 	function button (h, props) {
+		const disabled = props._stream === undefined
+
 		return !props.photo.url ?
 			h`
 				<input
@@ -158,8 +169,9 @@ const TakeAPick = (() => {
 					<svg class="w-8 h-8 xl:w-10 xl:h-10" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-upload"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
 				</button>
 				<button
+						disabled="${ disabled }"
 						onclick="${ () => { take(props) } }"
-						class="${ 'p-5 ml-1 rounded-full text-white shadow ' + (props.filter.path ? 'bg-purple-light' : 'bg-grey') }"
+						class="${ 'p-5 ml-1 rounded-full text-white shadow ' + (props.filter.path ? 'bg-purple-light' : 'bg-grey') + ' ' +  (disabled ? 'cursor-not-allowed' : 'cursor-pointer') }"
 				>
 					<svg class="w-8 h-8 xl:w-10 xl:h-10" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-camera"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
 				</button>
@@ -167,9 +179,15 @@ const TakeAPick = (() => {
 			h`
 				<button
 						onclick="${ () => { cancel(props) } }"
-						class="px-3 py-2 rounded text-white bg-purple-light"
+						class="px-3 py-2 mr-1 rounded text-white bg-purple-light"
 				>
 					Annuler
+				</button>
+				<button
+						onclick="${ () => { send(props) } }"
+						class="px-3 py-2 ml-1 rounded text-white bg-purple-light"
+				>
+					Envoyer
 				</button>
 			`
 	}
@@ -230,8 +248,6 @@ const TakeAPick = (() => {
 		const width = e.clientX - rect.left | 0
 		const height = e.clientY - rect.top | 0
 
-		console.log(width, height)
-
 		const size = width > height ? width : height
 
 		if (data.filter.position.x + size <= rect.width
@@ -246,7 +262,6 @@ const TakeAPick = (() => {
 	}
 
 	function render (h, props) {
-		console.log(props.filter, props.filter.block || !Number.isInteger(props.filter.height))
 		const style = (props.filter && props.filter.position && ('transform: translate3d(' + props.filter.position.x + 'px,' + props.filter.position.y + 'px, 0px)')) || false
 
 		return h`
