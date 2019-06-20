@@ -44,7 +44,7 @@ class Response {
 
     public function send () {
         if (!$this->sent) {
-            echo $this->content;
+            echo $this->content . PHP_EOL;
             $this->sent = true;
         }
     }

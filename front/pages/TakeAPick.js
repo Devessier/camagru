@@ -7,32 +7,8 @@ const TakeAPick = (() => {
 
 	const data = {
 		_stream: undefined,
-		filters: [
-			{
-				name: 'Vue.js',
-				path: 'https://vuejs.org/images/logo.png',
-				width: 200,
-				height: 200
-			},
-			{
-				name: 'PHP is perfect',
-				path: 'https://whydoesitsuck.com/why-does-php-suck/thumbnail.png',
-				width: 300,
-				height: 300
-			},
-			{
-				name: 'PHP is perfect',
-				path: 'https://whydoesitsuck.com/why-does-php-suck/thumbnail.png',
-				width: 300,
-				height: 300
-			},
-			{
-				name: 'PHP is perfect',
-				path: 'https://whydoesitsuck.com/why-does-php-suck/thumbnail.png',
-				width: 300,
-				height: 300
-			}
-		],
+		loadingFilters: true,
+		filters: [],
 		filter: {
 			path: '',
 			name: '',
@@ -135,18 +111,57 @@ const TakeAPick = (() => {
 	}
 
 	function send (props) {
-		if (!(props.filter.block && (props.file || props.photo.url) && props.message !== '')) {
+		if (!(props.filter.block && (props.file || props.photo.url) && props.message.value !== '')) {
 			console.log('this is a fail !')
 			return
 		}
+
+		const form = new FormData
+
 		if (props.file) {
 			console.log('we will send a file')
 		} else {
+			form.append('photo', props.photo.url)
+			form.append('filter.name', props.filter.name)
+			form.append('filter.width', props.filter.width)
+			form.append('filter.height', props.filter.height)
+			form.append('filter.x', props.filter.position.x)
+			form.append('filter.y', props.filter.position.y)
+			form.append('message', props.message.value)
+
+			fetch('http://localhost:8001/post/add/photo', {
+				method: 'POST',
+				body: form,
+				credentials: 'include'
+			})
+				.then(res => res.text())
+				.then(text => console.log(text))
+				.catch(console.error)
 			console.log('we will send a photo')
 		}
 		cancel(props)
 	}
 
+	function filters (props) {
+		const render = Maverick.link(props.filters)
+		const wait = props.loadingFilters || props.filters.length === 0
+
+		if (wait) {
+			return render`
+				<aside class="flex justify-center items-center">
+					<p>${
+						props.loadingFilters ? 'Chargement des filtres ...' : 'Pas de filtres disponibles'
+					}</p>
+				</aside>
+			`
+		}
+		return render`
+			<aside class="flex justify-start items-center absolute">${
+				props.filters.map((filter, index) => stackableImage(Maverick.link(filter), filter, index))
+			}</aside>
+		`
+	}
+	
 	function stackableImage (h, props, index) {
 		return h`
 			<figure style="width: 200px">
@@ -279,12 +294,12 @@ const TakeAPick = (() => {
 		const disabled = props.message.value === '' || props.message.value.length > POST_COMMENT_MAX
 
 		if (step === 1) {
+			const loading = data.loadingFilters
+
 			return h`
-				<div class="overflow-auto overflow-y-hidden w-full h-full relative" style="height: 140px">
-					<aside class="flex justify-start items-center absolute">${
-						props.filters.map((filter, index) => stackableImage(Maverick.link(filter), filter, index))
-					}</aside>
-				</div>
+				<div class="overflow-auto overflow-y-hidden w-full h-full relative" style="height: 140px">${
+					filters(props)
+				}</div>
 			`
 		} else if (step === 2) {
 			return h`
@@ -361,6 +376,36 @@ const TakeAPick = (() => {
 
 	return new Page('Camagru - Prise de Photographie optimisée pour Internet Explorer 6', data, render, {
 		created: function created () {
+			if (data.filters.length === 0) {
+				fetch('http://localhost:8001/filters/all')
+					.then(res => res.json())
+					.then((filters) => {
+						if (!Array.isArray(filters)) {
+							throw new Error('This is not an arrayyyyy')
+						}
+
+						Promise.all(
+							filters.map((filter) => loadImage(filter))
+						)
+							.then((filters) => {
+								data.filters = filters.map((filter) => Object.assign(
+									filter,
+									{
+										width: +filter.width,
+										height: +filter.height
+									}
+								))
+								data.loadingFilters = false
+							})
+							.catch(() => {
+								data.loadingFilters = false
+							})
+					})
+					.catch(() => {
+						data.loadingFilters = false
+					})
+			}
+
 			if (!this.state._stream) {
 				navigator.mediaDevices.getUserMedia({
 					video: true

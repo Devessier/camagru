@@ -19,3 +19,23 @@ function mergeObjects () {
 	}
 	return tmp
 }
+
+function loadImage (obj, srcKey, baseUrl) {
+    if (!srcKey)
+        srcKey = 'path'
+    if (!baseUrl)
+        baseUrl = 'http://localhost:8001'
+
+    return new Promise((resolve, reject) => {
+        const img = new Image
+
+        img.onload = function onload () {
+            console.log(obj)
+            obj[srcKey] = this.src
+            resolve(obj)
+        }
+        img.onerror = reject
+
+        img.src = baseUrl + obj[srcKey]
+    })
+}

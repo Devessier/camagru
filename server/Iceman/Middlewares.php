@@ -4,7 +4,7 @@ namespace Iceman;
 
 class Middlewares {
 
-    private const ACCEPTED_MIDDLEWARES = [ 'json' ];
+    private const ACCEPTED_MIDDLEWARES = [ 'json', 'body' ];
     
     public static function resolve (array $middlewares) {
         $data = [];
@@ -35,6 +35,14 @@ class Middlewares {
                     'body' => $json
                 ];
             }
+        }
+    }
+
+    private static function body () {
+        if (count($_POST) > 0) {
+            return [
+                'body' => (object) $_POST
+            ];
         }
     }
 

@@ -4,11 +4,11 @@
  * @param {string} props.value The **value** property holds the content of the input
  * @param {Object} options
  * @param {number} [options.maximum=120] The max size of the input
- * @param {string} [options.placeholder] The placeholder for the input
+ * @param {string | boolean} [options.placeholder=false] The placeholder for the input
  * @param {Function} [options.onkeydown] Handler to call when keydown event is triggered
  */
 function InputCounter (props, options) {
-    const h = Maverick.link(props)
+    const render = Maverick.link(props)
 
     const maximum = options.maximum || 120
     const placeholder = options.placeholder || false
@@ -16,7 +16,7 @@ function InputCounter (props, options) {
 
     const count = props.value.length
 
-    return h`
+    return render`
         <div>
             <input
                     placeholder="${ placeholder }"
@@ -29,7 +29,7 @@ function InputCounter (props, options) {
             />
             <div class="flex flex-col items-end mt-1 text-xs text-grey-darker font-thin">
                 <div>
-                <span class="${ count > maximum ? 'text-red' : '' }">${ count }</span> / <span>${ maximum }</span>
+                    <span class="${ count > maximum ? 'text-red' : '' }">${ count }</span> / <span>${ maximum }</span>
                 </div>
             </div>
         </div>
