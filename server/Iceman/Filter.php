@@ -8,7 +8,16 @@ class Filter extends Image {
 
     private const FILTER_DIR = __DIR__ . '/../public/filters';
 
+    public $name = '';
+    public $extra = [];
+
     public static $filters = [];
+
+    private function __construct ($content, string $name, array $extra) {
+        parent::__construct($content);
+        $this->name = $name;
+        $this->extra = $extra;
+    }
 
     public static function load () {
         if (count(self::$filters) !== 0) {
@@ -29,6 +38,33 @@ class Filter extends Image {
         } catch (\Exception $e) {
             return false;
         }
+    }
+
+    public static function fromName (string $name, array $extra) {
+        try {
+            DB::connect();
+
+            [ [ 'path' => $path ] ] = DB::select('SELECT path FROM filters WHERE name = ?', [
+                $name
+            ]);
+
+            if (empty($path))
+                return false;
+
+            $img = imagecreatefrompng(self::FILTER_DIR . "/$path");
+
+            //$img = imagescale($img, $extra['width'], -1,);
+
+            return new self($img, $name, $extra);
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
+    public function superposeTo (Image $img, int $x, int $y) {
+        imagecopy($img->content(), $this->content(), $x, $y, 0, 0, $img->width(), $img->height());
+
+        return $img->content();
     }
 
 }

@@ -43,28 +43,3 @@ function rmRf ($dir) {
         @unlink($dir);
     }
 }
-
-function array_any (array $array, $fn) {
-    foreach ($array as $item) {
-        if ($fn($item) === true)
-            return true;
-    }
-    return false;
-}
-
-function array_every (array $array, $fn) {
-    foreach ($array as $item) {
-        if ($fn($item) === false)
-            return false;
-    }
-    return true;
-}
-
-function endsWith($haystack, $needle) {
-    $length = strlen($needle);
-    if ($length == 0) {
-        return true;
-    }
-
-    return (substr($haystack, -$length) === $needle);
-}

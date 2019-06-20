@@ -4,10 +4,25 @@ namespace Iceman;
 
 class Image {
 
-    private $content;
+    protected $content;
+    protected $width;
+    protected $height;
 
-    private function __construct ($content) {
+    protected function __construct ($content) {
         $this->content = $content;
+        [ $this->width, $this->height ] = [ imagesx($content), imagesy($content) ];
+    }
+
+    public function content () {
+        return $this->content;
+    }
+
+    public function width () {
+        return $this->width;
+    }
+
+    public function height () {
+        return $this->height;
     }
 
     public static function fromBase64 ($base64) {
@@ -19,7 +34,7 @@ class Image {
             return false;
         }
 
-        if (!($img = imagecreatefromstring($decoded))) {
+        if (!($img = @imagecreatefromstring($decoded))) {
             return false;
         }
 
