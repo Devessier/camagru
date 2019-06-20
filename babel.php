@@ -71,7 +71,7 @@ function head_transpilation_result () {
         $string .= "[ $index, [";
         $i = 0;
         foreach ($chunks as $chunk) {
-            $string .= "'" . trim(preg_replace('/\s{2,}/', ' ', $chunk)) . "'";
+            $string .= "'" . preg_replace('/\s{2,}/', ' ', trim($chunk)) . "'";
             if ($i++ !== count($chunks) - 1) {
                 $string .= ', ';
             }
