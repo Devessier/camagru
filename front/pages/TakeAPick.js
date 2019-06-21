@@ -136,7 +136,7 @@ const TakeAPick = (() => {
 			})
 				.then(res => res.text())
 				.then(text => console.log(text))
-				.catch(console.error)
+				.catch(() => {})
 			console.log('we will send a photo')
 		}
 		cancel(props)
@@ -161,9 +161,9 @@ const TakeAPick = (() => {
 			}</aside>
 		`
 	}
-	
-	function stackableImage (h, props, index) {
-		return h`
+
+	function stackableImage (render, props, index) {
+		return render`
 			<figure style="width: 200px">
 				<img
 						src="${ props.path }"
