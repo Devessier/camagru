@@ -53,18 +53,14 @@ class Filter extends Image {
 
             $img = imagecreatefrompng(self::FILTER_DIR . "/$path");
 
-            //$img = imagescale($img, $extra['width'], -1,);
-
             return new self($img, $name, $extra);
         } catch (\Exception $e) {
             return false;
         }
     }
 
-    public function superposeTo (Image $img, int $x, int $y) {
-        imagecopy($img->content(), $this->content(), $x, $y, 0, 0, $img->width(), $img->height());
-
-        return $img->content();
+    public function superposeTo (Image $img, int $x, int $y, int $width, int $height) {
+        return imagecopyresampled($img->content(), $this->content, $x, $y, 0, 0, $width, $height, imagesx($this->content()), imagesy($this->content()));
     }
 
 }

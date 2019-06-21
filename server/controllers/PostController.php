@@ -54,14 +54,21 @@ class PostController {
                 return Response::badRequest();
             }
 
-            $resource = $filter->superposeTo($image, $filter_arr['x'], $filter_arr['y']);
+            if (!$filter->superposeTo($image, $filter_arr['x'], $filter_arr['y'], $filter_arr['width'], $filter_arr['height'])) {
+                return Response::internalError();
+            }
+
+            if (!($path = $image->saveTo('/images', 'png'))) {
+                return Response::internalError();
+            }
 
             imagedestroy($filter->content());
+            imagedestroy($image->content());
 
-            header('Content-Type: image/jpeg');
-            imagejpeg($resource);
-
-            imagedestroy($resource);
+            return Response::make()
+                    ->json([
+                        'path' => $path
+                    ]);
         } catch (\Exception $e) {
             return Response::internalError();
         }
