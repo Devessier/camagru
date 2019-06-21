@@ -58,7 +58,7 @@ class PostController {
                 return Response::internalError();
             }
 
-            if (!($path = $image->saveTo('/images', 'png'))) {
+            if (!($path = $image->saveTo('images', 'png'))) {
                 return Response::internalError();
             }
 

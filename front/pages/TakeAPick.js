@@ -29,6 +29,7 @@ const TakeAPick = (() => {
 		message: {
 			value: ''
 		},
+		takenPhotos: [],
 		toast: {
 			title: '',
 			text: '',
@@ -134,9 +135,17 @@ const TakeAPick = (() => {
 				body: form,
 				credentials: 'include'
 			})
-				.then(res => res.text())
-				.then(text => console.log(text))
+				.then(res => res.json())
+				.then(image => {
+					props.takenPhotos.push(
+						Object.assign(
+							image,
+							{ loaded: false, isLoading: false, src: '' }
+						)
+					)
+				})
 				.catch(() => {})
+
 			console.log('we will send a photo')
 		}
 		cancel(props)
@@ -175,13 +184,13 @@ const TakeAPick = (() => {
 		`
 	}
 
-	function button (h, props) {
+	function button (render, props) {
 		const takePhotoDisabled = props._stream === undefined || !props.filter.path
 		const uploadFileDisabled = !props.filter.path
 		const sendPostDisabled = props.message.value === '' || props.message.value.length > POST_COMMENT_MAX
 
-		return !props.photo.url ?
-			h`
+		if (!props.photo.url) {
+			return render`
 				<input
 						id="upload"
 						type="file"
@@ -203,22 +212,23 @@ const TakeAPick = (() => {
 				>
 					<svg class="w-8 h-8 xl:w-10 xl:h-10" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-camera"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
 				</button>
-			` :
-			h`
-				<button
-						onclick="${ () => { cancel(props) } }"
-						class="px-3 py-2 mr-1 rounded text-purple-light border border-purple-light"
-				>
-					Annuler
-				</button>
-				<button
-						disabled="${ sendPostDisabled }"
-						onclick="${ () => { send(props) } }"
-						class="${ 'px-3 py-2 ml-1 rounded text-white transition ' + (sendPostDisabled ? 'bg-grey' : 'bg-purple-light') }"
-				>
-					Envoyer
-				</button>
 			`
+		}
+		return render`
+			<button
+					onclick="${ () => { cancel(props) } }"
+					class="px-3 py-2 mr-1 rounded text-purple-light border border-purple-light"
+			>
+				Annuler
+			</button>
+			<button
+					disabled="${ sendPostDisabled }"
+					onclick="${ () => { send(props) } }"
+					class="${ 'px-3 py-2 ml-1 rounded text-white transition ' + (sendPostDisabled ? 'bg-grey' : 'bg-purple-light') }"
+			>
+				Envoyer
+			</button>
+		`
 	}
 
 	let rect
@@ -290,19 +300,17 @@ const TakeAPick = (() => {
 		window.removeEventListener('mousemove', resizeMove)
 	}
 
-	function aside (step, h, props) {
+	function aside (step, render, props) {
 		const disabled = props.message.value === '' || props.message.value.length > POST_COMMENT_MAX
 
 		if (step === 1) {
-			const loading = data.loadingFilters
-
-			return h`
+			return render`
 				<div class="overflow-auto overflow-y-hidden w-full h-full relative" style="height: 140px">${
 					filters(props)
 				}</div>
 			`
 		} else if (step === 2) {
-			return h`
+			return render`
 				<div class="mt-2">${
 					InputCounter(props.message, {
 						placeholder: 'Écrire un commentaire…',
@@ -314,10 +322,28 @@ const TakeAPick = (() => {
 		}
 	}
 
-	function render (h, props) {
+	function TakenPhotos (props) {
+		const photos = props.takenPhotos
+		const render = Maverick.link(photos)
+
+		if (photos.length === 0) {
+			return render`
+				<p>
+					Aucune photo n'a encore été prise
+				</p>
+			`
+		}
+		return render`
+			<div class="flex items-stretch justify-start overflow-x w-full">${
+				photos.map(photo => Img(photo))
+			}</div>
+		`
+	}
+
+	function render (render, props) {
 		const style = (props.filter && props.filter.position && ('transform: translate3d(' + props.filter.position.x + 'px,' + props.filter.position.y + 'px, 0px)')) || false
 
-		return h`
+		return render`
 			<section class="flex flex-col items-center">
 				<header class="flex justify-center items-center my-6">
 					<h2 class="text-3xl">Prise de photographie</h2>
@@ -366,6 +392,11 @@ const TakeAPick = (() => {
 
 					<footer class="flex justify-center w-full mt-5">${
 						button(Maverick.link(button), props)
+					}</footer>
+
+
+					<footer class="flex justify-center items-center w-full mt-4 py-3">${
+						TakenPhotos(props)
 					}</footer>
 
 					<canvas width="640" height="480" id="canvas" class="hidden"></canvas>

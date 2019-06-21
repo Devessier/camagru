@@ -25,4 +25,4 @@ Route::post('/^\/post\/add\/photo\/?$/', 'PostController@photo', Middlewares::bi
 
 Route::get('/^\/user\/([^\/]+)\/?$/', 'UserController@user');
 
-Route::get('/^\/public\/(image|filters)\/([^\.\/]+)\/?$/', 'PublicController@fetch');
+Route::get('/^\/public\/(images|filters)\/([^\.\/]+\.[^\.]+)\/?$/', 'PublicController@fetch');

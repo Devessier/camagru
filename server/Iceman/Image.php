@@ -40,11 +40,11 @@ class Image {
         }
     }
 
-    public function saveTo ($dir = '/images', $extension = 'txt') {
-        $id = uniqid('', true);
+    public function saveTo ($dir = 'images', $extension = 'txt') {
+        $id = uuid();
         $path = $dir . '/' . $id . '.' . $extension;
-        $externalPath = 'server/public/' . $path;
-        $serverPath = __DIR__ . '/../public' . $path;
+        $externalPath = 'public/' . $path;
+        $serverPath = __DIR__ . '/../public/' . $path;
 
         if (file_exists($serverPath)) {
             return $this->saveTo($dir, $extension);
