@@ -17,9 +17,9 @@ const Home = (() => {
 		return timestamp => timestamp ? f.format(new Date(timestamp)) : ''
 	})()
 
-	function fetchPosts () {
-		const start = data.paginationIndex
-		const end = start + DELTA
+	function loadMorePosts (_start, _end) {
+		const start = _start || data.paginationIndex
+		const end = _end || start + DELTA
 
 		return fetch('http://localhost:8001/posts/' + start + '/' + end, { credentials: 'include' })
 			.then(res => res.json())
@@ -40,8 +40,8 @@ const Home = (() => {
 			.catch(() => {})
 	}
 
-	function comment (h, props) {
-		return h`
+	function comment (render, props) {
+		return render`
 			<article class="flex space-around mx-1 mb-4">
 				<div class="flex flex-grow flex-wrap">
 					<img src="${ props.user.avatar }" width="20px" height="20px" class="rounded-full hover:shadow-md transition mr-1" />
@@ -55,27 +55,27 @@ const Home = (() => {
 		`
 	}
 
-	function loadCommentsButton (h, props) {
+	function loadCommentsButton (render, props) {
 		const hasComments = Array.isArray(props.comments) && props.comments.length > 0
 
 		return hasComments && !props.loadComments ?
-			h`
+			render`
 				<button
 						class="${ 'text-purple-light py-2 px-2 border-purple-light rounded mb-4' + (hasComments ? ' border' : '') }"
 						onclick="${ () => { props.loadComments = true } }"
 				>${
 					hasComments ? 'Voir les commentaires' : 'Aucun commentaire'
 				}</button>
-			` : h``
+			` : render``
 	}
 
-	function post (h, props, index) {
+	function post (render, props, index) {
         const userLink = '/user/' + props.user.id
 		const date = format(props.createdAt)
 		const id = 'input-home-' + index
 		const disabled = !isAuthenticated()
 
-		return h`
+		return render`
 			<article class="flex flex-col bg-grey-lighter" style="max-width: 640px">
 				<header class="flex justify-between items-center py-2 px-1">
 					<div class="flex items-center">
@@ -156,9 +156,9 @@ const Home = (() => {
 		`
 	}
 
-	function render (h, props) {
+	function render (render, props) {
 		if (isAuthenticated()) {
-			return h`
+			return render`
 				<div class="flex justify-center items-center md:mx-10">
 					<section class="container flex flex-col items-center">${
 						props.posts.map((p, i) => post(Maverick.link(p), p, i))
@@ -175,7 +175,7 @@ const Home = (() => {
 				</a>
 			`
 		}
-		return h`
+		return render`
 			<div class="flex justify-center items-center md:mx-10">
 				<section class="container flex flex-col items-center">${
 					props.posts.map((p, i) => post(Maverick.link(p), p, i))
@@ -184,13 +184,42 @@ const Home = (() => {
 		`
 	}
 
+	let htmlTag = null
+	let fetching = false
+
+	/**
+	 * 
+	 * @param {Event} e 
+	 */
+	function infiniteScroll (e) {
+		if (!htmlTag) {
+			htmlTag = document.querySelector('html')
+		}
+
+		const DELTA = 25 | 0
+
+		if (!fetching && e.pageY >= document.body.clientHeight - htmlTag.clientHeight - DELTA) {
+			// load
+			console.log('load')
+			fetching = true
+			loadMorePosts()
+				.then(() => {
+					setTimeout(() => {
+						fetching = false
+					}, 100)
+				})
+		}
+	}
+
 	return new Page('Camagru - Accueil', data, render, {
 		created: function created () {
-			console.log('created hook called')
-			if (data.paginationIndex !== 0)
-				return
-
-			fetchPosts()
+			loadMorePosts()
+				.then(() => {
+					window.addEventListener('scroll', infiniteScroll, { passive: true })
+				})
+		},
+		bye: function bye () {
+			window.removeEventListener('scroll', infiniteScroll)
 		}
 	})
 
