@@ -20,6 +20,9 @@ Route::get('/^\/me\/?$/', 'UserController@me', Middlewares::bind('authorized'));
 Route::put('/^\/me\/modify\/?$/', 'UserController@modify', Middlewares::bind('authorized'), Middlewares::bind('json'));
 
 Route::get('/^\/posts\/(\d+)\/(\d+)\/?$/', 'PostController@posts');
+Route::put('/^\/post\/(\d+)\/(like|unlike)\/?$/', 'PostController@like', Middlewares::bind('authorized'));
+
+Route::post('/^\/add\/comment\/(\d+)\/?$/', 'PostController@comment', Middlewares::bind('authorized'), Middlewares::bind('json'));
 
 Route::post('/^\/post\/add\/file\/?$/', 'PostController@file', Middlewares::bind('authorized'), Middlewares::bind('body'));
 Route::post('/^\/post\/add\/photo\/?$/', 'PostController@photo', Middlewares::bind('authorized'), Middlewares::bind('body'));

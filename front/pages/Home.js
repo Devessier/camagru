@@ -27,7 +27,6 @@ const Home = (() => {
 				post,
 				{
 					url: 'http://localhost:8001/' + post.url,
-					liked: false,
 					loadComments: false,
 					newComment: '',
 					focusComment: false
@@ -40,6 +39,51 @@ const Home = (() => {
 			.catch(() => {})
 	}
 
+	function likePost (props) {
+		props.liked ^= 1
+
+		fetch('http://localhost:8001/post/' + props.id + '/' + (!props.liked ? 'unlike' : 'like'), {
+			credentials: 'include',
+			method: 'PUT'
+		})
+			.catch(() => {})
+	}
+
+	/**
+	 * This function saves a written comment through a HTTP call made with Fetch API
+	 * @param {Object} props 
+	 */
+	function saveComment (props) {
+		fetch('http://localhost:8001/add/comment/' + props.id, {
+			credentials: 'include',
+			method: 'POST',
+			body: JSON.stringify({
+				comment: props.newComment
+			}),
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		})
+			.catch(() => {})
+		
+		const comment = {
+			user: {
+				id: 0,
+				name: 'Baptiste',
+				avatar: 'https://api.adorable.io/avatars/40/adwabott@adorable.io.png'
+			},
+			text: props.newComment,
+			createdAt: +new Date
+		}
+
+		if (!Array.isArray(props.comments))
+			props.comments = [ comment ]
+		else
+			props.comments.push(comment)
+		props.loadComments = true
+		props.newComment = ''
+	}
+
 	function comment (render, props) {
 		return render`
 			<article class="flex space-around mx-1 mb-4">
@@ -48,9 +92,7 @@ const Home = (() => {
 					<p class="font-medium mr-1">${ props.user.name }</p>
 					<p class="font-light">${ props.text }</p>
 				</div>
-				<div>
-					<p>${ format(props.createdAt) }</p>
-				</div>
+				<p class="text-sm font-thin">${ format(props.createdAt) }</p>
 			</article>
 		`
 	}
@@ -93,7 +135,7 @@ const Home = (() => {
 							props.user.name
 						}</a>
 					</div>
-					<p>${ date }</p>
+					<p class="text-sm font-thin">${ date }</p>
 				</header>
 
 				<section>
@@ -112,7 +154,7 @@ const Home = (() => {
 					<div class="flex items-center mb-2">
 						<button
 								class="mr-1"
-								onclick="${ () => { props.liked ^= 1 } }"
+								onclick="${ () => { likePost(props) } }"
 						>
 							<svg class="${ (props.liked ? 'fill-current' : 'stroke-current') + ' text-pink transition' }" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-heart"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
 						</button>

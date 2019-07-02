@@ -88,15 +88,54 @@ class PostController {
         try {
             DB::connect();
 
-            $posts = DB::select('SELECT posts.id, posts.text AS comment, posts.created_at AS createdAt, images.path AS url, users.id AS author_id, users.username AS author_username FROM posts INNER JOIN images ON posts.img_id = images.id INNER JOIN users ON users.id = posts.user_id ORDER BY posts.created_at DESC LIMIT ? OFFSET ?', [
+            $query = <<<EOT
+    SELECT
+        posts.id,
+        posts.text AS comment,
+        posts.created_at AS createdAt,
+        images.path AS url,
+        users.id AS author_id,
+        users.username AS author_username,
+        likes.liked
+    FROM
+        posts
+    INNER JOIN
+        images
+    ON
+        posts.img_id = images.id
+    INNER JOIN
+        users
+    ON
+        users.id = posts.user_id
+    LEFT JOIN
+        likes
+    ON
+        likes.user_id = users.id AND likes.post_id = posts.id
+    ORDER BY
+        posts.created_at DESC
+    LIMIT ?
+    OFFSET ?
+EOT;
+
+            $posts = DB::select($query, [
                 $end - $start,
                 $start
             ]);
 
             foreach ($posts as &$post) {
-                $comments = DB::select('SELECT * FROM comments WHERE post_id = :id ORDER BY created_at DESC', [
+                $comments = DB::select('SELECT comments.comment_id AS id, comments.created_at AS createdAt, comments.text AS text, users.username, user_id FROM comments INNER JOIN users ON users.id = comments.user_id WHERE post_id = :id ORDER BY comments.created_at DESC', [
                     'id' => $post['id']
                 ]);
+
+                foreach ($comments as &$comment) {
+                    $comment['user'] = [
+                        'id' => $comment['user_id'],
+                        'name' => $comment['username'],
+                        'avatar' => 'https://api.adorable.io/avatars/40/adwabott@adorable.io.png'
+                    ];
+
+                    unset($comment['username'], $comment['user_id']);
+                }
 
                 $post['user'] = [
                     'id' => (int)$post['author_id'],
@@ -106,6 +145,8 @@ class PostController {
 
                 $post['id'] = (int)$post['id'];
 
+                $post['liked'] = $post['liked'] == 1 ? true : false;
+
                 unset($post['author_id'], $post['author_username']);
 
                 $post['comments'] = $comments ?? [];
@@ -113,6 +154,67 @@ class PostController {
 
             return Response::make()
                     ->json($posts);
+        } catch (\Exception $e) {
+            return Response::internalError();
+        }
+    }
+
+    public static function like (Request $request, $postId, $state) {
+        try {
+            if (empty($postId) || empty($state))
+                return Response::badRequest();
+            if (!($userId = $request->session('id')))
+                return Response::unauthorized();
+
+            $liked = $state === 'like';
+
+            $query = <<<EOT
+    INSERT INTO likes
+        (user_id, post_id, liked)
+    VALUES
+        (:user_id, :post_id, :liked)
+    ON DUPLICATE KEY
+        UPDATE liked = :liked
+EOT;
+
+            DB::connect();
+
+            DB::insert($query, [
+                'user_id' => $userId,
+                'post_id' => $postId,
+                'liked' => $liked
+            ]);
+
+            return Response::make()
+                    ->json(true);
+        } catch (\Exception $e) {
+            return Response::internalError();
+        }
+        
+    }
+
+    public static function comment (Request $request, $postId) {
+        try {
+            if (empty($postId))
+                return Response::internalError();
+            if (!($userId = $request->session('id')))
+                return Response::unauthorized();
+
+            $body = $request->body();
+
+            if (!($comment = $body->comment))
+                return Response::badRequest();
+
+            DB::connect();
+
+            DB::insert('INSERT INTO comments(text, user_id, post_id) VALUES(:text, :user_id, :post_id)', [
+                'text' => $comment,
+                'user_id' => $userId,
+                'post_id' => $postId
+            ]);
+
+            return Response::make()
+                    ->json(true);
         } catch (\Exception $e) {
             return Response::internalError();
         }
