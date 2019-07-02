@@ -63,3 +63,17 @@ CREATE TABLE comments (
 		FOREIGN KEY (post_id)
 		REFERENCES posts(id)
 );
+
+CREATE TABLE likes (
+	user_id			INTEGER						NOT NULL,
+	post_id			INTEGER						NOT NULL,
+	liked			BOOLEAN						NOT NULL DEFAULT false,
+
+	PRIMARY KEY (user_id, post_id),
+	CONSTRAINT fk_likes_user_id
+		FOREIGN KEY (user_id)
+		REFERENCES users(id),
+	CONSTRAINT fk_likes_post_id
+		FOREIGN KEY (post_id)
+		REFERENCES posts(id)
+);
