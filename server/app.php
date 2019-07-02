@@ -17,8 +17,9 @@ Route::post('/^\/sign-in\/?$/', 'AuthController@login', Middlewares::bind('json'
 Route::get('/^\/logout\/?$/', 'AuthController@logout');
 
 Route::get('/^\/me\/?$/', 'UserController@me', Middlewares::bind('authorized'));
-Route::get('/^\/me\/posts\/?([0-9]*)\/?$/', 'UserController@posts', Middlewares::bind('authorized'));
 Route::put('/^\/me\/modify\/?$/', 'UserController@modify', Middlewares::bind('authorized'), Middlewares::bind('json'));
+
+Route::get('/^\/posts\/(\d+)\/(\d+)\/?$/', 'PostController@posts');
 
 Route::post('/^\/post\/add\/file\/?$/', 'PostController@file', Middlewares::bind('authorized'), Middlewares::bind('body'));
 Route::post('/^\/post\/add\/photo\/?$/', 'PostController@photo', Middlewares::bind('authorized'), Middlewares::bind('body'));

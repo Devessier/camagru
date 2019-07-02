@@ -1,97 +1,10 @@
 const Home = (() => {
 
+	const DELTA = 5
+
 	const data = {
-		posts: [
-			{
-				id: 0,
-				url: 'https://cdn.pixabay.com/photo/2017/10/22/13/17/malham-2877845_640.jpg',
-				text: 'Hi !',
-				user: {
-					id: 0,
-					name: 'Baptiste',
-					avatar: 'https://api.adorable.io/avatars/40/adwabott@adorable.io.png'
-				},
-				comment: 'Quel paysage magnifique ! Le Yorkshire a tout pour vous faire rêver',
-				comments: [],
-				liked: true,
-				loadComments: false,
-				createdAt: +new Date,
-				newComment: '',
-				focusComment: false,
-			},
-			{
-				id: 1,
-				url: 'https://cdn.pixabay.com/photo/2018/04/03/07/49/house-3286172_640.jpg',
-				text: 'Hi !',
-				user: {
-					id: 0,
-					name: 'Baptiste',
-					avatar: 'https://api.adorable.io/avatars/40/adwabott@adorable.io.png'
-				},
-				comment: "Dans un village pittoresque, il n'est pas rare de tomber sur des gens formidables. Ici, la maison de Monique, la dernière évangéliste Java de France, rencontrée au marché de Quimper-les-Menhirs",
-				comments: [
-					{
-						user: {
-							id: 0,
-							name: 'Baptiste',
-							avatar: 'https://api.adorable.io/avatars/40/adwabott@adorable.io.png'
-						},
-						text: "T'es trop beau gosse ! Profite bien gros !",
-						createdAt: (+new Date) - 100000000
-					},
-					{
-						user: {
-							id: 0,
-							name: 'Baptiste',
-							avatar: 'https://api.adorable.io/avatars/40/adwabott@adorable.io.png'
-						},
-						text: 'Sacrée photo !',
-						createdAt: (+new Date) - 1000000000
-					},
-					{
-						user: {
-							id: 0,
-							name: 'Baptiste',
-							avatar: 'https://api.adorable.io/avatars/40/adwabott@adorable.io.png'
-						},
-						text: 'Impressionnant !',
-						createdAt: (+new Date) - 1000000000
-					}
-				],
-				liked: false,
-				loadComments: false,
-				createdAt: +new Date,
-				newComment: '',
-				focusComment: false,
-			},
-			{
-				id: 2,
-				url: 'https://cdn.pixabay.com/photo/2017/10/22/13/17/malham-2877845_640.jpg',
-				text: 'Hi !',
-				user: {
-					id: 0,
-					name: 'Baptiste',
-					avatar: 'https://api.adorable.io/avatars/40/adwabott@adorable.io.png'
-				},
-				comment: 'Quel paysage magnifique ! Le Yorkshire a tout pour vous faire rêver',
-				/*comments: [
-					{
-						user: {
-							id: 0,
-							name: 'Baptiste',
-							avatar: 'https://api.adorable.io/avatars/40/adwabott@adorable.io.png'
-						},
-						text: 'Sacrée photo !',
-						createdAt: (+new Date) + 1000
-					}
-				],*/
-				liked: true,
-				loadComments: false,
-				createdAt: +new Date,
-				newComment: '',
-				focusComment: false,
-			},
-		],
+		paginationIndex: 0,
+		posts: [],
 		loading: false,
 		user: {}
 	}
@@ -103,6 +16,29 @@ const Home = (() => {
 
 		return timestamp => timestamp ? f.format(new Date(timestamp)) : ''
 	})()
+
+	function fetchPosts () {
+		const start = data.paginationIndex
+		const end = start + DELTA
+
+		return fetch('http://localhost:8001/posts/' + start + '/' + end, { credentials: 'include' })
+			.then(res => res.json())
+			.then(posts => posts.map(post => Object.assign(
+				post,
+				{
+					url: 'http://localhost:8001/' + post.url,
+					liked: false,
+					loadComments: false,
+					newComment: '',
+					focusComment: false
+				}
+			)))
+			.then((posts) => {
+				data.posts.push.apply(data.posts, posts)
+				data.paginationIndex += posts.length
+			})
+			.catch(() => {})
+	}
 
 	function comment (h, props) {
 		return h`
@@ -250,43 +186,11 @@ const Home = (() => {
 
 	return new Page('Camagru - Accueil', data, render, {
 		created: function created () {
-			//this.state.loading = true
+			console.log('created hook called')
+			if (data.paginationIndex !== 0)
+				return
 
-			/*setTimeout(() => {
-				this.state.user.username = 'kikou'
-				data.articles = [
-					{
-						title: 'Hehe !',
-						text: "Surprise"
-					}
-				]
-				this.state.loading = false
-			}, 15000)*/
-
-			/*fetch('http://localhost:8001/sign-in', {
-				method: 'POST',
-				body: JSON.stringify({
-					username: 'Shakespeare',
-					password: 'Hamlet'
-				}),
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				credentials: 'include'
-			})
-				.then(res => res.json())
-				.then(data => {
-					//const error = data.error
-					//const user = data.user
-
-					this.state.user = {
-						username: "<p>console.log('teub')</p>"
-					}
-				})
-				.catch(console.error)
-				.finally(() => {
-					this.state.loading = false
-				})*/
+			fetchPosts()
 		}
 	})
 

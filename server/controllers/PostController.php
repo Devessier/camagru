@@ -84,4 +84,92 @@ class PostController {
         }
     }
 
+    public static function posts (Request $request, $start, $end) {
+        try {
+            DB::connect();
+
+            $posts = DB::select('SELECT posts.id, posts.text AS comment, posts.created_at AS createdAt, images.path AS url, users.id AS author_id, users.username AS author_username FROM posts INNER JOIN images ON posts.img_id = images.id INNER JOIN users ON users.id = posts.user_id ORDER BY posts.created_at DESC LIMIT ? OFFSET ?', [
+                $end - $start,
+                $start
+            ]);
+
+            foreach ($posts as &$post) {
+                $comments = DB::select('SELECT * FROM comments WHERE post_id = :id ORDER BY created_at DESC', [
+                    'id' => $post['id']
+                ]);
+
+                $post['user'] = [
+                    'id' => (int)$post['author_id'],
+                    'name' => $post['author_username'],
+                    'avatar' => 'https://api.adorable.io/avatars/40/adwabott@adorable.io.png'
+                ];
+
+                $post['id'] = (int)$post['id'];
+
+                unset($post['author_id'], $post['author_username']);
+
+                $post['comments'] = $comments ?? [];
+            }
+
+            return Response::make()
+                    ->json($posts);
+
+            /*return Response::make()
+                    ->json([
+                        'posts' => [
+                            [
+                                'id' => 76,
+                                'url' => 'https://cdn.pixabay.com/photo/2017/10/22/13/17/malham-2877845_640.jpg',
+                                'user' => [
+                                    'id' => 0,
+                                    'name' => 'Baptiste',
+                                    'avatar' => 'https://api.adorable.io/avatars/40/adwabott@adorable.io.png'
+                                ],
+                                'comment' => 'Magnifique photo de vacances',
+                                'comments' => [],
+                                'createdAt' => time()
+                            ],
+                            [
+                                'id' => 76,
+                                'url' => 'https://cdn.pixabay.com/photo/2018/04/03/07/49/house-3286172_640.jpg',
+                                'user' => [
+                                    'id' => 0,
+                                    'name' => 'Baptiste',
+                                    'avatar' => 'https://api.adorable.io/avatars/40/adwabott@adorable.io.png'
+                                ],
+                                'comment' => 'Magnifique photo de vacances',
+                                'comments' => [],
+                                'createdAt' => time()
+                            ],
+                            [
+                                'id' => 76,
+                                'url' => 'https://cdn.pixabay.com/photo/2017/10/22/13/17/malham-2877845_640.jpg',
+                                'user' => [
+                                    'id' => 0,
+                                    'name' => 'Baptiste',
+                                    'avatar' => 'https://api.adorable.io/avatars/40/adwabott@adorable.io.png'
+                                ],
+                                'comment' => 'Magnifique photo de vacances',
+                                'comments' => [],
+                                'createdAt' => time()
+                            ],
+                            [
+                                'id' => 76,
+                                'url' => 'https://cdn.pixabay.com/photo/2017/10/22/13/17/malham-2877845_640.jpg',
+                                'user' => [
+                                    'id' => 0,
+                                    'name' => 'Baptiste',
+                                    'avatar' => 'https://api.adorable.io/avatars/40/adwabott@adorable.io.png'
+                                ],
+                                'comment' => 'Magnifique photo de vacances',
+                                'comments' => [],
+                                'createdAt' => time()
+                            ]
+                        ]
+                    ]);*/
+        } catch (\Exception $e) {
+            return Response::internalError();
+        }
+    }
+
 }
