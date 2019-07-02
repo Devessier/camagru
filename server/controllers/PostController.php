@@ -62,6 +62,16 @@ class PostController {
                 return Response::internalError();
             }
 
+            $imageID = DB::insert('INSERT INTO images(path) VALUES(?)', [
+                $path
+            ]);
+            
+            DB::insert('INSERT INTO posts(user_id, img_id, text) VALUES(:user_id, :img_id, :text)', [
+                'user_id' => $request->session('id'),
+                'img_id' => $imageID,
+                'text' => $message
+            ]);
+
             imagedestroy($filter->content());
             imagedestroy($image->content());
 

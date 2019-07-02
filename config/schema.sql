@@ -1,5 +1,6 @@
 USE camagru;
 
+DROP TABLE IF EXISTS comments;
 DROP TABLE IF EXISTS tokens;
 DROP TABLE IF EXISTS posts;
 DROP TABLE IF EXISTS users;
@@ -37,7 +38,8 @@ CREATE TABLE posts (
 	id				INTEGER						AUTO_INCREMENT PRIMARY KEY,
 	user_id	  		INTEGER						NOT NULL,
 	img_id    		INTEGER						NOT NULL,
-	text      		TEXT						NULL,
+	text      		TEXT						NOT NULL,
+	created_at		TIMESTAMP					NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
 	CONSTRAINT fk_user_id
 		FOREIGN KEY (user_id)
@@ -45,4 +47,19 @@ CREATE TABLE posts (
 	CONSTRAINT fk_img_id
 		FOREIGN KEY (img_id)
 		REFERENCES images(id)
+);
+
+CREATE TABLE comments (
+	comment_id		INTEGER						AUTO_INCREMENT PRIMARY KEY,
+	text			TEXT						NOT NULL,
+	user_id			INTEGER						NOT NULL,
+	post_id			INTEGER						NOT NULL,
+	created_at		TIMESTAMP					NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+	CONSTRAINT fk_comments_user_id
+		FOREIGN KEY (user_id)
+		REFERENCES users(id),
+	CONSTRAINT fk_comment_post_id
+		FOREIGN KEY (post_id)
+		REFERENCES posts(id)
 );

@@ -334,10 +334,19 @@ const TakeAPick = (() => {
 			`
 		}
 		return render`
-			<div class="flex items-stretch justify-start overflow-x w-full">${
-				photos.map(photo => Img(photo))
-			}</div>
+			<div class="overflow-auto overflow-y-hidden w-full h-full relative" style="height: 100px;">
+				<aside class="flex justify-start items-center absolute">${
+					photos.map((photo, index) => ClosableImage(photo, {
+						marginRight: '5px',
+						onClose: () => { deletePhoto(index) }
+					}))
+				}</aside>
+			</div>
 		`
+	}
+
+	function deletePhoto(index) {
+		data.takenPhotos.splice(index, 1)
 	}
 
 	function render (render, props) {

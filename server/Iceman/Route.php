@@ -19,7 +19,10 @@ class Route {
 
 			try {
 				if (method_exists($controller, $method)) {
-                    $data = Middlewares::resolve($middlewares);
+					$data = Middlewares::resolve($middlewares);
+					if ($data === false) {
+						return Response::unauthorized();
+					}
 
                     $request = Request::create($data);
 

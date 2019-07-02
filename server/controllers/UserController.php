@@ -7,10 +7,7 @@ use Iceman\Response;
 class UserController {
 
 	public static function me (Request $request) {
-        $id = $request->session('id');
-        if ($id === null)
-            return Response::unauthorized();
-        return self::user($request, $id);
+        return self::user($request, $request->session('id'));
     }
 
     public static function user (Request $request, $id) {
@@ -36,7 +33,32 @@ class UserController {
             if (!$id)
                 return Response::unauthorized();
 
+            DB::connect();
+
+            $posts = DB::select('SELECT posts.id, posts.text AS comment, posts.created_at AS createdAt, images.path AS url, users.id AS author_id, users.username AS author_username FROM posts INNER JOIN images ON posts.img_id = images.id INNER JOIN users ON users.id = posts.user_id ORDER BY posts.created_at DESC');
+
+            foreach ($posts as &$post) {
+                $comments = DB::select('SELECT * FROM comments WHERE post_id = :id ORDER BY created_at DESC', [
+                    'id' => $post['id']
+                ]);
+
+                $post['user'] = [
+                    'id' => (int)$post['author_id'],
+                    'name' => $post['author_username'],
+                    'avatar' => 'https://api.adorable.io/avatars/40/adwabott@adorable.io.png'
+                ];
+
+                $post['id'] = (int)$post['id'];
+
+                unset($post['author_id'], $post['author_username']);
+
+                $post['comments'] = $comments ?? [];
+            }
+
             return Response::make()
+                    ->json($posts);
+
+            /*return Response::make()
                     ->json([
                         'posts' => [
                             [
@@ -88,7 +110,7 @@ class UserController {
                                 'createdAt' => time()
                             ]
                         ]
-                    ]);
+                    ]);*/
         } catch (\Exception $e) {
             return Response::internalError();
         }

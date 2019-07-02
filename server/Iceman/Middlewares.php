@@ -14,8 +14,8 @@ class Middlewares {
                 $result = $middleware();
 
                 if ($result === false) {
-                    break;
-                } else {
+                    return false;
+                } else if ($result !== true) {
                     if (is_array($result)) {
                         $data = array_merge($data, $result);
                     } else if ($result) {
@@ -52,6 +52,10 @@ class Middlewares {
                 return self::$method(...$args);
             };
         }
+    }
+
+    public static function authenticated() {
+        return !empty($_SESSION['id']);
     }
 
 }

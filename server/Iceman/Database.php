@@ -47,6 +47,7 @@ class DB implements DatabaseOperations {
         self::canMakeRequest();
         $stmt = self::prepare($query, $params);
         $stmt->execute();
+        return self::$connection->lastInsertId();
     }
 
     public static function update (string $query, array $params = []) {

@@ -16,13 +16,13 @@ Route::post('/^\/sign-up\/?$/', 'AuthController@signup', Middlewares::bind('json
 Route::post('/^\/sign-in\/?$/', 'AuthController@login', Middlewares::bind('json'));
 Route::get('/^\/logout\/?$/', 'AuthController@logout');
 
-Route::get('/^\/me\/?$/', 'UserController@me');
-Route::get('/^\/me\/posts\/?([0-9]*)\/?$/', 'UserController@posts');
-Route::put('/^\/me\/modify\/?$/', 'UserController@modify', Middlewares::bind('json'));
+Route::get('/^\/me\/?$/', 'UserController@me', Middlewares::bind('authorized'));
+Route::get('/^\/me\/posts\/?([0-9]*)\/?$/', 'UserController@posts', Middlewares::bind('authorized'));
+Route::put('/^\/me\/modify\/?$/', 'UserController@modify', Middlewares::bind('authorized'), Middlewares::bind('json'));
 
-Route::post('/^\/post\/add\/file\/?$/', 'PostController@file', Middlewares::bind('body'));
-Route::post('/^\/post\/add\/photo\/?$/', 'PostController@photo', Middlewares::bind('body'));
+Route::post('/^\/post\/add\/file\/?$/', 'PostController@file', Middlewares::bind('authorized'), Middlewares::bind('body'));
+Route::post('/^\/post\/add\/photo\/?$/', 'PostController@photo', Middlewares::bind('authorized'), Middlewares::bind('body'));
 
-Route::get('/^\/user\/([^\/]+)\/?$/', 'UserController@user');
+Route::get('/^\/user\/([^\/]+)\/?$/', 'UserController@user', Middlewares::bind('authorized'));
 
 Route::get('/^\/public\/(images|filters)\/([^\.\/]+\.[^\.]+)\/?$/', 'PublicController@fetch');
