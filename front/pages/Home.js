@@ -21,15 +21,14 @@ const Home = (() => {
 				const now = new Date
 				const date = new Date(timestamp)
 
-				date.setHours(date.getHours() + 2)
-
 				const diffTime = Math.abs(now.getTime() - date.getTime())
-				const seconds = diffTime / 1000
+				console.log(diffTime, diffTime / 1000)
+				const seconds = Math.ceil(diffTime / 1000)
 
 				if (seconds > day) {
-					return intl.format(-(seconds / day) | 0, 'day')
+					return intl.format(Math.ceil(-(seconds / day)), 'day')
 				}
-				return intl.format(-(seconds / 60) | 0, 'minute')
+				return intl.format(Math.ceil(-(seconds / 60)), 'minute')
 			}
 		} else if (Intl && 'DateTimeFormat' in Intl) {
 			const intl = new Intl.DateTimeFormat('fr-FR', {})
@@ -73,6 +72,9 @@ const Home = (() => {
 	}
 
 	function likePost (props) {
+		if (!isAuthenticated())
+			return
+
 		props.liked ^= 1
 
 		fetch('http://localhost:8001/post/' + props.id + '/' + (!props.liked ? 'unlike' : 'like'), {
@@ -98,7 +100,7 @@ const Home = (() => {
 			}
 		})
 			.catch(() => {})
-		
+
 		const comment = {
 			user: {
 				id: GLOBAL_STATE.user.id,
@@ -106,7 +108,7 @@ const Home = (() => {
 				avatar: 'https://api.adorable.io/avatars/40/adwabott@adorable.io.png'
 			},
 			text: props.newComment,
-			createdAt: +new Date
+			createdAt: new Date
 		}
 
 		if (!Array.isArray(props.comments))
