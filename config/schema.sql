@@ -1,3 +1,5 @@
+SET GLOBAL time_zone = '+2:00';
+
 USE camagru;
 
 DROP TABLE IF EXISTS likes;
@@ -14,7 +16,7 @@ CREATE TABLE users (
 	password		VARCHAR(255)				NOT NULL,
 	email		    VARCHAR(100)				NOT NULL UNIQUE,
 	type			ENUM('default', 'admin')	NOT NULL DEFAULT 'default',
-	created_at		DATETIME					NOT NULL DEFAULT CURRENT_TIMESTAMP
+	created_at		TIMESTAMP					NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE filters (
@@ -40,7 +42,7 @@ CREATE TABLE posts (
 	user_id	  		INTEGER						NOT NULL,
 	img_id    		INTEGER						NOT NULL,
 	text      		TEXT						NOT NULL,
-	created_at		DATETIME					NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	created_at		TIMESTAMP					NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
 	CONSTRAINT fk_user_id
 		FOREIGN KEY (user_id)
@@ -55,7 +57,7 @@ CREATE TABLE comments (
 	text			TEXT						NOT NULL,
 	user_id			INTEGER						NOT NULL,
 	post_id			INTEGER						NOT NULL,
-	created_at		DATETIME					NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	created_at		TIMESTAMP					NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
 	CONSTRAINT fk_comments_user_id
 		FOREIGN KEY (user_id)
