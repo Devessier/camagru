@@ -203,14 +203,24 @@ const Home = (() => {
 		`
 	}
 
+	function posts (props) {
+		const render = Maverick.link(props.posts)
+
+		return render`
+			<section class="container flex flex-col items-center">${
+				props.posts.length > 0 ?
+					props.posts.map((p, i) => post(Maverick.link(p), p, i)) :
+					"<p class=\"mt-2\">Aucune image n'a été postée</p>"
+			}</section>
+		`
+	}
+
 	function render (render, props) {
 		if (isAuthenticated()) {
 			return render`
-				<div class="flex justify-center items-center md:mx-10">
-					<section class="container flex flex-col items-center">${
-						props.posts.map((p, i) => post(Maverick.link(p), p, i))
-					}</section>
-				</div>
+				<div class="flex justify-center items-center md:mx-10">${
+					posts(props)
+				}</div>
 				<a
 						href="/take-a-pick"
 						onclick="${ router.click('/take-a-pick') }"
@@ -223,11 +233,9 @@ const Home = (() => {
 			`
 		}
 		return render`
-			<div class="flex justify-center items-center md:mx-10">
-				<section class="container flex flex-col items-center">${
-					props.posts.map((p, i) => post(Maverick.link(p), p, i))
-				}</section>
-			</div>
+			<div class="flex justify-center items-center md:mx-10">${
+				posts(props)
+			}</div>
 		`
 	}
 
