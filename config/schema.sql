@@ -1,5 +1,6 @@
 USE camagru;
 
+DROP TABLE IF EXISTS likes;
 DROP TABLE IF EXISTS comments;
 DROP TABLE IF EXISTS tokens;
 DROP TABLE IF EXISTS posts;
