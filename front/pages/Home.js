@@ -23,15 +23,20 @@ const Home = (() => {
 
 		return fetch('http://localhost:8001/posts/' + start + '/' + end, { credentials: 'include' })
 			.then(res => res.json())
-			.then(posts => posts.map(post => Object.assign(
-				post,
-				{
-					url: 'http://localhost:8001/' + post.url,
-					loadComments: false,
-					newComment: '',
-					focusComment: false
-				}
-			)))
+			.then((posts) => {
+				if (!Array.isArray(posts))
+					throw new Error('No posts')
+
+				return posts.map(post => Object.assign(
+					post,
+					{
+						url: 'http://localhost:8001/' + post.url,
+						loadComments: false,
+						newComment: '',
+						focusComment: false
+					}
+				))
+			})
 			.then((posts) => {
 				data.posts.push.apply(data.posts, posts)
 				data.paginationIndex += posts.length
