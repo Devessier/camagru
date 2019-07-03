@@ -73,8 +73,8 @@ const Home = (() => {
 		
 		const comment = {
 			user: {
-				id: 0,
-				name: 'Baptiste',
+				id: GLOBAL_STATE.user.id,
+				name: GLOBAL_STATE.user.username,
 				avatar: 'https://api.adorable.io/avatars/40/adwabott@adorable.io.png'
 			},
 			text: props.newComment,
