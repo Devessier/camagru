@@ -10,11 +10,39 @@ const Home = (() => {
 	}
 
 	const format = (() => {
-		const f = new Intl.DateTimeFormat('fr-FR', {
+		if (Intl && 'RelativeTimeFormat' in Intl) {
+			const intl = new Intl.RelativeTimeFormat('fr-FR', { numeric: 'auto', style: 'long' })
+			const day = 3600 * 24 | 0
 
-		})
+			return (timestamp) => {
+				if (!timestamp)
+					return ''
 
-		return timestamp => timestamp ? f.format(new Date(timestamp)) : ''
+				const now = new Date
+				const date = new Date(timestamp)
+
+				date.setHours(date.getHours() + 2)
+
+				const diffTime = Math.abs(now.getTime() - date.getTime())
+				const seconds = diffTime / 1000
+
+				if (seconds > day) {
+					return intl.format(-(seconds / day) | 0, 'day')
+				}
+				return intl.format(-(seconds / 60) | 0, 'minute')
+			}
+		} else if (Intl && 'DateTimeFormat' in Intl) {
+			const intl = new Intl.DateTimeFormat('fr-FR', {})
+
+			return (timestamp) => {
+				if (!timestamp)
+					return ''
+				return intl.format(new Date(timestamp))
+			}
+		}
+		return (date) => {
+			return (date && typeof date.toDateString === 'function') ? date.toDateString() : date.toString()
+		}
 	})()
 
 	function loadMorePosts (_start, _end) {
