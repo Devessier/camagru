@@ -110,20 +110,23 @@ class PostController {
     LEFT JOIN
         likes
     ON
-        likes.user_id = users.id AND likes.post_id = posts.id
+        likes.user_id = :user_id AND likes.post_id = posts.id
     ORDER BY
         posts.created_at DESC
-    LIMIT ?
-    OFFSET ?
+    LIMIT :limit
+    OFFSET :offset
 EOT;
 
+            $userId = $request->session('id');
+
             $posts = DB::select($query, [
-                $end - $start,
-                $start
+                'limit' => $end - $start,
+                'offset' => $start,
+                'user_id' => $userId ?? -1
             ]);
 
             foreach ($posts as &$post) {
-                $comments = DB::select('SELECT comments.comment_id AS id, comments.created_at AS createdAt, comments.text AS text, users.username, user_id FROM comments INNER JOIN users ON users.id = comments.user_id WHERE post_id = :id ORDER BY comments.created_at DESC', [
+                $comments = DB::select('SELECT comments.comment_id AS id, comments.created_at AS createdAt, comments.text AS text, users.username, user_id FROM comments INNER JOIN users ON users.id = comments.user_id WHERE post_id = :id ORDER BY comments.created_at ASC', [
                     'id' => $post['id']
                 ]);
 
