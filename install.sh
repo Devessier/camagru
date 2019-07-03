@@ -1,6 +1,18 @@
+echo "U:$SENGRID_USERNAME" "P:$SENDGRID_KEY"
+
 apt-get update
 apt-get install -y mysql-server
 apt-get install -y curl vim
+
+apt-get install -y sendmail-bin sendmail m4
+
+echo "AuthInfo:smtp.sendgrid.net \"U:$SENGRID_USERNAME\" \"P:$SENDGRID_KEY\" \"M:PLAIN\"" >> /etc/mail/access
+
+cp /git/sendmail.mc /etc/mail/sendmail.mc
+cd /etc/mail
+m4 sendmail.mc > sendmail.cf
+makemap hash access < access
+service sendmail restart
 
 apt-get install -y apt-transport-https lsb-release
 wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg # Download the signing key
