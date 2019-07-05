@@ -94,6 +94,7 @@ class AuthController {
 
 				return Response::make()
 						->json([
+							'error' => false,
 							'message' => "Un email de confirmation vous a été envoyé à l'adresse '$email'."
 						]);
 			} catch (\PDOException $e) {

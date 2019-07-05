@@ -44,10 +44,7 @@ const SignUp = (() => {
 					if (res.error) {
 						data.error = res.message
 					} else {
-						data.error = false
 						data.message = res.message
-						GLOBAL_STATE.user = res.user
-						router.replace('/me')
 					}
 				})
 				.catch((err) => {
@@ -58,7 +55,9 @@ const SignUp = (() => {
 				})
 		},
 		signup: true,
-		loading: false
+		loading: false,
+		error: '',
+		message: ''
 	}
 
 	function render (h, props) {

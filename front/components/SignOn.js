@@ -49,13 +49,16 @@ function SignOnComponentFooter (h, props) {
 
 function SignOnComponent (h, props) {
     const error = Maverick.sanitize(props.error)
+    const message = Maverick.sanitize(props.message)
+
+    const classCSS = (error ? 'text-red ' : '') + (error || message ? 'mt-2' : '')
 
     return h`
         <div class="flex justify-center items-center">
             <section class="flex flex-col justify-space-between items-center px-20 py-8 mt-8 bg-grey-lighter">
                 <header class="mb-3 text-center">
                     <h2 class="text-purple-light">Camagru</h2>
-                    <p class="${ error ? 'text-red mt-2' : 'hidden' }">${ error || '' }</p>
+                    <p class="${ classCSS }">${ error || message || '' }</p>
                 </header>
                 <article class="flex flex-col items-center">${
                     props.inputs.map(input => inputComponent(
