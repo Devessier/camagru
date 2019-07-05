@@ -20,6 +20,11 @@ class Response {
         return $this;
     }
 
+    public function redirect ($page) {
+        header("Location: $page");
+        return $this;
+    }
+
     public function session ($name, $value) {
         $_SESSION[$name] = $value;
         return $this;

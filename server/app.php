@@ -30,3 +30,5 @@ Route::post('/^\/post\/add\/photo\/?$/', 'PostController@photo', Middlewares::bi
 Route::get('/^\/user\/([^\/]+)\/?$/', 'UserController@user', Middlewares::bind('authorized'));
 
 Route::get('/^\/public\/(images|filters)\/([^\.\/]+\.[^\.]+)\/?$/', 'PublicController@fetch');
+
+Route::get('/^\/email\/sign-up\/confirmation\/([\d\w-]+)?$/', 'MailController@signUpValidate');

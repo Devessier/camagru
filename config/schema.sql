@@ -16,6 +16,7 @@ CREATE TABLE users (
 	password		VARCHAR(255)				NOT NULL,
 	email		    VARCHAR(100)				NOT NULL UNIQUE,
 	type			ENUM('default', 'admin')	NOT NULL DEFAULT 'default',
+	verified		BOOLEAN						NOT NULL DEFAULT false,
 	created_at		TIMESTAMP					NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -33,8 +34,15 @@ CREATE TABLE images (
 );
 
 CREATE TABLE tokens (
-	id				INTEGER						AUTO_INCREMENT PRIMARY KEY,
-	token			VARCHAR(255)				NOT NULL
+	id				INTEGER						AUTO_INCREMENT,
+	token			CHAR(36)					NOT NULL,
+	user_id			INTEGER						NOT NULL,
+
+	PRIMARY KEY (id, token),
+
+	CONSTRAINT fk_tokens_user_id
+		FOREIGN KEY (user_id)
+		REFERENCES users(id)
 );
 
 CREATE TABLE posts (

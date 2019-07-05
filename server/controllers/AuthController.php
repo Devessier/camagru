@@ -1,5 +1,8 @@
 <?php
 
+require_once __DIR__ . '/MailController.php';
+require_once __DIR__ . '/../utils.php';
+
 use Iceman\DB;
 use Iceman\Request;
 use Iceman\Response;
@@ -74,29 +77,24 @@ class AuthController {
 			DB::connect();
 
 			try {
-				DB::insert("INSERT INTO users(username, password, email) VALUES(:username, :password, :email)", [
+				$userID = DB::insert("INSERT INTO users(username, password, email) VALUES(:username, :password, :email)", [
 					'username' => $username,
 					'password' => password_hash($password, PASSWORD_BCRYPT),
 					'email' => $email
 				]);
 
-				[ $user ] = DB::select('SELECT LAST_INSERT_ID() AS id, type, created_at FROM users WHERE username = :username', [
-					'username' => $username
+				$token = uuid();
+
+				DB::insert('INSERT INTO tokens(token, user_id) VALUES(:token, :user_id)', [
+					'token' => $token,
+					'user_id' => $userID
 				]);
 
-				$user = (object) $user;
+				MailController::sendSignUpEmail($email, $username, $token);
 
 				return Response::make()
-						->session('id', $user->id)
 						->json([
-							'message' => 'Successfully signed-in',
-							'user' => [
-								'id' => $user->id,
-								'username' => $username,
-								'email' => $email,
-								'type' => $user->type,
-								'createdAt' => $user->created_at
-							]
+							'message' => "Un email de confirmation vous a été envoyé à l'adresse '$email'."
 						]);
 			} catch (\PDOException $e) {
 				if ($e->getCode() === '23000') {
@@ -104,7 +102,7 @@ class AuthController {
 							->status(403)
 							->json([
 								'error' => true,
-								'message' => "The username and/or the email you provided can't be used"
+								'message' => "Nom d'utilisateur et/ou mot de passe incorrect(s)."
 							]);
 				}
 				return Response::internalError();
