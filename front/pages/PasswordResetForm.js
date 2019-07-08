@@ -4,7 +4,9 @@ const PasswordResetForm = (() => {
             name: 'email',
             value: '',
             placeholder: 'Adresse mail'
-        }
+        },
+        message: '',
+        error: false
     }
 
     function resetPassword () {
@@ -17,7 +19,18 @@ const PasswordResetForm = (() => {
                 'Content-Type': 'application/json'
             }
         })
-            .catch(() => {})
+            .then(res => res.json())
+            .then((response) => {
+                if (response.error || !response.done) {
+                    throw new Error('An error occured')
+                }
+                data.message = "Nous avons envoyé un email à l'adresse " + data.email.value + '.'
+                data.email.value = ''
+            })
+            .catch(() => {
+                data.message = "Une erreur s'est produite, veuillez réessayer ultérieurement"
+                data.error = true
+            })
     }
 
     function h (render, props) {
@@ -32,6 +45,10 @@ const PasswordResetForm = (() => {
                         <p class="mt-2">
                             Saisissez votre adresse mail
                         </p>
+
+                        <p class="${ (props.error ? 'text-red' : '') + ' ' +  (props.message ? 'block' : 'hidden') + ' mt-2 text-sm font-thin' }">${
+                            props.message
+                        }</p>
                     </header>
 
                     <article class="py-3">${
@@ -51,6 +68,11 @@ const PasswordResetForm = (() => {
         `
     }
 
-    return new Page('Camagru - Mot de passe oublié', data, h)
+    return new Page('Camagru - Mot de passe oublié', data, h, {
+        bye: function bye () {
+            data.message = ''
+            data.error = false
+        }
+    })
 
 })()
