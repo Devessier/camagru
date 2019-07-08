@@ -121,10 +121,10 @@ class AuthController {
 		try {
 			$body = $request->body();
 
-			if (!isset($body))
-				return Response::badRequest();
-
 			$email = $body->email;
+
+			if (!(isset($body) && validEmail($email)))
+				return Response::badRequest();
 
 			DB::connect();
 
