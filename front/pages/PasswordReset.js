@@ -39,7 +39,7 @@ const PasswordReset = (() => {
                 data.message = 'Votre mot de passe à bien été modifié, vous pouvez désormais vous connecter avec celui-ci.'
             })
             .catch(() => {
-                data.message = "Une erreur s'est produite, veuillez réeassayer ultérieurement"
+                data.message = "Une erreur s'est produite, veuillez réessayer ultérieurement"
                 data.error = true
             })
     }
