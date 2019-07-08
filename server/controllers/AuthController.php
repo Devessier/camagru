@@ -24,12 +24,12 @@ class AuthController {
 
 			DB::connect();
 
-			[ $user ] = DB::select('SELECT * FROM users WHERE username = ?', [ $username ]);
-			
-			if (!isset($user))
+			$users = DB::select('SELECT * FROM users WHERE username = BINARY ?', [ $username ]);
+
+			if (empty($users) || empty($users[0]))
 				return Response::unauthorized();
 
-			$user = (object)$user;
+			$user = (object)$users[0];
 
 			if (!(isset($user) && password_verify($password, $user->password) && $user->verified))
                 return Response::unauthorized();
