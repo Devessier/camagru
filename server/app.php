@@ -14,7 +14,10 @@ Route::get('/^\/filters\/all\/?$/', 'FiltersController@all');
 
 Route::post('/^\/sign-up\/?$/', 'AuthController@signup', Middlewares::bind('json'));
 Route::post('/^\/sign-in\/?$/', 'AuthController@login', Middlewares::bind('json'));
-Route::get('/^\/logout\/?$/', 'AuthController@logout');
+Route::get('/^\/logout\/?$/', 'AuthController@logout', Middlewares::bind('authorized'));
+Route::post('/^\/password-reset\/?$/', 'AuthController@passwordReset', Middlewares::bind('json'));
+Route::get('/^\/password-reset\/confirm\/([\d\w-]+)\/?$/', 'MailController@passwordResetConfirm');
+Route::post('/^\/password\/modify\/?$/', 'AuthController@modifyPassword', Middlewares::bind('json'));
 
 Route::get('/^\/me\/?$/', 'UserController@me', Middlewares::bind('authorized'));
 Route::put('/^\/me\/modify\/?$/', 'UserController@modify', Middlewares::bind('authorized'), Middlewares::bind('json'));
@@ -31,4 +34,4 @@ Route::get('/^\/user\/([^\/]+)\/?$/', 'UserController@user', Middlewares::bind('
 
 Route::get('/^\/public\/(images|filters)\/([^\.\/]+\.[^\.]+)\/?$/', 'PublicController@fetch');
 
-Route::get('/^\/email\/sign-up\/confirmation\/([\d\w-]+)?$/', 'MailController@signUpValidate');
+Route::get('/^\/email\/sign-up\/confirmation\/([\d\w-]+)\/?$/', 'MailController@signUpValidate');

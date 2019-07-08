@@ -5,6 +5,7 @@ function inputComponent (h, props) {
     return h`
         <div class="flex w-64">
             <input
+                    name="${ props.name || false }"
                     placeholder="${ props.placeholder }"
                     value="${ props.value }"
                     oninput="${ event => { props.value = event.target.value } }"
@@ -21,9 +22,9 @@ function inputComponent (h, props) {
     `
 }
 
-function SignOnComponentFooter (h, props) {
+function SignOnComponentFooter (render, props) {
     return props.signin ?
-        h`
+        render`
             <a
                     href="/sign-up"
                     onclick="${ router.click('/sign-up') }"
@@ -33,8 +34,12 @@ function SignOnComponentFooter (h, props) {
                     onclick="${ props.onclick }"
                     class="px-2 py-1 text-white bg-purple-light hover:bg-purple rounded short-transition"
             >Me connecter</button>
+            <button
+                    onclick="${ router.click('/password-reset/form') }"
+                    class="w-full mt-2 underline"
+            >Mot de passe oublié</button>
         ` :
-        h`
+        render`
             <a
                     href="/sign-in"
                     onclick="${ router.click('/sign-in') }"
@@ -47,13 +52,13 @@ function SignOnComponentFooter (h, props) {
         `
 }
 
-function SignOnComponent (h, props) {
+function SignOnComponent (render, props) {
     const error = Maverick.sanitize(props.error)
     const message = Maverick.sanitize(props.message)
 
     const classCSS = (error ? 'text-red ' : '') + (error || message ? 'mt-2' : '')
 
-    return h`
+    return render`
         <div class="flex justify-center items-center">
             <section class="flex flex-col justify-space-between items-center px-20 py-8 mt-8 bg-grey-lighter">
                 <header class="mb-3 text-center">
@@ -66,10 +71,16 @@ function SignOnComponent (h, props) {
                         input,
                     ))
                 }</article>
-                <footer class="flex justify-around items-center w-full mt-4">${
-                    SignOnComponentFooter(Maverick.link(h), props)
+                <footer class="flex justify-around items-center flex-wrap w-full mt-4">${
+                    SignOnComponentFooter(Maverick.link(render), props)
                 }</footer>
             </section>
         </div>
     `
+}
+
+function sendResetPasswordLink () {
+    fetch('http://localhost:8001/password-reset')
+        .then(res => res.json())
+        .catch(() => {})
 }

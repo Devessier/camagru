@@ -25,7 +25,7 @@ const Router = (() => {
 		this._currentRoute = null
 
 		try {
-			this.replace(decodeURIComponent(window.location.pathname))
+			this.replace(decodeURIComponent(window.location.pathname) + window.location.search)
 		} catch (e) {}
 
 		/** @member {String} Router._currentRoute The route currently displayed */

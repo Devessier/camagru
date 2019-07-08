@@ -29,9 +29,9 @@ class AuthController {
 			if (!isset($user))
 				return Response::unauthorized();
 
-			$user = (object) $user;
+			$user = (object)$user;
 
-			if (!(isset($user) && password_verify($password, $user->password)))
+			if (!(isset($user) && password_verify($password, $user->password) && $user->verified))
                 return Response::unauthorized();
 
 			return Response::make()
@@ -85,7 +85,7 @@ class AuthController {
 
 				$token = uuid();
 
-				DB::insert('INSERT INTO tokens(token, user_id) VALUES(:token, :user_id)', [
+				DB::insert("INSERT INTO tokens(token, user_id, type) VALUES(:token, :user_id, 'SIGN-UP')", [
 					'token' => $token,
 					'user_id' => $userID
 				]);
@@ -115,6 +115,86 @@ class AuthController {
 
 	public static function logout () {
 		return Response::make()->session('id', null);
+	}
+
+	public static function passwordReset (Request $request) {
+		try {
+			$body = $request->body();
+
+			if (!isset($body))
+				return Response::badRequest();
+
+			$email = $body->email;
+
+			DB::connect();
+
+			try {
+				$result = DB::select('SELECT id FROM users WHERE email = ?', [
+					$email
+				]);
+
+				if (isset($result) && isset($result[0])) {
+					[ [ 'id' => $userID ] ] = $result;
+				} else {
+					throw new \Exception('Fck');
+				}
+			} catch (\Exception $e) {
+				MailController::sendResetPasswordEmailAnonymous($email);
+
+				return Response::make()
+						->json([
+							'done' => true
+						]);
+			}
+
+			if (!MailController::sendResetPasswordEmail($email, $userID)) {
+				return Response::internalError();
+			}
+
+			return Response::make()
+					->json([
+						'done' => true
+					]);
+		} catch (\Exception $e) {
+			return Response::internalError();
+		}
+	}
+
+	public static function modifyPassword (Request $request) {
+		try {
+			$body = $request->body();
+
+			$token = $body->token;
+			$password = $body->password;
+
+			DB::connect();
+
+			$result = DB::select('SELECT users.id FROM tokens INNER JOIN users ON tokens.user_id = users.id WHERE tokens.token = :token', [
+				'token' => $token
+			]);
+
+			if (empty($result) || empty($result[0])) {
+				return Response::badRequest();
+			}
+
+			[ [ 'id' => $userID ] ] = $result;
+
+			if (empty($userID)) {
+				return Response::badRequest();
+			}
+
+			DB::update('UPDATE users SET password = :password WHERE id = :id', [
+				'password' => password_hash($password, PASSWORD_BCRYPT),
+				'id' => $userID
+			]);
+
+			return Response::make()
+					->json([
+						'done' => true
+					]);
+		} catch (\Exception $e) {
+			return Response::internalError();
+		}
 	}
 
 }

@@ -14,9 +14,15 @@ class UserController {
         try {
             DB::connect();
 
-            [ $user ] = DB::select('SELECT username, email, created_at, type, verified FROM users WHERE id = :id', [
+            $users = DB::select('SELECT username, email, created_at, type, verified FROM users WHERE id = :id', [
                 'id' => $id
             ]);
+
+            if (is_array($users) && isset($users[0])) {
+                [ $user ] = $users;
+            } else {
+                $user = null;
+            }
 
             return Response::make()->json([
                 'user' => ($user && $user['verified'] == true) ? $user : null

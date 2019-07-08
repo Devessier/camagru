@@ -62,6 +62,10 @@ const SignIn = (() => {
         return SignOnComponent(h, props)
     }
 
-    return new Page('Camagru - Connexion', data, render)
+    return new Page('Camagru - Connexion', data, render, {
+        bye: function bye () {
+            data.message = ''
+        }
+    })
 
 })()

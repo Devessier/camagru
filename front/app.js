@@ -51,6 +51,18 @@ authenticate()
                 beforeEnter: isAuthenticated
             },
             {
+                name: 'PasswordResetForm',
+                path: /^\/password-reset\/form\/?$/,
+                component: PasswordResetForm,
+                beforeEnter: () => !isAuthenticated()
+            },
+            {
+                name: 'PasswordReset',
+                path: /^\/password-reset\?token=([\d\w-]+)\/?$/,
+                component: PasswordReset,
+                beforeEnter: () => !isAuthenticated()
+            },
+            {
                 name: '404',
                 path: /.*/,
                 component: _404

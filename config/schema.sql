@@ -37,6 +37,7 @@ CREATE TABLE tokens (
 	id				INTEGER						AUTO_INCREMENT,
 	token			CHAR(36)					NOT NULL,
 	user_id			INTEGER						NOT NULL,
+	type			ENUM('SIGN-UP', 'RESET')	NOT NULL,
 
 	PRIMARY KEY (id, token),
 
