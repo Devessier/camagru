@@ -14,12 +14,12 @@ class UserController {
         try {
             DB::connect();
 
-            $users = DB::select('SELECT username, email, created_at, type FROM users WHERE id = :id', [
+            [ $user ] = DB::select('SELECT username, email, created_at, type, verified FROM users WHERE id = :id', [
                 'id' => $id
             ]);
 
             return Response::make()->json([
-                'user' => count($users) === 0 ? null : $users[0]
+                'user' => ($user && $user['verified'] == true) ? $user : null
             ]);
         } catch (\Exception $e) {
             return Response::internalError();
