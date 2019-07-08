@@ -156,7 +156,7 @@ const TakeAPick = (() => {
 		const wait = props.loadingFilters || props.filters.length === 0
 
 		if (wait) {
-			return render`
+			return render`
 				<aside class="flex justify-center items-center">
 					<p>${
 						props.loadingFilters ? 'Chargement des filtres ...' : 'Pas de filtres disponibles'
