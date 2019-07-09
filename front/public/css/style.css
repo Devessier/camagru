@@ -86,3 +86,9 @@ a, a:visited {
     transition-delay: 500ms;
     filter: blur(15px);
 }
+
+.account-input:disabled {
+    background-color: transparent;
+    color: inherit;
+    border-color: white;
+}
