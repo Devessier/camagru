@@ -12,7 +12,7 @@ DROP TABLE IF EXISTS filters;
 
 CREATE TABLE users (
 	id				INTEGER						AUTO_INCREMENT PRIMARY KEY,
-	username		VARCHAR(100)				NOT NULL UNIQUE,
+	username		VARCHAR(100)				CHARACTER SET utf8 COLLATE utf8_bin NOT NULL UNIQUE,
 	password		VARCHAR(255)				NOT NULL,
 	email		    VARCHAR(100)				NOT NULL UNIQUE,
 	type			ENUM('default', 'admin')	NOT NULL DEFAULT 'default',

@@ -24,7 +24,7 @@ class AuthController {
 
 			DB::connect();
 
-			$users = DB::select('SELECT * FROM users WHERE username = BINARY ?', [ $username ]);
+			$users = DB::select('SELECT * FROM users WHERE username = ?', [ $username ]);
 
 			if (empty($users) || empty($users[0]))
 				return Response::unauthorized();
