@@ -151,6 +151,12 @@ const MeEdit = (() => {
 				placeholder: "Adresse mail",
 				ref: props.email,
 				property: 'email'
+			},
+			{
+				title: 'Nouveau mot de passe',
+				placeholder: 'Mot de passe',
+				ref: props.password,
+				property: 'password'
 			}
 		]
 
