@@ -115,9 +115,9 @@ const MeEdit = (() => {
 		}
 
 		return render`
-			<div class="${ (!isLast ? 'pb-2 mb-4 border-b border-grey-light ' : '') +  'flex' }">
-				<div class="flex flex-col w-1/2">
-					<h3 class="mb-3 w-full font-medium">${
+			<div class="${ (!isLast ? 'pb-2 mb-4 border-b border-grey-light ' : '') +  'flex flex-wrap' }">
+				<div class="flex flex-col items-start w-full md:w-1/2 px-1 md:px-0">
+					<h3 class="mb-3 font-medium">${
 						title
 					}</h3>
 
@@ -131,7 +131,7 @@ const MeEdit = (() => {
 					/>
 				</div>
 
-				<div class="flex justify-end items-start w-1/2">${
+				<div class="flex justify-center md:justify-end items-start w-full md:w-1/2">${
 					modifying ? saveButton(ref, save(props.property), onAbort) : modifyButton(ref)
 				}</div>
 			</div>
@@ -163,7 +163,7 @@ const MeEdit = (() => {
 		return render`
 			<div class="flex justify-center items-center md:mx-10 mt-10">
 				<div class="flex flex-col w-full md:w-3/5">
-					<h2 class="pb-3 mb-5 border-b border-grey-light">
+					<h2 class="px-1 md:px-0 pb-3 mb-5 border-b border-grey-light">
 						Modification du profil
 					</h2>
 					<div class="flex flex-col items-stretch">${
