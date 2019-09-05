@@ -91,6 +91,13 @@ const Home = (() => {
 	 * @param {Object} props 
 	 */
 	function saveComment (props) {
+		if (!props.newComment)
+			return
+
+		props.newComment = props.newComment.trim()
+		if (props.newComment === '')
+			return
+
 		fetch('http://localhost:8001/add/comment/' + props.id, {
 			credentials: 'include',
 			method: 'POST',
