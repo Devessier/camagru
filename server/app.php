@@ -22,7 +22,8 @@ Route::post('/^\/password\/modify\/?$/', 'AuthController@modifyPassword', Middle
 Route::get('/^\/me\/?$/', 'UserController@me', Middlewares::bind('authorized'));
 Route::put('/^\/me\/modify\/?$/', 'UserController@modify', Middlewares::bind('authorized'), Middlewares::bind('json'));
 
-Route::get('/^\/posts\/(\d+)\/(\d+)\/?$/', 'PostController@posts');
+Route::get('/^\/posts\/?$/', 'PostController@load');
+Route::get('/^\/posts\/(\d+)\/?$/', 'PostController@loadMore');
 Route::put('/^\/post\/(\d+)\/(like|unlike)\/?$/', 'PostController@like', Middlewares::bind('authorized'));
 
 Route::post('/^\/add\/comment\/(\d+)\/?$/', 'PostController@comment', Middlewares::bind('authorized'), Middlewares::bind('json'));

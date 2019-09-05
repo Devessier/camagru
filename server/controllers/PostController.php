@@ -84,46 +84,82 @@ class PostController {
         }
     }
 
-    public static function posts (Request $request, $start, $end) {
+    public static function fetch (Request $request, $id) {
         try {
             DB::connect();
 
-            $query = <<<EOT
-    SELECT
-        posts.id,
-        posts.text AS comment,
-        posts.created_at AS createdAt,
-        images.path AS url,
-        users.id AS author_id,
-        users.username AS author_username,
-        likes.liked
-    FROM
-        posts
-    INNER JOIN
-        images
-    ON
-        posts.img_id = images.id
-    INNER JOIN
-        users
-    ON
-        users.id = posts.user_id
-    LEFT JOIN
-        likes
-    ON
-        likes.user_id = :user_id AND likes.post_id = posts.id
-    ORDER BY
-        posts.created_at DESC
-    LIMIT :limit
-    OFFSET :offset
+            if ($id === null) {
+                $query = <<<EOT
+                    SELECT
+                        posts.id,
+                        posts.text AS comment,
+                        posts.created_at AS createdAt,
+                        images.path AS url,
+                        users.id AS author_id,
+                        users.username AS author_username,
+                        likes.liked
+                    FROM
+                        posts
+                    INNER JOIN
+                        images
+                    ON
+                        posts.img_id = images.id
+                    INNER JOIN
+                        users
+                    ON
+                        users.id = posts.user_id
+                    LEFT JOIN
+                        likes
+                    ON
+                        likes.user_id = :user_id AND likes.post_id = posts.id
+                    ORDER BY
+                        posts.created_at DESC
+                    LIMIT :limit
 EOT;
+            } else {
+                $query = <<<EOT
+                    SELECT
+                        posts.id,
+                        posts.text AS comment,
+                        posts.created_at AS createdAt,
+                        images.path AS url,
+                        users.id AS author_id,
+                        users.username AS author_username,
+                        likes.liked
+                    FROM
+                        posts
+                    INNER JOIN
+                        images
+                    ON
+                        posts.img_id = images.id
+                    INNER JOIN
+                        users
+                    ON
+                        users.id = posts.user_id
+                    LEFT JOIN
+                        likes
+                    ON
+                        likes.user_id = :user_id AND likes.post_id = posts.id
+                    WHERE
+                        posts.id < :id
+                    ORDER BY
+                        posts.created_at DESC
+                    LIMIT :limit
+EOT;
+            }
 
             $userId = $request->session('id');
 
-            $posts = DB::select($query, [
-                'limit' => $end - $start,
-                'offset' => $start,
+            $limit = 3;
+
+            $args = [
+                'limit' => $limit,
                 'user_id' => $userId ?? -1
-            ]);
+            ];
+
+            if ($id !== null) $args['id'] = $id;
+
+            $posts = DB::select($query, $args);
 
             foreach ($posts as &$post) {
                 $comments = DB::select('SELECT comments.comment_id AS id, comments.created_at AS createdAt, comments.text AS text, users.username, user_id FROM comments INNER JOIN users ON users.id = comments.user_id WHERE post_id = :id ORDER BY comments.created_at ASC', [
@@ -158,8 +194,19 @@ EOT;
             return Response::make()
                     ->json($posts);
         } catch (\Exception $e) {
+            print_r($e);
             return Response::internalError();
         }
+    }
+
+    public static function loadMore (Request $request, string $id) {
+        if (!((int)$id > 0)) return Response::make()->json([]);
+
+        return self::fetch($request, $id);
+    }
+
+    public static function load (Request $request) {
+        return self::fetch($request, null);
     }
 
     public static function like (Request $request, $postId, $state) {

@@ -1,9 +1,7 @@
 const Home = (() => {
 
-	const DELTA = 5
-
 	const data = {
-		paginationIndex: 0,
+		paginationIndex: -1,
 		posts: [],
 		loading: false,
 		user: {}
@@ -22,7 +20,6 @@ const Home = (() => {
 				const date = new Date(timestamp)
 
 				const diffTime = Math.abs(now.getTime() - date.getTime())
-				console.log(diffTime, diffTime / 1000)
 				const seconds = Math.ceil(diffTime / 1000)
 
 				if (seconds > day) {
@@ -45,28 +42,29 @@ const Home = (() => {
 	})()
 
 	function loadMorePosts (_start, _end) {
-		const start = _start || data.paginationIndex
-		const end = _end || start + DELTA
+		const url = 'http://localhost:8001/posts' + (data.paginationIndex === -1 ? '' : ('/' + data.paginationIndex))
 
-		return fetch('http://localhost:8001/posts/' + start + '/' + end, { credentials: 'include' })
+		return fetch(url, { credentials: 'include' })
 			.then(res => res.json())
 			.then((posts) => {
 				if (!Array.isArray(posts))
 					throw new Error('No posts')
 
-				return posts.map(post => Object.assign(
-					post,
-					{
-						url: 'http://localhost:8001/' + post.url,
-						loadComments: false,
-						newComment: '',
-						focusComment: false
-					}
-				))
+				return posts
+					.map(post => Object.assign(
+						post,
+						{
+							url: 'http://localhost:8001/' + post.url,
+							loadComments: false,
+							newComment: '',
+							focusComment: false
+						}
+					))
 			})
 			.then((posts) => {
 				data.posts.push.apply(data.posts, posts)
-				data.paginationIndex += posts.length
+
+				if (Array.isArray(posts) && posts.length > 0) data.paginationIndex = posts[posts.length - 1].id
 			})
 			.catch(() => {})
 	}
