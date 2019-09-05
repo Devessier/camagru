@@ -25,7 +25,11 @@ const Home = (() => {
 				if (seconds > day) {
 					return intl.format(Math.ceil(-(seconds / day)), 'day')
 				}
-				return intl.format(Math.ceil(-(seconds / 60)), 'minute')
+				const minutes = Math.ceil(-(seconds / 60))
+
+				if (minutes === 0)
+					return 'maintenant'
+				return intl.format(minutes, 'minute')
 			}
 		} else if (Intl && 'DateTimeFormat' in Intl) {
 			const intl = new Intl.DateTimeFormat('fr-FR', {})
