@@ -16,13 +16,10 @@ Pour confirmer votre inscription, veuillez cliquez sur le lien ci-dessous :\n\r
 $link
 EOF;
 
-            mail(
+            self::sendMail(
                 $email,
                 'Camagru - Inscription',
-                wordwrap($text, 70, "\r\n"),
-                [
-                    'From' => 'no-reply@camagru.fr'
-                ]
+                $text
             );
         } catch (\Exception $e) {}
     }
@@ -57,6 +54,17 @@ EOF;
         }
     }
 
+    public static function sendMail (string $email, string $title, string $text) {
+        return mail(
+            $email,
+            utf8_decode($title),
+            wordwrap(utf8_decode($text), 70, "\r\n"),
+                [
+                    'From' => 'no-reply@camagru.fr'
+                ]
+        );
+    }
+
     public static function sendResetPasswordEmail ($email, $userID) {
         try {
             DB::connect();
@@ -71,13 +79,10 @@ Cliquez sur le lien ci-dessous pour réinitialiser votre mot de passe :\n\r
 $link\n\r
 EOF;
 
-            $result = mail(
+            $result = self::sendMail(
                 $email,
-                utf8_decode('Camagru - Réinitialisation du mot de passe'),
-                wordwrap($text, 70, "\r\n"),
-                [
-                    'From' => 'no-reply@camagru.fr'
-                ]
+                'Camagru - Réinitialisation du mot de passe',
+                $text
             );
 
             if (!$result)
@@ -104,13 +109,10 @@ Si vous n'avez pas effectué cette demande, ignorez ce mail.\n\r
 A bientôt sur Camagru !\n\r
 EOF;
 
-            return mail(
+            return self::sendMail(
                 $email,
-                utf8_decode('Camagru - Demande de réinitialisation du mot de passe'),
-                $text,
-                [
-                    'From' => 'no-reply@camagru.fr'
-                ]
+                'Camagru - Demande de réinitialisation du mot de passe',
+                $text
             );
         } catch (\Exception $e) {
             return false;
