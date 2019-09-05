@@ -150,7 +150,7 @@ EOT;
 
             $userId = $request->session('id');
 
-            $limit = 3;
+            $limit = 5;
 
             $args = [
                 'limit' => $limit,
@@ -219,12 +219,12 @@ EOT;
             $liked = $state === 'like';
 
             $query = <<<EOT
-    INSERT INTO likes
-        (user_id, post_id, liked)
-    VALUES
-        (:user_id, :post_id, :liked)
-    ON DUPLICATE KEY
-        UPDATE liked = :liked
+                INSERT INTO likes
+                    (user_id, post_id, liked)
+                VALUES
+                    (:user_id, :post_id, :liked)
+                ON DUPLICATE KEY
+                    UPDATE liked = :liked
 EOT;
 
             DB::connect();
