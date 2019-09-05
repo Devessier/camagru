@@ -73,4 +73,98 @@ class UserController {
         }
     }
 
+    public static function posts (Request $request) {
+        try {
+            $id = $request->session('id');
+
+            $query = <<<EOT
+                SELECT
+                    posts.id,
+                    images.path AS "img"
+                FROM
+                    posts
+                INNER JOIN
+                    images
+                ON
+                    images.id = posts.img_id
+                WHERE
+                    posts.user_id = :user_id
+                ORDER BY
+                    posts.created_at DESC
+EOT;
+
+            DB::connect();
+
+            $posts = DB::select($query, [
+                'user_id' => $id
+            ]);
+
+            return Response::make()->json($posts);
+        } catch (\Exception $e) {
+            return Response::internalError();
+        }
+    }
+
+    public static function deletePost (Request $request, $postId) {
+        try {
+            $userId = $request->session('id');
+
+            DB::connect();
+
+            $getImgIdQuery = <<<EOT
+                SELECT
+                    img_id
+                FROM
+                    posts
+                INNER JOIN
+                    images
+                ON
+                    images.id = posts.img_id
+                WHERE
+                    posts.id = :post_id
+                        AND
+                    posts.user_id = :user_id
+EOT;
+
+            $imgId = DB::select($getImgIdQuery, [
+                'post_id' => $postId,
+                'user_id' => $userId
+            ]);
+
+            DB::statement('SET foreign_key_checks = 0');
+
+            $deletePostQuery = <<<EOT
+                DELETE FROM
+                    posts
+                WHERE
+                    id = :post_id
+                        AND
+                    user_id = :user_id
+EOT;
+
+            DB::delete($deletePostQuery, [
+                'post_id' => $postId,
+                'user_id' => $userId
+            ]);
+
+            $deleteImgQuery = <<<EOT
+                DELETE FROM
+                    images
+                WHERE
+                    id = :id
+EOT;
+
+            DB::delete($deleteImgQuery, [
+                'id' => $imgId
+            ]);
+
+            DB::statement('SET foreign_key_checks = 1');
+
+            return Response::make()->json(true);
+        } catch (\Exception $e) {
+            print_r($e);
+            return Response::internalError();
+        }
+    }
+
 }

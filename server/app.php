@@ -21,6 +21,8 @@ Route::post('/^\/password\/modify\/?$/', 'AuthController@modifyPassword', Middle
 
 Route::get('/^\/me\/?$/', 'UserController@me', Middlewares::bind('authorized'));
 Route::put('/^\/me\/modify\/?$/', 'UserController@modify', Middlewares::bind('authorized'), Middlewares::bind('json'));
+Route::get('/^\/me\/posts\/?$/','UserController@posts', Middlewares::bind('authorized'));
+Route::delete('/^\/me\/post\/(\d+)\/?$/', 'UserController@deletePost', Middlewares::bind('authorized'));
 
 Route::get('/^\/posts\/?$/', 'PostController@load');
 Route::get('/^\/posts\/(\d+)\/?$/', 'PostController@loadMore');

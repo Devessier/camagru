@@ -62,6 +62,12 @@ class DB implements DatabaseOperations {
         return self::update($query, $params);
     }
 
+    public static function statement (string $query, array $params = []) {
+        self::canMakeRequest();
+        $stmt = self::prepare($query, $params);
+        $stmt->execute();
+    }
+
     private static function &prepare (string $query, array $params) {
         if (!($paramsType = arrayType($params)))
             throw new \Exception('Bad parameters array');
