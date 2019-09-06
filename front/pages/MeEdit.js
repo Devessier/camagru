@@ -1,6 +1,6 @@
 const MeEdit = (() => {
 
-	let data = {
+	const data = {
 		username: {
 			value: '',
 			modifying: false
@@ -12,6 +12,10 @@ const MeEdit = (() => {
 		password: {
 			value: '',
 			modifying: false
+		},
+		notifications: {
+			value: true,
+			ref: {}
 		},
 		visible: false,
 		toast: {
@@ -58,6 +62,20 @@ const MeEdit = (() => {
 		}
 	}
 
+	/**
+	 * Save whether the user wants to receive notifications.
+	 * @param {Boolean} state
+	 */
+	function saveNotificationPreference (state) {
+		fetch('http://localhost:8001/me/preferences/notifications/' + (state === true ? 'enable' : 'disable'), {
+			method: 'PUT',
+			credentials: 'include'
+		})
+			.then(res => res.json())
+			.then(console.log)
+			.catch(() => {})
+	}
+
 	function modifyButton (props) {
 		const render = Maverick.link()
 
@@ -102,24 +120,34 @@ const MeEdit = (() => {
 
 	function profileProperty (props, index, items) {
 		const title = props.title || ''
-		const placeholder = props.placeholder || ''
 		const ref = props.ref
-
 		const render = Maverick.link(ref)
-
 		const isLast = index === items.length - 1
-		const modifying = ref.modifying
 
+		if (props.toggle === true) {
+			return render`
+				<div class="${ (!isLast ? 'pb-2 mb-4 border-b border-grey-light ' : '') +  'flex flex-wrap' }">
+					<div class="flex justify-between w-full px-1 md:px-0">
+						<h3 class="mb-3 font-medium">${ title }</h3>
+
+						<div>${
+							Switch(ref, saveNotificationPreference)
+						}</div>
+					</div>
+				</div>
+			`
+		}
+
+		const placeholder = props.placeholder || ''
+		const modifying = ref.modifying
 		const onAbort = () => {
 			ref.value = GLOBAL_STATE.user[props.property || ''] || ''
 		}
-
+		
 		return render`
 			<div class="${ (!isLast ? 'pb-2 mb-4 border-b border-grey-light ' : '') +  'flex flex-wrap' }">
 				<div class="flex flex-col items-start w-full md:w-1/2 px-1 md:px-0">
-					<h3 class="mb-3 font-medium">${
-						title
-					}</h3>
+					<h3 class="mb-3 font-medium">${ title }</h3>
 
 					<input
 							value="${ ref.value }"
@@ -138,47 +166,55 @@ const MeEdit = (() => {
 		`
 	}
 
-	function h (render, props) {
-		const items = [
-			{
-				title: "Votre identifiant",
-				placeholder: "Identifiant",
-				ref: props.username,
-				property: 'username'
-			},
-			{
-				title: "Votre adresse mail",
-				placeholder: "Adresse mail",
-				ref: props.email,
-				property: 'email'
-			},
-			{
-				title: 'Nouveau mot de passe',
-				placeholder: 'Mot de passe',
-				ref: props.password,
-				property: 'password'
-			}
-		]
+	return new Page(
+		'Camagru - Édition du profil',
+		data,
+		function render (render, props) {
+			const items = [
+				{
+					title: "Votre identifiant",
+					placeholder: "Identifiant",
+					ref: props.username,
+					property: 'username'
+				},
+				{
+					title: "Votre adresse mail",
+					placeholder: "Adresse mail",
+					ref: props.email,
+					property: 'email'
+				},
+				{
+					title: 'Nouveau mot de passe',
+					placeholder: 'Mot de passe',
+					ref: props.password,
+					property: 'password'
+				},
+				{
+					title: 'Recevoir les notifications',
+					toggle: true,
+					ref: props.notifications
+				}
+			]
 
-		return render`
-			<div class="flex justify-center items-center md:mx-10 mt-10">
-				<div class="flex flex-col w-full md:w-3/5">
-					<h2 class="px-1 md:px-0 pb-3 mb-5 border-b border-grey-light">
-						Modification du profil
-					</h2>
-					<div class="flex flex-col items-stretch">${
-						items.map(profileProperty)
-					}</div>
+			return render`
+				<div class="flex justify-center items-center md:mx-10 my-10">
+					<div class="flex flex-col w-full md:w-3/5">
+						<h2 class="px-1 md:px-0 pb-3 mb-5 border-b border-grey-light">
+							Modification du profil
+						</h2>
+						<div class="flex flex-col items-stretch">${
+							items.map(profileProperty)
+						}</div>
+					</div>
 				</div>
-			</div>
-		`
-	}
-
-	return new Page('Camagru - Édition du profil', data, h, {
-		created: function created () {
-			data.username.value = GLOBAL_STATE.user.username
-			data.email.value = GLOBAL_STATE.user.email
+			`
+		},
+		{
+			created: function created () {
+				data.username.value = GLOBAL_STATE.user.username
+				data.email.value = GLOBAL_STATE.user.email
+			}
 		}
-	})
+	)
 
 })()

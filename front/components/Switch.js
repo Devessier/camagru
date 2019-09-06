@@ -2,13 +2,16 @@
 /**
  * Switch is a switch component.
  * props must have a **ref** property which is not a primitive to prevent re-renderings.
- * @param {Object} props 
+ * @param {Object} props
+ * @param {Function} [onChange] A function called when the state of the switch changed
  */
-function Switch (props) {
+function Switch (props, onChange) {
 	const render = Maverick.link(props.ref)
 
 	function onclick () {
 		props.value = this.checked
+
+		if (typeof onChange === 'function') onChange(this.checked)
 	}
 
 	return render`

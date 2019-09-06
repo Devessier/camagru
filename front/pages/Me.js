@@ -43,7 +43,7 @@ const Me = (() => {
 
     function render (render, props) {
         return render`
-            <div class="flex justify-center items-center md:mx-10 mt-10">
+            <div class="flex justify-center items-center md:mx-10 my-10">
                 <div class="flex flex-col items-stretch w-full md:w-3/5">
                     <div class="flex justify-between flex-wrap">
                         <div class="flex flex-col justify-around items-start">

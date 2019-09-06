@@ -239,7 +239,8 @@ EOT;
                 SELECT
                     posts.text,
                     users.email,
-                    users.username
+                    users.username,
+                    users.wants_notifications
                 FROM
                     posts
                 INNER JOIN
@@ -255,7 +256,7 @@ EOT;
                     'post_id' => $postId
                 ]);
 
-                if (!empty($data) && !empty($data[0])) {
+                if (!empty($data) && !empty($data[0]) && !empty($data['wants_notifications']) && $data['wants_notifications'] === true) {
                     [ 'text' => $text, 'email' => $email, 'username' => $username ] = $data[0];
 
                     // Notify the user
@@ -296,6 +297,7 @@ EOT;
                     post_author.id AS "author_id",
                     post_author.username AS "username",
                     post_author.email AS "email",
+                    post_author.wants_notifications AS "author_wants_notifications",
                     posts.text AS "post_text",
                     comment_author.username AS "comment_author"
                 FROM
@@ -323,10 +325,13 @@ EOT;
                     'username' => $username,
                     'email' => $email,
                     'post_text' => $postText,
-                    'comment_author' => $commentAuthor
+                    'comment_author' => $commentAuthor,
+                    'author_wants_notifications' => $authorWantsNotifications
                 ] = $data[0];
 
-                if (!empty($authorId) && $authorId !== $userId) {
+                echo "authorWantsNotifications =" . $authorWantsNotifications . "\n";
+
+                if (!empty($authorId) && $authorId !== $userId && $authorWantsNotifications === true) {
                     // Notify the post author that its post has received a new comment
                     // if the commenter is not the author of the comment.
                     MailController::postHasBeenCommented(

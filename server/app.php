@@ -21,6 +21,7 @@ Route::post('/^\/password\/modify\/?$/', 'AuthController@modifyPassword', Middle
 
 Route::get('/^\/me\/?$/', 'UserController@me', Middlewares::bind('authorized'));
 Route::put('/^\/me\/modify\/?$/', 'UserController@modify', Middlewares::bind('authorized'), Middlewares::bind('json'));
+Route::put('/^\/me\/preferences\/notifications\/(enable|disable)\/?$/', 'UserController@modifyNotificationsPreferences', Middlewares::bind('authorized'));
 Route::get('/^\/me\/posts\/?$/','UserController@posts', Middlewares::bind('authorized'));
 Route::delete('/^\/me\/post\/(\d+)\/?$/', 'UserController@deletePost', Middlewares::bind('authorized'));
 

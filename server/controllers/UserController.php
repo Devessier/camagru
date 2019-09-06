@@ -167,4 +167,30 @@ EOT;
         }
     }
 
+    public static function modifyNotificationsPreferences (Request $request, string $state) {
+        try {
+            $userId = $request->session('id');
+
+            $query = <<<EOT
+                UPDATE
+                    users
+                SET
+                    wants_notifications = :enable
+                WHERE
+                    id = :user_id
+EOT;
+
+            DB::connect();
+
+            DB::update($query, [
+                'enable' => $state === 'enable',
+                'user_id' => $userId
+            ]);
+
+            return Response::make()->json(true);
+        } catch (\Exception $e) {
+            return Response::internalError();
+        }
+    }
+
 }
