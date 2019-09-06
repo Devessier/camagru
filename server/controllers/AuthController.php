@@ -62,7 +62,7 @@ class AuthController {
 			$password = $body->password;
 			$email = $body->email;
 
-			if (!($username && $password && $email))
+			if (!($username && $password && $email && strlen($password) >= 6))
 				return Response::unauthorized();
 
 			if (!validEmail($email)) {

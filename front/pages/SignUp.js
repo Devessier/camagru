@@ -17,10 +17,16 @@ const SignUp = (() => {
 				visible: false
 			}
         ],
-        onclick: () => {
+        onclick: function onclick () {
 			const username = data.inputs[0].value
 			const email = data.inputs[1].value
 			const password = data.inputs[2].value
+
+			if (!(password.length >= 6)) {
+				data.inputs[2].value = ''
+				data.error = 'Votre mot de passe est trop court : 6 caractères minimum'
+				return
+			}
 
 			data.inputs[0].value = ''
 			data.inputs[1].value = ''
