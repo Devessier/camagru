@@ -235,6 +235,34 @@ EOT;
                 'liked' => $liked
             ]);
 
+            $getPostAuthorQuery = <<<EOT
+                SELECT
+                    posts.text,
+                    users.email,
+                    users.username
+                FROM
+                    posts
+                INNER JOIN
+                    users
+                ON
+                    posts.user_id = users.id
+                WHERE
+                    posts.id = :post_id
+EOT;
+
+            if ($state === 'like') {
+                $data = DB::select($getPostAuthorQuery, [
+                    'post_id' => $postId
+                ]);
+
+                if (!empty($data) && !empty($data[0])) {
+                    [ 'text' => $text, 'email' => $email, 'username' => $username ] = $data[0];
+
+                    // Notify the user
+                    MailController::postHasBeenLiked($username, $email, $text);
+                }
+            }
+
             return Response::make()
                     ->json(true);
         } catch (\Exception $e) {
@@ -252,7 +280,7 @@ EOT;
 
             $body = $request->body();
 
-            if (!($comment = $body->comment))
+            if (!($comment = $body->comment) || $comment === '')
                 return Response::badRequest();
 
             DB::connect();
@@ -263,8 +291,54 @@ EOT;
                 'post_id' => $postId
             ]);
 
-            return Response::make()
-                    ->json(true);
+            $query = <<<EOT
+                SELECT
+                    post_author.id AS "author_id",
+                    post_author.username AS "username",
+                    post_author.email AS "email",
+                    posts.text AS "post_text",
+                    comment_author.username AS "comment_author"
+                FROM
+                    posts
+                INNER JOIN
+                    users AS post_author
+                ON
+                    post_author.id = posts.user_id
+                INNER JOIN
+                    users AS comment_author
+                ON
+                    comment_author.id = :comment_author_id
+                WHERE
+                    posts.id = :post_id
+EOT;
+
+            $data = DB::select($query, [
+                'comment_author_id' => $userId,
+                'post_id' => $postId
+            ]);
+
+            if (!empty($data) && !empty($data[0])) {
+                [
+                    'author_id' => $authorId,
+                    'username' => $username,
+                    'email' => $email,
+                    'post_text' => $postText,
+                    'comment_author' => $commentAuthor
+                ] = $data[0];
+
+                if (!empty($authorId) && $authorId !== $userId) {
+                    // Notify the post author that its post has received a new comment
+                    // if the commenter is not the author of the comment.
+                    MailController::postHasBeenCommented(
+                        $username,
+                        $email,
+                        $postText,
+                        $commentAuthor,
+                        $comment
+                    );
+                }
+            }
+            return Response::make()->json(true);
         } catch (\Exception $e) {
             return Response::internalError();
         }

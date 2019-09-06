@@ -139,4 +139,41 @@ EOF;
         }
     }
 
+    public static function postHasBeenLiked (string $username, string $email, string $postText) {
+        try {
+            $text = <<<EOT
+Bonjour $username,\n\r
+Votre post "$postText" vient d'être liké !\n\r
+A bientôt sur Camagru !\n\r
+EOT;
+
+            return self::sendMail(
+                $email,
+                'Camagru - Un de vos posts a été liké',
+                $text
+            );
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
+    public static function postHasBeenCommented (string $username, string $email, string $postText, string $commentAuthor, string $comment) {
+        try {
+            $text = <<<EOT
+Bonjour $username,\n\r
+Votre post "$postText" vient de recevoir un nouveau commentaire par $commentAuthor :\n\r
+$comment\n\r
+A bientôt sur Camagru !\n\r
+EOT;
+
+            return self::sendMail(
+                $email,
+                'Camagru - Un de vos posts a été commenté',
+                $text
+            );
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
 }
