@@ -26,7 +26,7 @@ curl https://getcaddy.com | bash -s personal http.cors
 
 sudo cat <<EOF > /etc/init.d/camagru.sh
 #!/usr/bin/env bash
-cd /git && ./build.php && ./config/database.php && caddy &
+cd /git && ./build.php && ./config/setup.php && caddy &
 EOF
 
 chmod +x /etc/init.d/camagru.sh

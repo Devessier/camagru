@@ -2,7 +2,7 @@
 
 namespace Iceman;
 
-include_once __DIR__ . '/../../config/setup.php';
+include_once __DIR__ . '/../../config/database.php';
 
 $GLOBALS['DB_DSN'] = $DB_DSN;
 $GLOBALS['DB_USER'] = $DB_USER;
@@ -10,10 +10,11 @@ $GLOBALS['DB_PASSWORD'] = $DB_PASSWORD;
 
 interface DatabaseOperations {
 
-    public static function select (string $query, array $params);
-    public static function insert (string $query, array $params);
-    public static function update (string $query, array $params);
-    public static function delete (string $query, array $params);
+    public static function select       (string $query, array $params);
+    public static function insert       (string $query, array $params);
+    public static function update       (string $query, array $params);
+    public static function delete       (string $query, array $params);
+    public static function statement    (string $query, array $params);
 
 }
 
