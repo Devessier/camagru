@@ -2,6 +2,10 @@ a, a:visited {
     text-decoration: none;
 }
 
+input:focus, textarea:focus, select:focus{
+    outline: none;
+}
+
 .transition {
     transition: all .2s;
 }
