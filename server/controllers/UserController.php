@@ -14,12 +14,13 @@ class UserController {
         try {
             DB::connect();
 
-            $users = DB::select('SELECT username, email, created_at, type, verified FROM users WHERE id = :id', [
+            $users = DB::select('SELECT username, email, created_at, type, verified, wants_notifications FROM users WHERE id = :id', [
                 'id' => $id
             ]);
 
             if (is_array($users) && isset($users[0])) {
                 [ $user ] = $users;
+                $user['wants_notifications'] = $user['wants_notifications'] === '1';
             } else {
                 $user = null;
             }

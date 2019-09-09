@@ -14,7 +14,7 @@ const MeEdit = (() => {
 			modifying: false
 		},
 		notifications: {
-			value: true,
+			value: false,
 			ref: {}
 		},
 		visible: false,
@@ -213,6 +213,7 @@ const MeEdit = (() => {
 			created: function created () {
 				data.username.value = GLOBAL_STATE.user.username
 				data.email.value = GLOBAL_STATE.user.email
+				data.notifications.value = GLOBAL_STATE.user.wants_notifications
 			}
 		}
 	)
