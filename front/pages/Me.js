@@ -88,11 +88,9 @@ const Me = (() => {
             })
                 .then(res => res.json())
                 .then((data) => {
-                    console.log('data =', data)
                     if (data.error) {
                         this.state.error = data.error
                     } else {
-                        console.log('posts =', data)
                         this.state.posts = data
                     }
                 })

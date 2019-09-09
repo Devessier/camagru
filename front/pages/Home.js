@@ -294,7 +294,6 @@ const Home = (() => {
 
 		if (!fetching && e.pageY >= document.body.clientHeight - htmlTag.clientHeight - DELTA) {
 			// load
-			console.log('load')
 			fetching = true
 			loadMorePosts()
 				.then(() => {

@@ -30,7 +30,6 @@ function loadImage (obj, srcKey, baseUrl) {
         const img = new Image
 
         img.onload = function onload () {
-            console.log(obj)
             obj[srcKey] = this.src
             resolve(obj)
         }
