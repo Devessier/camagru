@@ -32,12 +32,15 @@ function toast (h, props) {
 }
 
 function $toast (props, title, text, timeout) {
-	if (typeof timeout !== 'number')
+	if (typeof timeout !== 'number' || timeout < 0)
 		timeout = 3000
 	props.toast.hide = false
 	props.toast.title = title
 	props.toast.text = text
 	props.toast.open = true
+
+	clearTimeout(props.toast._timeoutID)
+
 	props.toast._timeoutID = setTimeout(() => {
 		props.toast.open = false
 	}, timeout)
