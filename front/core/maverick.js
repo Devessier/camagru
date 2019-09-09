@@ -163,13 +163,57 @@ const Maverick = (() => {
         if (isListener) {
             aircraft.removeAttribute(name)
 
-            return function event (value) {
-                const old = weapons.get(name)
+            let attributeName = name
+            let modifier = null
 
-                if (old !== value) {
-                    aircraft[name] = value
-                    weapons.set(name, value)
+            if ([ 'passive', 'prevent', 'once' ].some(modifier => name.endsWith('.' + modifier))) {
+                const splits = attributeName.split('.')
+
+                attributeName = splits[0]
+                modifier = splits[1]
+            }
+
+            const eventName = attributeName.split(/^on/)[1]
+
+            function preventDefaultHandlerMaker (handler) {
+                return (event) => {
+                    event.preventDefault()
+
+                    handler()
                 }
+            }
+
+            return function event (value) {
+                const old = weapons.get(attributeName)
+
+                if (old === value)
+                    return
+
+                if (typeof value !== 'function') {
+                    aircraft.removeAttribute(attributeName)
+                    weapons.set(attributeName, false)
+                    return
+                }
+
+                aircraft.removeEventListener(eventName, old)
+
+                if (modifier === 'prevent') {
+                    const handler = preventDefaultHandlerMaker(value)
+
+                    aircraft.addEventListener(eventName, handler)
+                    weapons.set(attributeName, handler)
+                    return
+                }
+
+                let options = false
+                if (modifier === 'passive') {
+                    options = { passive: true }
+                } else if (modifier === 'once') {
+                    options = { once: true }
+                }
+
+                aircraft.addEventListener(eventName, value, options)
+                weapons.set(attributeName, value)
             }
         }
         /**
@@ -181,18 +225,25 @@ const Maverick = (() => {
         return function attr (value) {
             const old = weapons.get(name)
 
-            if (old !== value) {
-                if (value === false) {
-                    aircraft.removeAttribute(name)
+            if (old === value)
+                return
+
+            /**
+             * If *value* is a falsy value, remove the attribute and save that the value was *false*.
+             * This prevents, for instance, img tags to fetch **undefined** file.
+             */
+            if (Boolean(value) === false) {
+                aircraft.removeAttribute(name)
+
+                weapons.set(name, false)
+            } else {
+                if (old === false) {
+                    aircraft.setAttribute(name, value)
                 } else {
-                    if (old === false) {
-                        aircraft.setAttribute(name, value)
-                    } else {
-                        if (directWrite) {
-                            aircraft[name] = value
-                        }
-                        attribute.value = value
+                    if (directWrite) {
+                        aircraft[name] = value
                     }
+                    attribute.value = value
                 }
                 weapons.set(name, value)
             }
