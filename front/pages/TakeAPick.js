@@ -35,7 +35,36 @@ const TakeAPick = (() => {
 			text: '',
 			open: undefined,
 			hide: true
+		},
+		navigatorWidthFactor: 0
+	}
+
+	let ehElement
+	let rect
+
+	function updateFilterFactor () {
+		const width = window.innerWidth
+
+		data.navigatorWidthFactor = (width >= 640) ? 1 : (width / 640)
+
+		const oldRect = rect
+
+		if (!ehElement) ehElement = document.getElementById('eh')
+
+		if (ehElement) rect = ehElement.getBoundingClientRect()
+		else return
+
+		if (data.filter.block === true && oldRect) {
+			data.filter.position.x *= rect.width / oldRect.width
+			data.filter.position.y *= rect.height / oldRect.height
+
+			return
 		}
+
+		if (data.filter.position.x + data.filter.width * data.navigatorWidthFactor > rect.width)
+			data.filter.position.x = rect.width - data.filter.width * data.navigatorWidthFactor
+		if (data.filter.position.y + data.filter.height * data.navigatorWidthFactor > rect.height)
+			data.filter.position.y = rect.height - data.filter.height * data.navigatorWidthFactor
 	}
 
 	function take (props) {
@@ -43,7 +72,7 @@ const TakeAPick = (() => {
 		const image = document.getElementById('video')
 
 		canvas.getContext('2d').drawImage(image, 0, 0, WIDTH, HEIGHT)
-		props.photo.url = canvas.toDataURL('image/png')
+		props.photo.url = canvas.toDataURL('image/jpeg', .8)
 		props.filter.block = true
 	}
 
@@ -231,7 +260,6 @@ const TakeAPick = (() => {
 		`
 	}
 
-	let rect
 	let diff = {
 		x: 0,
 		y: 0
@@ -283,17 +311,20 @@ const TakeAPick = (() => {
 		const computedX = x - rect.left - diff.x | 0
 		const computedY = y - rect.top - diff.y | 0
 
+		console.log('fcking filter')
+		debugger
+
 		if (computedX < 0)
 			data.filter.position.x = 0
-		else if ((computedX + data.filter.width) > rect.width)
-			data.filter.position.x = rect.width - data.filter.width
+		else if ((computedX + data.filter.width * data.navigatorWidthFactor) > rect.width)
+			data.filter.position.x = rect.width - data.filter.width * data.navigatorWidthFactor
 		else
 			data.filter.position.x = computedX
 
 		if (computedY < 0)
 			data.filter.position.y = 0
-		else if ((computedY + data.filter.height) > rect.height)
-			data.filter.position.y = rect.height - data.filter.height
+		else if ((computedY + data.filter.height * data.navigatorWidthFactor) > rect.height)
+			data.filter.position.y = rect.height - data.filter.height * data.navigatorWidthFactor
 		else
 			data.filter.position.y = computedY
 	}
@@ -308,8 +339,7 @@ const TakeAPick = (() => {
 	}
 
 	function resizeMove (e) {
-		if (!rect)
-			rect = document.getElementById('eh').getBoundingClientRect()
+		if (!rect) rect = document.getElementById('eh').getBoundingClientRect()
 
 		const width = e.clientX - rect.left | 0
 		const height = e.clientY - rect.top | 0
@@ -318,8 +348,8 @@ const TakeAPick = (() => {
 
 		if (data.filter.position.x + size <= rect.width
 			&& data.filter.position.y + size <= rect.height) {
-			data.filter.width = size
-			data.filter.height = size
+			data.filter.width = size * data.navigatorWidthFactor
+			data.filter.height = size * data.navigatorWidthFactor
 		}
 	}
 
@@ -390,10 +420,14 @@ const TakeAPick = (() => {
 							id="eh"
 
 							class="h-full w-full relative"
-							style="height: 480px; background: linear-gradient(to right, #9796f0, #fbc7d4);"
 					>
-						<video width="640" height="480" id="video" class="${ 'max-w-full ' + (props.photo.url ? 'hidden' : 'rounded') }"></video>
-						<img id="photo" class="${ props.photo.url ? 'h-full w-full rounded flash' : 'hidden' }" src="${ props.photo.url }" />
+						<video id="video" class="${ 'max-w-full ' + (props.photo.url ? 'hidden' : 'rounded') }"></video>
+						<img
+								id="photo"
+								src="${ props.photo.url }"
+								class="${ props.photo.url ? 'h-full w-full rounded flash' : 'hidden' }"
+								style="object-fit: contain"
+						/>
 
 						<div
 								class="${ props.filter ? 'absolute pin-t pin-l' : 'hidden' }"
@@ -411,8 +445,8 @@ const TakeAPick = (() => {
 										ontouchstart.passive="${ handleMouseDown }"
 										ontouchmove.passive="${ handleMouseMove }"
 
-										width="${ props.filter.width + 'px' }"
-										height="${ props.filter.height + 'px' }"
+										width="${ props.filter.width * props.navigatorWidthFactor + 'px' }"
+										height="${ props.filter.height * props.navigatorWidthFactor + 'px' }"
 
 										style="touch-action: none"
 								/>
@@ -422,8 +456,6 @@ const TakeAPick = (() => {
 										style="transform: rotate(90deg); bottom: -10px; right: -10px"
 
 										onmousedown.prevent="${ resizeDown }"
-
-										
 								>
 									<svg class="w-5 h-5 text-white" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-maximize-2"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
 								</div>
@@ -496,10 +528,14 @@ const TakeAPick = (() => {
 						$toast(this.state, 'Caméra', 'Une erreur est survenue lors du lancement de la caméra', 2e3)
 					})
 			}
+
+			updateFilterFactor()
+			window.addEventListener('resize', updateFilterFactor, { passive: true })
 		},
 		bye: function bye () {
 			const video = document.getElementById('video')
 			video && (video.src = '')
+			window.removeEventListener('resize', updateFilterFactor)
 		}
 	})
 
