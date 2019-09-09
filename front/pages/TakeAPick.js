@@ -237,45 +237,72 @@ const TakeAPick = (() => {
 		y: 0
 	}
 
-	function handleMouseDown (event, props) {
-		if (props.filter.block)
+	function handleMouseDown (event) {
+		if (data.filter.block)
 			return
-		if (!rect)
-			rect = document.getElementById('eh').getBoundingClientRect()
-		diff.x = event.clientX - rect.left - props.filter.position.x | 0
-		diff.y = event.clientY - rect.top - props.filter.position.y | 0
-		window.addEventListener('mousemove', handleMouseMove)
-		window.addEventListener('mouseup', handleMouseUp)
+
+		let x, y
+
+		if (event instanceof TouchEvent) {
+			const touchLocation = event.targetTouches[0]
+
+			x = touchLocation.pageX
+			y = touchLocation.pageY
+		} else {
+			x = event.clientX
+			y = event.clientY
+		}
+
+		if (!rect) rect = document.getElementById('eh').getBoundingClientRect()
+
+		diff.x = x - rect.left - data.filter.position.x | 0
+		diff.y = y - rect.top - data.filter.position.y | 0
+
+		if (!(event instanceof TouchEvent)) {
+			window.addEventListener('mousemove', handleMouseMove)
+			window.addEventListener('mouseup', handleMouseUp)
+		}
 	}
 
 	function handleMouseMove (event) {
 		if (data.filter.block)
 			return
 
-		const x = event.clientX - rect.left - diff.x | 0
-		const y = event.clientY - rect.top - diff.y | 0
+		let x, y
 
-		if (x < 0)
+		if (event instanceof TouchEvent) {
+			const touchLocation = event.targetTouches[0]
+
+			x = touchLocation.pageX
+			y = touchLocation.pageY
+		} else {
+			x = event.clientX
+			y = event.clientY
+		}
+
+		const computedX = x - rect.left - diff.x | 0
+		const computedY = y - rect.top - diff.y | 0
+
+		if (computedX < 0)
 			data.filter.position.x = 0
-		else if ((x + data.filter.width) > rect.width)
+		else if ((computedX + data.filter.width) > rect.width)
 			data.filter.position.x = rect.width - data.filter.width
 		else
-			data.filter.position.x = x
+			data.filter.position.x = computedX
 
-		if (y < 0)
+		if (computedY < 0)
 			data.filter.position.y = 0
-		else if ((y + data.filter.height) > rect.height)
+		else if ((computedY + data.filter.height) > rect.height)
 			data.filter.position.y = rect.height - data.filter.height
 		else
-			data.filter.position.y = y
+			data.filter.position.y = computedY
 	}
 
 	function handleMouseUp () {
 		window.removeEventListener('mousemove', handleMouseMove)
 	}
 
-	function resizeDown (props, event) {
-		event.preventDefault()
+	function resizeDown () {
 		window.addEventListener('mousemove', resizeMove)
 		window.addEventListener('mouseup', resizeUp)
 	}
@@ -358,7 +385,7 @@ const TakeAPick = (() => {
 					<h2 class="text-3xl">Prise de photographie</h2>
 				</header>
 
-				<section class="flex flex-wrap align-center" style="width: 640px">
+				<section class="flex flex-wrap align-center" style="max-width: 640px">
 					<article
 							id="eh"
 
@@ -376,18 +403,27 @@ const TakeAPick = (() => {
 								<img
 										src="${ props.filter && props.filter.path }"
 
+										draggable="false"
+
 										ondragstart="${ () => false }"
-										onmousedown="${ e => { handleMouseDown(e, props) } }"
+										onmousedown="${ handleMouseDown }"
+
+										ontouchstart.passive="${ handleMouseDown }"
+										ontouchmove.passive="${ handleMouseMove }"
 
 										width="${ props.filter.width + 'px' }"
 										height="${ props.filter.height + 'px' }"
+
+										style="touch-action: none"
 								/>
 
 								<div
 										class="${ (props.filter.block || !props.filter.height) ? 'hidden' : 'absolute' }"
 										style="transform: rotate(90deg); bottom: -10px; right: -10px"
 
-										onmousedown="${ resizeDown.bind(null, props) }"
+										onmousedown.prevent="${ resizeDown }"
+
+										
 								>
 									<svg class="w-5 h-5 text-white" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-maximize-2"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
 								</div>
