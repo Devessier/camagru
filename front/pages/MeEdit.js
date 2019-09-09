@@ -72,8 +72,15 @@ const MeEdit = (() => {
 			credentials: 'include'
 		})
 			.then(res => res.json())
-			.then(console.log)
-			.catch(() => {})
+			.then((newState) => {
+				if (newState !== true)
+					throw new Error('Invalid Reponse')
+
+				$toast(data, 'Préférences - Notifications', state === true ? 'Les notifications ont été activées' : 'Les notifications ont été désactivées')
+			})
+			.catch(() => {
+				$toast(data, 'Préférences - Notifications', 'Une erreur a eu lieu pendant la mise à jour des données')
+			})
 	}
 
 	function modifyButton (props) {
