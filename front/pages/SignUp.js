@@ -51,6 +51,7 @@ const SignUp = (() => {
 						data.error = res.message
 					} else {
 						data.message = res.message
+						data.error = ''
 					}
 				})
 				.catch((err) => {
