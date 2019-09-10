@@ -128,6 +128,13 @@ const Home = (() => {
 		props.newComment = ''
 	}
 
+	function wroteNewComment (event, props) {
+		if (event.key === 'Enter') {
+			saveComment(props)
+			event.target.blur()
+		}
+	}
+
 	function comment (render, props) {
 		return render`
 			<article class="flex space-around mx-1 mb-4">
@@ -228,7 +235,7 @@ const Home = (() => {
 									value="${ props.newComment }"
 									oninput="${ event => { props.newComment = event.target.value } }"
 									class="${ 'font-light text-grey-darker flex-grow short-transition ' + (disabled ? 'bg-grey-light' : 'bg-transparent') }"
-									onkeyup="${ event => { event.key === 'Enter' && saveComment(props) } }"
+									onkeyup="${ (event) => wroteNewComment(event, props) }"
 									disabled="${ disabled }"
 							/>
 							<button

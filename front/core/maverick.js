@@ -232,19 +232,14 @@ const Maverick = (() => {
              * If *value* is a falsy value, remove the attribute and save that the value was *false*.
              * This prevents, for instance, img tags to fetch **undefined** file.
              */
-            if (Boolean(value) === false) {
+            if (Boolean(value) === false && name !== 'value') {
                 aircraft.removeAttribute(name)
 
                 weapons.set(name, false)
             } else {
-                if (old === false) {
-                    aircraft.setAttribute(name, value)
-                } else {
-                    if (directWrite) {
-                        aircraft[name] = value
-                    }
-                    attribute.value = value
-                }
+                if (directWrite) aircraft.value = value
+                else aircraft.setAttribute(name, value)
+
                 weapons.set(name, value)
             }
         }

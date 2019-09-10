@@ -22,10 +22,11 @@ const TakeAPick = (() => {
 			},
 			block: false
 		},
+		upload: '',
 		photo: {
 			url: ''
 		},
-		file: '',
+		upload: '',
 		message: {
 			value: ''
 		},
@@ -68,6 +69,11 @@ const TakeAPick = (() => {
 	}
 
 	function take (props) {
+		if (props.upload !== '') {
+			props.filter.block = true
+			return
+		}
+
 		const canvas = document.getElementById('canvas')
 		const image = document.getElementById('video')
 
@@ -91,7 +97,7 @@ const TakeAPick = (() => {
 			block: false
 		}
 		props.photo.url = '' 
-		props.file = ''
+		props.upload = ''
 		props.message.value = ''
 	}
 
@@ -122,16 +128,17 @@ const TakeAPick = (() => {
 
 	function upload (e, props) {
 		const input = e.target
+
 		if (input) {
 			const file = input.files[0]
 
 			if (isValidFile(file)) {
 				const reader = new FileReader
-				props.file = file
-				props.filter.block = true
 
 				reader.onload = (e) => {
-					props.photo.url = e.target.result
+					props.upload = e.target.result
+
+					setTimeout(updateFilterFactor, 0)
 				}
 				reader.readAsDataURL(file)
 			} else {
@@ -141,14 +148,13 @@ const TakeAPick = (() => {
 	}
 
 	function send (props) {
-		if (!(props.filter.block && (props.file || props.photo.url) && props.message.value !== '')) {
-			console.log('this is a fail !')
-			return
-		}
+		console.log({ ...props })
+		
+		if (!(props.filter.block && (props.photo.url || props.upload) && props.message.value !== '')) return
 
 		const form = new FormData
 
-		if (props.file) {
+		if (props.upload) {
 			console.log('we will send a file')
 		} else {
 			form.append('photo', props.photo.url)
@@ -214,11 +220,11 @@ const TakeAPick = (() => {
 	}
 
 	function button (render, props) {
-		const takePhotoDisabled = props._stream === undefined || !props.filter.path
-		const uploadFileDisabled = !props.filter.path
+		const takePhotoDisabled = (props._stream === undefined && !props.upload) || !props.filter.path 
+		const uploadFileDisabled = data.filter.block
 		const sendPostDisabled = props.message.value === '' || props.message.value.length > POST_COMMENT_MAX
 
-		if (!props.photo.url) {
+		if (!props.filter.block) {
 			return render`
 				<input
 						id="upload"
@@ -374,13 +380,21 @@ const TakeAPick = (() => {
 	function aside (step, render, props) {
 		const disabled = props.message.value === '' || props.message.value.length > POST_COMMENT_MAX
 
+		if (!(props._stream || props.upload)) {
+			return render`
+				<div class="flex justify-center items-center my-3">
+					En attente du stream ou du téléchargement d'un fichier ...
+				</div>
+			`
+		}
 		if (step === 1) {
 			return render`
 				<div class="overflow-auto overflow-y-hidden w-full h-full relative" style="height: 140px">${
 					filters(props)
 				}</div>
 			`
-		} else if (step === 2) {
+		}
+		if (step === 2) {
 			return render`
 				<div class="mt-2">${
 					InputCounter(props.message, {
@@ -423,6 +437,8 @@ const TakeAPick = (() => {
 	function render (render, props) {
 		const style = (props.filter && props.filter.position && ('transform: translate3d(' + props.filter.position.x + 'px,' + props.filter.position.y + 'px, 0px)')) || false
 
+		const imgSrc = props.photo.url || props.upload
+
 		return render`
 			<section class="flex flex-col items-center">
 				<header class="flex justify-center items-center my-6">
@@ -435,11 +451,11 @@ const TakeAPick = (() => {
 
 							class="w-full relative"
 					>
-						<video id="video" class="${ 'max-w-full ' + (props.photo.url ? 'hidden' : 'rounded') }"></video>
+						<video id="video" class="${ 'max-w-full ' + ((!props._stream || props.photo.url || props.upload) ? 'hidden' : 'rounded') }"></video>
 						<img
 								id="photo"
-								src="${ props.photo.url }"
-								class="${ props.photo.url ? 'h-full w-full rounded flash' : 'hidden' }"
+								src="${ imgSrc }"
+								class="${ imgSrc ? 'h-full w-full rounded flash' : 'hidden' }"
 								style="object-fit: contain"
 						/>
 
@@ -538,7 +554,7 @@ const TakeAPick = (() => {
 						video.onloadedmetadata = video.play
 					})
 					.catch(() => {
-						$toast(this.state, 'Caméra', 'Une erreur est survenue lors du lancement de la caméra', 2e3)
+						$toast(this.state, 'Caméra', "La caméra n'a pas pu être lancée", 2e3)
 					})
 			}
 
