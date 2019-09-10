@@ -104,7 +104,6 @@ EOF;
             $text = <<<EOF
 Bonjour,\n\r
 Camagru a reçu une demande de réinitilisation de mot de passe concernant votre adresse mail.\n\r
-Si vous n'avez pas effectué cette demande, ignorez ce mail.\n\r
 \n\r
 A bientôt sur Camagru !\n\r
 EOF;
