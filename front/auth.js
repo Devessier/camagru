@@ -22,6 +22,9 @@ function isAuthenticated () {
 
 function logout () {
     GLOBAL_STATE.user = {}
+
+    router.replace('/')
+
     fetch('http://localhost:8001/logout', {
         credentials: 'include'
     })
