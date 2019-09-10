@@ -179,7 +179,7 @@ class AuthController {
 
 			[ [ 'id' => $userID ] ] = $result;
 
-			if (empty($userID)) {
+			if (empty($userID) || strlen($password) < 6) {
 				return Response::badRequest();
 			}
 

@@ -13,6 +13,15 @@ const PasswordReset = (() => {
     }
 
     function saveNewPassword () {
+        if (data.password.value.length < 6) {
+            data.message = 'Votre mot de passe est trop court, il doit faire au moins 6 caractères'
+            data.error = true
+            return
+        } else {
+            data.message = ''
+            data.error = false
+        }
+
         const regex = /token=([\d\w-]+)/
 
         const result = regex.exec(window.location.search)
