@@ -271,7 +271,7 @@ const TakeAPick = (() => {
 
 		let x, y
 
-		if (event instanceof TouchEvent) {
+		if (window.TouchEvent && event instanceof window.TouchEvent) {
 			const touchLocation = event.targetTouches[0]
 
 			x = touchLocation.pageX
@@ -286,7 +286,7 @@ const TakeAPick = (() => {
 		diff.x = x - rect.left - data.filter.position.x | 0
 		diff.y = y - rect.top - data.filter.position.y | 0
 
-		if (!(event instanceof TouchEvent)) {
+		if (!(window.TouchEvent && event instanceof window.TouchEvent)) {
 			window.addEventListener('mousemove', handleMouseMove)
 			window.addEventListener('mouseup', handleMouseUp)
 		}
@@ -298,7 +298,7 @@ const TakeAPick = (() => {
 
 		let x, y
 
-		if (event instanceof TouchEvent) {
+		if (window.TouchEvent && event instanceof window.TouchEvent) {
 			const touchLocation = event.targetTouches[0]
 
 			x = touchLocation.pageX
@@ -310,9 +310,6 @@ const TakeAPick = (() => {
 
 		const computedX = x - rect.left - diff.x | 0
 		const computedY = y - rect.top - diff.y | 0
-
-		console.log('fcking filter')
-		debugger
 
 		if (computedX < 0)
 			data.filter.position.x = 0
@@ -338,18 +335,35 @@ const TakeAPick = (() => {
 		window.addEventListener('mouseup', resizeUp)
 	}
 
-	function resizeMove (e) {
+	function resizeMove (event) {
 		if (!rect) rect = document.getElementById('eh').getBoundingClientRect()
 
-		const width = e.clientX - rect.left | 0
-		const height = e.clientY - rect.top | 0
+		let x,y 
 
-		const size = width > height ? width : height
+		if (window.TouchEvent && event instanceof window.TouchEvent) {
+			const touchLocation = event.targetTouches[0]
 
-		if (data.filter.position.x + size <= rect.width
-			&& data.filter.position.y + size <= rect.height) {
-			data.filter.width = size * data.navigatorWidthFactor
-			data.filter.height = size * data.navigatorWidthFactor
+			x = touchLocation.pageX
+			y = touchLocation.pageY
+		} else {
+			x = event.clientX
+			y = event.clientY
+		}
+
+		x -= rect.left
+		y -= rect.top
+
+		const diffX = (x - (data.filter.position.x + data.filter.width))  | 0
+		const diffY = (y - (data.filter.position.y + data.filter.height)) | 0
+
+		const maxDiff = diffX > diffY ? diffX : diffY
+
+		const possibleSize = data.filter.width + maxDiff
+
+		if (data.filter.position.x + possibleSize <= rect.width
+			&& data.filter.position.y + possibleSize <= rect.height) {
+			data.filter.width = possibleSize * data.navigatorWidthFactor
+			data.filter.height = possibleSize * data.navigatorWidthFactor
 		}
 	}
 
@@ -419,7 +433,7 @@ const TakeAPick = (() => {
 					<article
 							id="eh"
 
-							class="h-full w-full relative"
+							class="w-full relative"
 					>
 						<video id="video" class="${ 'max-w-full ' + (props.photo.url ? 'hidden' : 'rounded') }"></video>
 						<img
@@ -433,13 +447,12 @@ const TakeAPick = (() => {
 								class="${ props.filter ? 'absolute pin-t pin-l' : 'hidden' }"
 								style="${ style }"
 						>
-							<div class="h-full w-full relative">
+							<div class="h-full w-full relative" style="touch-action: none">
 								<img
 										src="${ props.filter && props.filter.path }"
 
 										draggable="false"
 
-										ondragstart="${ () => false }"
 										onmousedown="${ handleMouseDown }"
 
 										ontouchstart.passive="${ handleMouseDown }"
@@ -447,8 +460,6 @@ const TakeAPick = (() => {
 
 										width="${ props.filter.width * props.navigatorWidthFactor + 'px' }"
 										height="${ props.filter.height * props.navigatorWidthFactor + 'px' }"
-
-										style="touch-action: none"
 								/>
 
 								<div
@@ -456,6 +467,8 @@ const TakeAPick = (() => {
 										style="transform: rotate(90deg); bottom: -10px; right: -10px"
 
 										onmousedown.prevent="${ resizeDown }"
+
+										ontouchmove.passive="${ resizeMove }"
 								>
 									<svg class="w-5 h-5 text-white" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-maximize-2"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
 								</div>
