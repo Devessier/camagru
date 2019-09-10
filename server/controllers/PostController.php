@@ -13,18 +13,33 @@ class PostController {
     private const MAX_WIDTH = 680;
 
     public static function file (Request $request) {
-        [ 'file' => $file ] = $request->body();
+        try {
+            $body = $request->body();
 
-        echo "file\n";
+            $file = $body->file;
+
+            return self::processImageUpload($request, $file, $body);
+        } catch (\Exception $e) {
+            return Response::badRequest();
+        }
     }
 
     public static function photo (Request $request) {
         try {
-            DB::connect();
-
             $body = $request->body();
 
             $photo = $body->photo;
+
+            return self::processImageUpload($request, $photo, $body);
+        } catch (\Exception $e) {
+            return Response::badRequest();
+        }
+    }
+
+    private static function processImageUpload (Request $request, string $base64, $body) {
+        try {
+            DB::connect();
+
             $message = $body->message;
 
             $filter_arr = [
@@ -36,7 +51,7 @@ class PostController {
             ];
 
             if (!(
-                $photo
+                $base64
                 && $message
                 && strlen($message) <= 120
                 && array_every($filter_arr, function ($item) { return isset($item); })
@@ -48,7 +63,7 @@ class PostController {
             }
 
             $filter = Filter::fromName($filter_arr['name'], $filter_arr);
-            $image = Image::fromBase64($photo);
+            $image = Image::fromBase64($base64);
 
             if (!($filter && $image)) {
                 return Response::badRequest();

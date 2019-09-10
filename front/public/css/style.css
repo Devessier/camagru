@@ -123,3 +123,11 @@ input:focus, textarea:focus, select:focus{
     transform: translateX(0);
     background-color: white;
 }
+
+.object-contain {
+    object-fit: contain;
+}
+
+.object-cover {
+    object-fit: cover;
+}

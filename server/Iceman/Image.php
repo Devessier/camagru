@@ -65,13 +65,11 @@ class Image {
 
         $payload = count($data) === 1 ? $data[0] : $data[1];
 
-        if (!($decoded = @base64_decode($payload))) {
-            return false;
-        }
+        if (!($decoded = @base64_decode($payload))) return false;
 
-        if (!($img = @imagecreatefromstring($decoded))) {
-            return false;
-        }
+        if (!($img = @imagecreatefromstring($decoded))) return false;
+
+        if (!($img = @imagescale($img, 640))) return false;
 
         imagealphablending($img, true);
         imagesavealpha($img, true);

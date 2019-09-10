@@ -154,35 +154,32 @@ const TakeAPick = (() => {
 
 		const form = new FormData
 
-		if (props.upload) {
-			console.log('we will send a file')
-		} else {
-			form.append('photo', props.photo.url)
-			form.append('filter.name', props.filter.name)
-			form.append('filter.width', props.filter.width)
-			form.append('filter.height', props.filter.height)
-			form.append('filter.x', props.filter.position.x)
-			form.append('filter.y', props.filter.position.y)
-			form.append('message', props.message.value)
+		form.append('filter.name', props.filter.name)
+		form.append('filter.width', props.filter.width)
+		form.append('filter.height', props.filter.height)
+		form.append('filter.x', props.filter.position.x)
+		form.append('filter.y', props.filter.position.y)
+		form.append('message', props.message.value)
 
-			fetch('http://localhost:8001/post/add/photo', {
-				method: 'POST',
-				body: form,
-				credentials: 'include'
-			})
-				.then(res => res.json())
-				.then(image => {
-					props.takenPhotos.push(
-						Object.assign(
-							image,
-							{ loaded: false, isLoading: false, src: '' }
-						)
+		if (props.upload) form.append('file', props.upload)
+		else form.append('photo', props.photo.url)
+
+		fetch('http://localhost:8001/post/add/' + (Boolean(props.upload) ? 'file' : 'photo'), {
+			method: 'POST',
+			body: form,
+			credentials: 'include'
+		})
+			.then(res => res.json())
+			.then((image) => {
+				props.takenPhotos.push(
+					Object.assign(
+						image,
+						{ loaded: false, isLoading: false, src: '' }
 					)
-				})
-				.catch(() => {})
-
-			console.log('we will send a photo')
-		}
+				)
+			})
+			.catch(() => {})
+		
 		cancel(props)
 	}
 
@@ -423,6 +420,7 @@ const TakeAPick = (() => {
 				<aside class="flex justify-start items-center absolute">${
 					photos.map((photo, index) => ClosableImage(photo, {
 						marginRight: '5px',
+						objectFit: 'object-contain',
 						onClose: () => { deletePhoto(index) }
 					}))
 				}</aside>
