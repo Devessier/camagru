@@ -265,12 +265,12 @@ EOT;
                     posts.id = :post_id
 EOT;
 
-            if ($state === 'like') {
+            if ($liked) {
                 $data = DB::select($getPostAuthorQuery, [
                     'post_id' => $postId
                 ]);
 
-                if (!empty($data) && !empty($data[0]) && !empty($data['wants_notifications']) && $data['wants_notifications'] === true) {
+                if (!empty($data) && !empty($data[0]) && !empty($data[0]['wants_notifications']) && $data[0]['wants_notifications'] === '1') {
                     [ 'text' => $text, 'email' => $email, 'username' => $username ] = $data[0];
 
                     // Notify the user
@@ -279,7 +279,7 @@ EOT;
             }
 
             return Response::make()
-                    ->json(true);
+                ->json(true);
         } catch (\Exception $e) {
             return Response::internalError();
         }
@@ -343,7 +343,7 @@ EOT;
                     'author_wants_notifications' => $authorWantsNotifications
                 ] = $data[0];
 
-                if (!empty($authorId) && $authorId !== $userId && $authorWantsNotifications === true) {
+                if (!empty($authorId) && $authorId !== $userId && $authorWantsNotifications === '1') {
                     // Notify the post author that its post has received a new comment
                     // if the commenter is not the author of the comment.
                     MailController::postHasBeenCommented(
