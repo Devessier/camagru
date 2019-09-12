@@ -287,14 +287,14 @@ const Home = (() => {
 	 * 
 	 * @param {Event} e 
 	 */
-	function infiniteScroll (e) {
+	function infiniteScroll () {
 		if (!htmlTag) {
-			htmlTag = document.querySelector('html')
+			if (!(htmlTag = document.querySelector('html'))) return
 		}
 
-		const DELTA = 25 | 0
+		const DELTA = 80 | 0
 
-		if (!fetching && e.pageY >= document.body.clientHeight - htmlTag.clientHeight - DELTA) {
+		if (!fetching && htmlTag.offsetHeight - window.pageYOffset - htmlTag.scrollTop <= DELTA) {
 			// load
 			fetching = true
 			loadMorePosts()
