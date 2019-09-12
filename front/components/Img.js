@@ -28,13 +28,14 @@ function Img (props, options) {
 	}
 
 	const cssClasses = 'rounded-lg hover:shadow-lg transition bg-grey-light' + (!props.loaded ? ' blur' : '') + (' ' + objectFit || '')
+	const styles = 'width: ' + WIDTH + 'px; height: ' + height + '; margin-right: ' + marginRight
 
 	return render`
 		<img
 				src="${ props.src }"
 
-				style="${ 'width: ' + WIDTH + 'px; height: ' + height + '; margin-right: ' + marginRight }"
-				class="${ cssClasses.trim() }"
+				style="${ styles }"
+				class="${ cssClasses }"
 		>
 	`
 }

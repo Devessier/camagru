@@ -77,8 +77,11 @@ const Maverick = (() => {
         return function any (value) {
             switch (typeof value) {
                 case 'string':
+                    // The value is a simple string that
+                    // we will put into the element using textContent.
+                    // This prevents XSS.
                     if (old !== value) {
-                        ship.innerHTML = value
+                        ship.textContent = value
                         old = value
                     }
                     break
@@ -409,6 +412,7 @@ const Maverick = (() => {
     function upgrade (templates) {
         const updates = []
         const html = templates.join(UIDC)
+        // The node is a HTML element
         if (this.nodeType === 1) {
             this.innerHTML = html
         } else {

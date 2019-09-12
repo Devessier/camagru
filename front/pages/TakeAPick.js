@@ -148,8 +148,6 @@ const TakeAPick = (() => {
 	}
 
 	function send (props) {
-		console.log({ ...props })
-		
 		if (!(props.filter.block && (props.photo.url || props.upload) && props.message.value !== '')) return
 
 		const form = new FormData

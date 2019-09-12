@@ -8,7 +8,7 @@ const Home = (() => {
 	}
 
 	const format = (() => {
-		if (Intl && 'RelativeTimeFormat' in Intl) {
+		if (window.Intl && 'RelativeTimeFormat' in window.Intl) {
 			const intl = new Intl.RelativeTimeFormat('fr-FR', { numeric: 'auto', style: 'long' })
 			const day = 3600 * 24 | 0
 
@@ -31,7 +31,7 @@ const Home = (() => {
 					return 'maintenant'
 				return intl.format(minutes, 'minute')
 			}
-		} else if (Intl && 'DateTimeFormat' in Intl) {
+		} else if (window.Intl && 'DateTimeFormat' in window.Intl) {
 			const intl = new Intl.DateTimeFormat('fr-FR', {})
 
 			return (timestamp) => {
@@ -252,12 +252,18 @@ const Home = (() => {
 	function posts (props) {
 		const render = Maverick.link(props.posts)
 
+		if (props.posts.length > 0) {
+			return render`
+				<section class="container flex flex-col items-center">${
+					props.posts.map((p, i) => post(Maverick.link(p), p, i))
+				}</section>
+			`
+		}
+
 		return render`
-			<section class="container flex flex-col items-center">${
-				props.posts.length > 0 ?
-					props.posts.map((p, i) => post(Maverick.link(p), p, i)) :
-					"<p class=\"mt-2\">Aucune image n'a été postée</p>"
-			}</section>
+			<section class="container flex flex-col items-center">
+				<p class="mt-2">Aucune image n'a été postée</p>
+			</section>
 		`
 	}
 
