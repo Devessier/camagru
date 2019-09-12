@@ -163,7 +163,6 @@ EOT;
 
             return Response::make()->json(true);
         } catch (\Exception $e) {
-            print_r($e);
             return Response::internalError();
         }
     }

@@ -48,7 +48,6 @@ EOF;
                     ->session('id', $userID)
                     ->redirect('http://localhost:8000/me');
         } catch (\Exception $e) {
-            echo "error\n";
             return Response::make()
                     ->redirect('http://localhost:8000/401');
         }

@@ -209,7 +209,6 @@ EOT;
             return Response::make()
                     ->json($posts);
         } catch (\Exception $e) {
-            print_r($e);
             return Response::internalError();
         }
     }
@@ -343,8 +342,6 @@ EOT;
                     'comment_author' => $commentAuthor,
                     'author_wants_notifications' => $authorWantsNotifications
                 ] = $data[0];
-
-                echo "authorWantsNotifications =" . $authorWantsNotifications . "\n";
 
                 if (!empty($authorId) && $authorId !== $userId && $authorWantsNotifications === true) {
                     // Notify the post author that its post has received a new comment
