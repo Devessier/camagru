@@ -224,7 +224,7 @@ const TakeAPick = (() => {
 				<input
 						id="upload"
 						type="file"
-						accept="image/*"
+						accept="image/png, image/jpeg"
 						class="hidden"
 						onchange="${ (e) => { upload(e, props) } }"
 				/>
