@@ -34,3 +34,5 @@ chmod +x /etc/init.d/camagru.sh
 sudo update-rc.d camagru.sh defaults
 
 mysql < /git/init.sql
+
+cd /git/server/public/images ; rm -- !(preview.png)
