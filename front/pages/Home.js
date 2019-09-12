@@ -172,19 +172,8 @@ const Home = (() => {
 			<article class="flex flex-col bg-grey-lighter" style="max-width: 640px">
 				<header class="flex justify-between items-center py-2 px-1">
 					<div class="flex items-center">
-                        <a
-                                href="${ userLink }"
-                                onclick="${ router.click(userLink) }"
-                        >
-							<img src="${ props.user.avatar }" width="40px" height="40px" class="rounded-full hover:shadow-md transition" />
-						</a>
-                        <a
-                                class="block ml-2 hover:underline text-black"
-                                href="${ userLink }"
-                                onclick="${ router.click(userLink) }"
-                        >${
-							props.user.name
-						}</a>
+						<img src="${ props.user.avatar }" width="40px" height="40px" class="rounded-full hover:shadow-md transition" />
+						<div class="ml-2">${ props.user.name }</div>
 					</div>
 					<p class="text-sm font-thin">${ date }</p>
 				</header>
