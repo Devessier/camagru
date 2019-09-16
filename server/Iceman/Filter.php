@@ -20,9 +20,7 @@ class Filter extends Image {
     }
 
     public static function load () {
-        if (count(self::$filters) !== 0) {
-            return true;
-        }
+        if (count(self::$filters) !== 0) return true;
 
         try {
             DB::connect();

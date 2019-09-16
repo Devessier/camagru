@@ -28,13 +28,15 @@ EOF;
         try {
             DB::connect();
 
-            [ [ 'user_id' => $userID ] ] = DB::select('SELECT user_id FROM tokens WHERE token = :token', [
+            $result = DB::select('SELECT user_id FROM tokens WHERE token = :token', [
                 'token' => $token
             ]);
 
-            if (empty($userID)) {
-                throw new Exception('Auth error');
-            }
+            if (empty($result) || empty($result[0])) return Response::internalError();
+
+            [ [ 'user_id' => $userID ] ] = $result;
+
+            if (empty($userID)) throw new Exception('Auth error');
 
             DB::delete('DELETE FROM tokens WHERE token = :token', [
                 'token' => $token
@@ -84,8 +86,7 @@ EOF;
                 $text
             );
 
-            if (!$result)
-                return false;
+            if (!$result) return false;
 
             DB::insert("INSERT INTO tokens(token, user_id, type) VALUES(:token, :user_id, 'RESET')", [
                 'token' => $token,
@@ -125,15 +126,11 @@ EOF;
                 'token' => $token
             ]);
 
-            if (!(is_array($tokens) && count($tokens) === 1)) {
-                throw new \Exception('invalid token');
-            }
+            if (!(is_array($tokens) && count($tokens) === 1)) throw new \Exception('invalid token');
 
-            return Response::make()
-                    ->redirect("http://localhost:8000/password-reset?token=$token");
+            return Response::make()->redirect("http://localhost:8000/password-reset?token=$token");
         } catch (\Exception $e) {
-            return Response::make()
-                    ->redirect("http://localhost:8000/401");
+            return Response::make()->redirect("http://localhost:8000/401");
         }
     }
 
