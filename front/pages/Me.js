@@ -41,6 +41,18 @@ const Me = (() => {
         `
     }
 
+    function myPosts (props) {
+        if (props.posts.length > 0) {
+            return props.posts.map((p, i) => post(Maverick.link(p), p, i))
+        }
+
+        const render = Maverick.link(props.posts)
+
+        return render`
+            <p class="w-full text-center py-2">Vous n'avez encore posté aucune photo 🐶</p>
+        `
+    }
+
     function render (render, props) {
         return render`
             <div class="flex justify-center items-center md:mx-10 my-10">
@@ -71,7 +83,7 @@ const Me = (() => {
                         <section
                                 class="flex flex-wrap"
                         >${
-                            props.posts.map((p, i) => post(Maverick.link(p), p, i))
+                            myPosts(props)
                         }</section>
                     </section>
                 </div>
