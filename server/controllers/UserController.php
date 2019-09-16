@@ -125,7 +125,8 @@ EOT;
 
             $getImgIdQuery = <<<EOT
                 SELECT
-                    img_id
+                    img_id,
+                    images.path
                 FROM
                     posts
                 INNER JOIN
@@ -138,10 +139,14 @@ EOT;
                     posts.user_id = :user_id
 EOT;
 
-            $imgId = DB::select($getImgIdQuery, [
+            $entries = DB::select($getImgIdQuery, [
                 'post_id' => $postId,
                 'user_id' => $userId
             ]);
+
+            if (empty($entries) || empty($entries[0])) return Response::internalError();
+
+            [ [ 'img_id' => $imgId,  'path' => $path ] ] = $entries;
 
             DB::statement('SET foreign_key_checks = 0');
 
@@ -171,6 +176,8 @@ EOT;
             ]);
 
             DB::statement('SET foreign_key_checks = 1');
+
+            @unlink(__DIR__ . '/../' . $path);
 
             return Response::make()->json(true);
         } catch (\Exception $e) {
