@@ -43,3 +43,20 @@ function rmRf ($dir) {
         @unlink($dir);
     }
 }
+
+function isPasswordCorrect (string $password) {
+    if (strlen($password) < 6) return false;
+
+    $specialCharacters = [ '!', '"',  '#', '$', '%', '&', '\'', '(', ')', '*', '+', ',', '-', '.', '/', ':', ';', '<', '=', '>', '?', '@', '[', '\\', ']', '^', '_', '`', '{', '|', '}', '~' ];
+
+    $found = false;
+
+    foreach ($specialCharacters as $char) {
+        if (strpos($password, $char) !== false) {
+            $found = true;
+            break;
+        }
+    }
+
+    return $found;
+}

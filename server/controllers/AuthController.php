@@ -62,7 +62,7 @@ class AuthController {
 			$password = $body->password;
 			$email = $body->email;
 
-			if (!($username && $password && $email && strlen($password) >= 6))
+			if (!($username && $password && $email && Iceman\isPasswordCorrect($password)))
 				return Response::unauthorized();
 
 			if (!validEmail($email)) {
@@ -179,7 +179,7 @@ class AuthController {
 
 			[ [ 'id' => $userID ] ] = $result;
 
-			if (empty($userID) || strlen($password) < 6) {
+			if (empty($userID) || !Iceman\isPasswordCorrect($password)) {
 				return Response::badRequest();
 			}
 

@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__ . '/../utils.php';
+
 use Iceman\DB;
 use Iceman\Request;
 use Iceman\Response;
@@ -59,6 +61,15 @@ class UserController {
 
                 DB::update('UPDATE users SET email = :email WHERE id = :id', [
                     'email' => $email,
+                    'id' => $id
+                ]);
+
+                $done = true;
+            } else if (is_string($password) && Iceman\isPasswordCorrect($password)) {
+                DB::connect();
+
+                DB::update('UPDATE users SET password = :password WHERE id = :id', [
+                    'password' => password_hash($password, PASSWORD_BCRYPT),
                     'id' => $id
                 ]);
 

@@ -44,16 +44,20 @@ const MeEdit = (() => {
 				.then(res => res.json())
 				.then((response) => {
 					if (response.success) {
-						GLOBAL_STATE.user[property] = value
+						if (property !== 'password') GLOBAL_STATE.user[property] = value
+						else data[property].value = ''
 					} else {
-						data[property].value = GLOBAL_STATE.user[property]
+						data[property].value = GLOBAL_STATE.user[property] || ''
 					}
+
+					let text = "Une erreur s'est produite, veuillez réessayer ultérieurement"
+					if (response.success === true) text = 'Votre profil a été modifié avec succès'
+					else if (response.success === false) text = 'Les données entrées étaient probablement incorrectes'
+
 					$toast(
 						data,
 						'Édition du profil',
-						response.success ?
-							'Votre profil a été modifié avec succès'
-							: "Une erreur s'est produite, veuillez réessayer ultérieurement"
+						text
 					)
 				})
 				.catch(() => {
@@ -161,6 +165,7 @@ const MeEdit = (() => {
 							oninput="${ event => { ref.value = event.target.value } }"
 							placeholder="${ placeholder }"
 							disabled="${ !modifying }"
+							type="${ props.hidden === true ? 'password' : 'text' }"
 
 							class="mb-3 pb-1 font-light border-purple-lighter focus:border-purple border-b short-transition account-input"
 					/>
@@ -194,7 +199,8 @@ const MeEdit = (() => {
 					title: 'Nouveau mot de passe',
 					placeholder: 'Mot de passe',
 					ref: props.password,
-					property: 'password'
+					property: 'password',
+					hidden: true
 				},
 				{
 					title: 'Recevoir les notifications',
@@ -220,6 +226,7 @@ const MeEdit = (() => {
 			created: function created () {
 				data.username.value = GLOBAL_STATE.user.username
 				data.email.value = GLOBAL_STATE.user.email
+				data.password.value = ''
 				data.notifications.value = GLOBAL_STATE.user.wants_notifications
 			}
 		}

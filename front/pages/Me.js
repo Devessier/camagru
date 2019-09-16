@@ -49,7 +49,7 @@ const Me = (() => {
         const render = Maverick.link(props.posts)
 
         return render`
-            <p class="w-full text-center py-2">Vous n'avez encore posté aucune photo 🐶</p>
+            <p class="w-full py-2">Vous n'avez encore posté aucune photo 🐶</p>
         `
     }
 
