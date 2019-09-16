@@ -8,7 +8,7 @@
 function Switch (props, onChange) {
 	const render = Maverick.link(props.ref)
 
-	function onclick () {
+	function onClick () {
 		props.value = this.checked
 
 		if (typeof onChange === 'function') onChange(this.checked)
@@ -21,7 +21,7 @@ function Switch (props, onChange) {
 			<input
 					type="checkbox"
 					checked="${ props.value }"
-					onclick="${ onclick }"
+					onclick="${ onClick }"
 					class="absolute w-0 h-0 opacity-0 pointer"
 			/>
 			<div class="switch h-full flex items-center"></div>

@@ -43,7 +43,8 @@ class AuthController {
 							'username' => $user->username,
 							'email' => $user->email,
 							'type' => $user->type,
-							'createdAt' => $user->created_at
+							'createdAt' => $user->created_at,
+							'wants_notifications' => $user->wants_notifications === '1'
 						]
 					]);
 		} catch (\Exception $e) {
