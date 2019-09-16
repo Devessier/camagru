@@ -251,7 +251,7 @@ const Home = (() => {
 
 		return render`
 			<section class="container flex flex-col items-center">
-				<p class="mt-2">Aucune image n'a été postée</p>
+				<p class="py-2">Aucune image n'a été postée</p>
 			</section>
 		`
 	}
