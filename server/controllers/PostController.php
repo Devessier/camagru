@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__ . '/../utils.php';
+
 use Iceman\DB;
 use Iceman\Request;
 use Iceman\Response;
@@ -36,7 +38,7 @@ class PostController {
         }
     }
 
-    private static function processImageUpload (Request $request, string $base64, $body) {
+    private static function processImageUpload (Request $request, string &$base64, $body) {
         try {
             DB::connect();
 
@@ -52,6 +54,7 @@ class PostController {
 
             if (!(
                 $base64
+                && Iceman\base64IsImage($base64)
                 && $message
                 && strlen($message) <= 120
                 && array_every($filter_arr, function ($item) { return isset($item); })

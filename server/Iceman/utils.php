@@ -60,3 +60,7 @@ function isPasswordCorrect (string $password) {
 
     return $found;
 }
+
+function base64IsImage (string &$base64) {
+    return preg_match('/data:image\/(?:png|jpg|jpeg);base64/', $base64) === 1;
+}

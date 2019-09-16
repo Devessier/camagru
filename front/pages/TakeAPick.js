@@ -168,15 +168,21 @@ const TakeAPick = (() => {
 			credentials: 'include'
 		})
 			.then(res => res.json())
-			.then((image) => {
+			.then((res) => {
+				if (res.error === true || res.message !== undefined) throw new Error('An error occured')
+
 				props.takenPhotos.push(
 					Object.assign(
-						image,
+						res,
 						{ loaded: false, isLoading: false, src: '' }
 					)
 				)
+
+				$toast(data, 'Nouvelle photo', 'Votre photo a été ajoutée à la galerie')
 			})
-			.catch(() => {})
+			.catch(() => {
+				$toast(data, 'Erreur', "Une erreur s'est produite")
+			})
 		
 		cancel(props)
 	}
