@@ -280,29 +280,24 @@ const Home = (() => {
 		`
 	}
 
-	let htmlTag = null
 	let fetching = false
 
 	/**
-	 * 
 	 * @param {Event} e 
 	 */
 	function infiniteScroll () {
-		if (!htmlTag) {
-			if (!(htmlTag = document.querySelector('html'))) return
-		}
-
 		const DELTA = 80 | 0
 
-		if (!fetching && htmlTag.offsetHeight - window.pageYOffset - htmlTag.scrollTop <= DELTA) {
+		const dist = Math.max(document.body.offsetHeight - (window.pageYOffset + window.innerHeight), 0)
+
+		if (!fetching && dist <= DELTA) {
 			// load
 			fetching = true
-			loadMorePosts()
-				.then(() => {
-					setTimeout(() => {
-						fetching = false
-					}, 100)
-				})
+			loadMorePosts().finally(() => {
+				setTimeout(() => {
+					fetching = false
+				}, 100)
+			})
 		}
 	}
 
