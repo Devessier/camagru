@@ -75,8 +75,15 @@ const Maverick = (() => {
         let old
 
         return function any (value) {
+            if (value === null) value = undefined
+
             switch (typeof value) {
                 case 'string':
+                case 'number':
+                case 'boolean':
+                case 'undefined':
+                case 'bigint':
+                case 'symbol':
                     // The value is a simple string that
                     // we will put into the element using textContent.
                     // This prevents XSS.
@@ -85,12 +92,6 @@ const Maverick = (() => {
                         old = value
                     }
                     break
-                case 'number':
-                case 'boolean':
-                    if (old !== value) {
-                        ship.textContent = value
-                        old = value
-                    }
                 default:
                     if (Array.isArray(value)) {
                         if (value.length === 1) {
