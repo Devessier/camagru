@@ -134,6 +134,8 @@ if (file_exists($dist)) {
 
 @mkdir($dist);
 
+@file_put_contents($dist . '/<!--', '');
+
 $mainChunk = "/dist/app-$id.js";
 
 if (@file_put_contents(__DIR__ . $mainChunk, sort_files_and_conc($paths)) === false) {
