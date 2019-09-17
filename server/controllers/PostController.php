@@ -350,7 +350,7 @@ EOT;
                     'author_wants_notifications' => $authorWantsNotifications
                 ] = $data[0];
 
-                if (!empty($authorId) && $authorId !== $userId && $authorWantsNotifications === '1') {
+                if (!empty($authorId) && $authorWantsNotifications === '1') {
                     // Notify the post author that its post has received a new comment
                     // if the commenter is not the author of the comment.
                     MailController::postHasBeenCommented(
