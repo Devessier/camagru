@@ -218,7 +218,7 @@ EOT;
 
     public static function loadMore (Request $request, string $id) {
         try {
-            if (!((int)$id > 0)) return Response::make()->json([]);
+            if ($id !== null &&!((int)$id > 0)) return Response::make()->json([]);
 
             return self::fetch($request, $id);
         } catch (\Exception $e) {
